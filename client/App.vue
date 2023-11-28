@@ -25,9 +25,9 @@ onBeforeMount(async () => {
   <header>
     <nav>
       <div class="title">
-        <img src="@/assets/images/logo.svg" />
+        <img src="@/assets/images/logo.png" />
         <RouterLink :to="{ name: 'Home' }">
-          <h1>Social Media App</h1>
+          <h1 class="logo-text">Sharefolio</h1>
         </RouterLink>
       </div>
       <ul>
@@ -54,7 +54,7 @@ onBeforeMount(async () => {
 
 nav {
   padding: 1em 2em;
-  background-color: lightgray;
+  background-color: var(--dark-background);
   display: flex;
   align-items: center;
 }
@@ -70,13 +70,22 @@ h1 {
   gap: 0.5em;
 }
 
+.logo-text {
+  background: -webkit-linear-gradient(0deg, var(--dark-gold), var(--light-gold), var(--dark-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Tangerine";
+  font-weight: bold;
+}
+
 img {
   height: 2em;
 }
 
 a {
   font-size: large;
-  color: black;
+  color: white;
+  font-family: "Libre Baskerville";
   text-decoration: none;
 }
 
