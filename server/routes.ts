@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, User, WebSession } from "./app";
+import { Friend, Money, Post, User, WebSession } from "./app";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -28,7 +28,14 @@ class Routes {
   @Router.post("/users")
   async createUser(session: WebSessionDoc, username: string, password: string) {
     WebSession.isLoggedOut(session);
-    return await User.create(username, password);
+    const res = await User.create(username, password);
+    const user = res.user;
+    // create a new account balance associated with this user
+    if (user !== null) {
+      const userId = user._id;
+      await Money.create(userId);
+    }
+    return res;
   }
 
   @Router.patch("/users")
@@ -135,6 +142,24 @@ class Routes {
     const user = WebSession.getUser(session);
     const fromId = (await User.getUserByUsername(from))._id;
     return await Friend.rejectRequest(fromId, user);
+  }
+
+  @Router.get("/balance")
+  async getBalance(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Money.getBalance(user);
+  }
+
+  @Router.patch("/balance/withdraw/:amount")
+  async withdraw(session: WebSessionDoc, amount: number) {
+    const user = WebSession.getUser(session);
+    return await Money.withdraw(user, amount);
+  }
+
+  @Router.patch("/balance/deposit/:amount")
+  async deposit(session: WebSessionDoc, amount: number) {
+    const user = WebSession.getUser(session);
+    return await Money.deposit(user, amount);
   }
 }
 
