@@ -81,7 +81,7 @@ section {
 section,
 p,
 .row {
-  margin: 0 auto;
+  margin: auto;
   max-width: 65em;
 }
 

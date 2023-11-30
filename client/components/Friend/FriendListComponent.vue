@@ -94,4 +94,8 @@ p {
   border-radius: 1em;
   padding: 1em;
 }
+
+.pending-friends {
+  margin-top: 1em;
+}
 </style>
