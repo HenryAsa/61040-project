@@ -9,17 +9,20 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 <template>
   <main>
-    <div class="split-wrapper">
+    <h1>Home Page</h1>
+    <section>
+      <h1 v-if="isLoggedIn">Welcome {{ currentUsername }}!</h1>
+      <h1 v-else>Please login!</h1>
+    </section>
+    <div v-if="!isLoggedIn">
+      <PostListComponent />
+    </div>
+    <div class="split-wrapper" v-else>
       <div class="split left">
-        <h1>Home Page</h1>
-        <section>
-          <h1 v-if="isLoggedIn">Welcome {{ currentUsername }}!</h1>
-          <h1 v-else>Please login!</h1>
-        </section>
         <PostListComponent />
       </div>
       <div class="split right">
-        <FriendListComponent v-if="isLoggedIn" ref="friendListRef" />
+        <FriendListComponent ref="friendListRef" />
       </div>
     </div>
   </main>
