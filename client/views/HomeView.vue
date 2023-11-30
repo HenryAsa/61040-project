@@ -30,7 +30,7 @@ async function updateFriendList() {
         <PostListComponent />
       </div>
       <div class="split right">
-        <FriendListComponent ref="friendListRef" />
+        <FriendListComponent :username="currentUsername" ref="friendListRef" />
         <PendingFriendListComponent @refreshFriends="updateFriendList" />
       </div>
     </div>
