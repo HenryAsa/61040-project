@@ -3,6 +3,7 @@ import PostListComponent from "@/components/Post/PostListComponent.vue";
 import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import PendingFriendListComponent from "../components/Friend/PendingFriendListComponent.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 </script>
@@ -23,6 +24,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
       </div>
       <div class="split right">
         <FriendListComponent ref="friendListRef" />
+        <PendingFriendListComponent />
       </div>
     </div>
   </main>
