@@ -31,7 +31,7 @@ defineExpose({ getFriends });
     <section class="friends" v-if="loaded && friends.length !== 0">
       <p>Friends</p>
       <article v-for="friend in friends" :key="friend._id">
-        friend
+        <p class="username">{{ friend }}</p>
         <FriendOptionComponent :from="props.username" :to="friend" :isFriendOverride="true" @refreshFriends="getFriends" />
       </article>
     </section>
