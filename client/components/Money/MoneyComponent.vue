@@ -42,7 +42,7 @@ async function getBalance() {
 }
 
 onBeforeMount(async () => {
-  if (isLoggedIn) {
+  if (isLoggedIn.value) {
     await getBalance();
   }
   loaded.value = true;
