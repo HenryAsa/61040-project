@@ -14,6 +14,10 @@ let requested = ref(false);
 let isFriend = ref(false);
 let selfFriend = ref(false);
 
+/**
+ * Checks if the user is friends with themselves and returns if the other user is friends with the user.
+ * @returns true iff other is friends with user; false otherwise
+ */
 function checkFriend() {
   selfFriend.value = props.user == props.other;
   return currentFriends.value.includes(props.other);
@@ -32,24 +36,33 @@ async function checkRequested() {
   }
 }
 
-async function friendRequest() {
+/**
+ * Sends a friend request to the other user
+ */
+async function sendFriendRequest() {
   try {
-    await fetchy(`/api/friend/requests/${props.user}`, "POST");
+    await fetchy(`/api/friend/requests/${props.other}`, "POST");
     requested.value = true;
   } catch (_) {
     return;
   }
 }
 
+/**
+ * Cancels a sent friend request to the other user
+ */
 async function cancelRequest() {
   try {
-    await fetchy(`/api/friend/requests/${props.user}`, "DELETE");
+    await fetchy(`/api/friend/requests/${props.other}`, "DELETE");
     requested.value = false;
   } catch (_) {
     return;
   }
 }
 
+/**
+ * Unfriends the other user, then refreshes the friend list
+ */
 async function unfriend() {
   try {
     await fetchy(`/api/friends/${props.other}`, "DELETE");
@@ -59,6 +72,9 @@ async function unfriend() {
   emit("refreshFriends");
 }
 
+/**
+ * Accepts a friend request from the other user, then refreshes the friend list
+ */
 async function acceptRequest() {
   try {
     await fetchy(`/api/friend/accept/${props.other}`, "PUT");
@@ -68,6 +84,9 @@ async function acceptRequest() {
   emit("refreshFriends");
 }
 
+/**
+ * Rejects a friend request from the other users, then refreshes the friend list
+ */
 async function rejectRequest() {
   try {
     await fetchy(`/api/friend/reject/${props.other}`, "PUT");
@@ -91,7 +110,7 @@ onBeforeMount(async () => {
   <div class="friend-box">
     <div v-if="!selfFriend">
       <div v-if="!isFriend && props.outgoing" class="send-request">
-        <button v-if="!requested" class="pure-button" @click="friendRequest">Send Friend Request</button>
+        <button v-if="!requested" class="pure-button" @click="sendFriendRequest">Send Friend Request</button>
         <button v-else class="pure-button" @click="cancelRequest">Cancel Request</button>
       </div>
       <div v-else-if="!isFriend" class="recieve-request">
