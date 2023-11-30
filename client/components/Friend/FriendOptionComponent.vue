@@ -8,22 +8,22 @@ const { currentFriends } = storeToRefs(useUserStore());
 
 const emit = defineEmits(["refreshFriends"]);
 
-const props = defineProps(["from", "to", "outgoing", "isFriendOverride"]);
+const props = defineProps(["user", "other", "outgoing", "isFriendOverride"]);
 
 let requested = ref(false);
 let isFriend = ref(false);
 let selfFriend = ref(false);
 
 function checkFriend() {
-  selfFriend.value = props.from == props.to;
-  return currentFriends.value.includes(props.to);
+  selfFriend.value = props.user == props.other;
+  return currentFriends.value.includes(props.other);
 }
 
 async function checkRequested() {
   try {
     const requests = await fetchy(`/api/friend/requests`, "GET");
     for (const request of requests) {
-      if (request.from == props.to) {
+      if (request.from == props.other) {
         requested.value = true;
       }
     }
@@ -34,7 +34,7 @@ async function checkRequested() {
 
 async function friendRequest() {
   try {
-    await fetchy(`/api/friend/requests/${props.from}`, "POST");
+    await fetchy(`/api/friend/requests/${props.user}`, "POST");
     requested.value = true;
   } catch (_) {
     return;
@@ -43,7 +43,7 @@ async function friendRequest() {
 
 async function cancelRequest() {
   try {
-    await fetchy(`/api/friend/requests/${props.from}`, "DELETE");
+    await fetchy(`/api/friend/requests/${props.user}`, "DELETE");
     requested.value = false;
   } catch (_) {
     return;
@@ -52,7 +52,7 @@ async function cancelRequest() {
 
 async function unfriend() {
   try {
-    await fetchy(`/api/friends/${props.to}`, "DELETE");
+    await fetchy(`/api/friends/${props.other}`, "DELETE");
   } catch (_) {
     return;
   }
@@ -61,7 +61,7 @@ async function unfriend() {
 
 async function acceptRequest() {
   try {
-    await fetchy(`/api/friend/accept/${props.to}`, "PUT");
+    await fetchy(`/api/friend/accept/${props.other}`, "PUT");
   } catch (_) {
     return;
   }
@@ -70,7 +70,7 @@ async function acceptRequest() {
 
 async function rejectRequest() {
   try {
-    await fetchy(`/api/friend/reject/${props.to}`, "PUT");
+    await fetchy(`/api/friend/reject/${props.other}`, "PUT");
   } catch (_) {
     return;
   }
