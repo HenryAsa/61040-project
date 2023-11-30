@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { fetchy } from "@/utils/fetchy";
 import { onBeforeMount, ref } from "vue";
-import UserComponent from "../User/UserComponent.vue";
 import FriendOptionComponent from "../Friend/FriendOptionComponent.vue";
 
 const props = defineProps(["username"]);
@@ -32,7 +31,7 @@ defineExpose({ getFriends });
     <section class="friends" v-if="loaded && friends.length !== 0">
       <p>Friends</p>
       <article v-for="friend in friends" :key="friend._id">
-        <UserComponent style="width: 60%" :overrideUsername="friend" />
+        friend
         <FriendOptionComponent :from="props.username" :to="friend" :isFriendOverride="true" @refreshFriends="getFriends" />
       </article>
     </section>
