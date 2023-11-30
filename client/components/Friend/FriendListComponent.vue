@@ -57,7 +57,7 @@ section {
 section,
 p,
 .row {
-  margin: 0 auto;
+  margin: auto;
   max-width: 65em;
 }
 
@@ -79,6 +79,6 @@ section {
 p {
   background-color: var(--base-bg);
   border-radius: 1em;
-  padding-top: 1em;
+  padding: 1em;
 }
 </style>
