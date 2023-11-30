@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PostListComponent from "@/components/Post/PostListComponent.vue";
+import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
@@ -17,7 +18,9 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
         </section>
         <PostListComponent />
       </div>
-      <div class="split right"></div>
+      <div class="split right">
+        <FriendListComponent v-if="isLoggedIn" ref="friendListRef" />
+      </div>
     </div>
   </main>
 </template>
