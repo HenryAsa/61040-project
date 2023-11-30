@@ -45,9 +45,7 @@ defineExpose({ updateFriends });
         </article>
       </section>
       <p v-else>No friends</p>
-      <section class="pending-friends">
-        <PendingFriendListComponent v-if="isLoggedIn && currentUsername == props.username" @refreshFriends="updateFriends" />
-      </section>
+      <PendingFriendListComponent v-if="isLoggedIn && currentUsername == props.username" @refreshFriends="updateFriends" />
     </div>
     <p v-else>Loading...</p>
   </div>
