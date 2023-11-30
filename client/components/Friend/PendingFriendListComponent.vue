@@ -11,8 +11,8 @@ const emit = defineEmits(["refreshFriends"]);
 
 const loaded = ref(false);
 let requests = ref();
-let outgoing = ref();
-let pending = ref();
+let outgoingPendingRequests = ref();
+let incomingPendingRequests = ref();
 
 /**
  * Refresh the list of friend requests so the user knows their input was successfully taken
@@ -33,8 +33,8 @@ async function getFriendRequests() {
     return;
   }
   requests.value = requestResults;
-  outgoing.value = requestResults.filter((request: { from: string; status: string }) => request.from == currentUsername.value && request.status == "pending");
-  pending.value = requestResults.filter((request: { to: string; status: string }) => request.to == currentUsername.value && request.status == "pending");
+  outgoingPendingRequests.value = requestResults.filter((request: { from: string; status: string }) => request.from == currentUsername.value && request.status == "pending");
+  incomingPendingRequests.value = requestResults.filter((request: { to: string; status: string }) => request.to == currentUsername.value && request.status == "pending");
 }
 
 onBeforeMount(async () => {
@@ -45,9 +45,9 @@ onBeforeMount(async () => {
 
 <template>
   <div class="list-wrapper">
-    <section class="request" v-if="loaded && pending.length !== 0">
+    <section class="request" v-if="loaded && incomingPendingRequests.length !== 0">
       <p>Pending Friend Requests</p>
-      <article v-for="request in pending" :key="request._id">
+      <article v-for="request in incomingPendingRequests" :key="request._id">
         <p class="username">{{ request.from }}</p>
         <FriendOptionComponent :to="request.from" :outgoing="false" @refreshFriends="refreshFriendRequests" />
       </article>
@@ -56,9 +56,9 @@ onBeforeMount(async () => {
     <p v-else>Loading...</p>
   </div>
   <div class="list-wrapper">
-    <section class="request" v-if="loaded && outgoing.length !== 0">
+    <section class="request" v-if="loaded && outgoingPendingRequests.length !== 0">
       <p>Outgoing Friend Requests</p>
-      <article v-for="request in outgoing" :key="request._id">
+      <article v-for="request in outgoingPendingRequests" :key="request._id">
         <p class="username">{{ request.to }}</p>
       </article>
     </section>
