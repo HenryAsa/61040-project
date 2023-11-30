@@ -4,6 +4,7 @@ import { onBeforeMount, ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import FriendOptionComponent from "../Friend/FriendOptionComponent.vue";
+import PendingFriendListComponent from "./PendingFriendListComponent.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
@@ -40,6 +41,7 @@ defineExpose({ updateFriends });
       <article v-for="friend in friends" :key="friend._id">
         <p class="username">{{ friend }}</p>
         <FriendOptionComponent v-if="isLoggedIn && currentUsername == props.username" :user="props.username" :other="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />
+        <PendingFriendListComponent v-if="isLoggedIn" @refreshFriends="updateFriends" />
       </article>
     </section>
     <p v-else-if="loaded">No friends</p>
