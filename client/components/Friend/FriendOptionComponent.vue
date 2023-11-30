@@ -15,14 +15,17 @@ let isFriend = ref(false);
 let selfFriend = ref(false);
 
 /**
- * Checks if the user is friends with themselves and returns if the other user is friends with the user.
- * @returns true iff other is friends with user; false otherwise
+ * Checks if this user is friends with themselves and returns if the other user is friends with the user.
+ * @returns true iff the other user is friends with this user; false otherwise
  */
 function checkFriend() {
   selfFriend.value = props.user == props.other;
   return currentFriends.value.includes(props.other);
 }
 
+/**
+ * Checks if the other user is in this user's requests
+ */
 async function checkRequested() {
   try {
     const requests = await fetchy(`/api/friend/requests`, "GET");
