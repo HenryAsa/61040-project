@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { fetchy } from "@/utils/fetchy";
 import { onBeforeMount, ref } from "vue";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import FriendOptionComponent from "../Friend/FriendOptionComponent.vue";
+
+const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
 
@@ -35,7 +39,7 @@ defineExpose({ updateFriends });
       <p>Friends</p>
       <article v-for="friend in friends" :key="friend._id">
         <p class="username">{{ friend }}</p>
-        <FriendOptionComponent :user="props.username" :other="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />
+        <FriendOptionComponent v-if="isLoggedIn && currentUsername == props.username" :user="props.username" :other="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />
       </article>
     </section>
     <p v-else-if="loaded">No friends</p>
