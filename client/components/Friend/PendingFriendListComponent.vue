@@ -79,9 +79,8 @@ section {
 }
 
 section,
-p,
-.row {
-  margin: auto;
+p {
+  margin: 0 auto;
   max-width: 65em;
 }
 
@@ -92,13 +91,6 @@ section {
   flex-direction: column;
   gap: 0em;
   padding: 1em;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  max-width: 65em;
 }
 
 p {
