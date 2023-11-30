@@ -36,19 +36,19 @@ defineExpose({ updateFriends });
 
 <template>
   <div class="list-wrapper">
-    <div v-if="loaded && friends.length !== 0">
-      <section class="friends">
+    <div v-if="loaded">
+      <section class="friends" v-if="friends.length !== 0">
         <p>Friends</p>
         <article v-for="friend in friends" :key="friend._id">
           <p class="username">{{ friend }}</p>
           <FriendOptionComponent v-if="isLoggedIn && currentUsername == props.username" :user="props.username" :other="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />
         </article>
       </section>
+      <p v-else-if="loaded">No friends</p>
       <section class="pending-friends">
         <PendingFriendListComponent v-if="isLoggedIn && currentUsername == props.username" @refreshFriends="updateFriends" />
       </section>
     </div>
-    <p v-else-if="loaded">No friends</p>
     <p v-else>Loading...</p>
   </div>
 </template>
