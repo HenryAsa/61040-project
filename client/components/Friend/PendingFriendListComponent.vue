@@ -49,7 +49,7 @@ onBeforeMount(async () => {
       <p>Pending Friend Requests</p>
       <article v-for="request in incomingPendingRequests" :key="request._id">
         <p class="username">{{ request.from }}</p>
-        <FriendOptionComponent :to="request.from" :outgoing="false" @refreshFriends="refreshFriendRequests" />
+        <FriendOptionComponent :other="request.from" :outgoing="false" @refreshFriends="refreshFriendRequests" />
       </article>
     </section>
     <p v-else-if="loaded">No pending friend requests</p>
