@@ -8,7 +8,10 @@ const props = defineProps(["username"]);
 const loaded = ref(false);
 let friends = ref();
 
-async function getFriends() {
+/**
+ * Updates the stored list of the user's friends
+ */
+async function updateFriends() {
   let friendResults;
   try {
     friendResults = await fetchy(`/api/friends`, "GET");
@@ -19,11 +22,11 @@ async function getFriends() {
 }
 
 onBeforeMount(async () => {
-  await getFriends();
+  await updateFriends();
   loaded.value = true;
 });
 
-defineExpose({ getFriends });
+defineExpose({ updateFriends });
 </script>
 
 <template>
@@ -32,7 +35,7 @@ defineExpose({ getFriends });
       <p>Friends</p>
       <article v-for="friend in friends" :key="friend._id">
         <p class="username">{{ friend }}</p>
-        <FriendOptionComponent :from="props.username" :to="friend" :isFriendOverride="true" @refreshFriends="getFriends" />
+        <FriendOptionComponent :from="props.username" :to="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />
       </article>
     </section>
     <p v-else-if="loaded">No friends</p>

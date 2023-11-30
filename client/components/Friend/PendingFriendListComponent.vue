@@ -14,11 +14,17 @@ let requests = ref();
 let outgoing = ref();
 let pending = ref();
 
-async function updateFriendRequests() {
+/**
+ * Refresh the list of friend requests so the user knows their input was successfully taken
+ */
+async function refreshFriendRequests() {
   await getFriendRequests();
   emit("refreshFriends");
 }
 
+/**
+ * Get all friend requests for the user and save them
+ */
 async function getFriendRequests() {
   let requestResults;
   try {
@@ -43,7 +49,7 @@ onBeforeMount(async () => {
       <p>Pending Friend Requests</p>
       <article v-for="request in pending" :key="request._id">
         <p class="username">{{ request.from }}</p>
-        <FriendOptionComponent :to="request.from" :outgoing="false" @refreshFriends="updateFriendRequests" />
+        <FriendOptionComponent :to="request.from" :outgoing="false" @refreshFriends="refreshFriendRequests" />
       </article>
     </section>
     <p v-else-if="loaded">No pending friend requests</p>
