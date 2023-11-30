@@ -4,7 +4,6 @@ import { onBeforeMount, ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import FriendOptionComponent from "./FriendOptionComponent.vue";
-import UserComponent from "../User/UserComponent.vue";
 
 const { currentUsername } = storeToRefs(useUserStore());
 
@@ -43,7 +42,7 @@ onBeforeMount(async () => {
     <section class="request" v-if="loaded && pending.length !== 0">
       <p>Pending Friend Requests</p>
       <article v-for="request in pending" :key="request._id">
-        <UserComponent :overrideUsername="request.from" />
+        <p class="username">{{ request.from }}</p>
         <FriendOptionComponent :to="request.from" :outgoing="false" @refreshFriends="updateFriendRequests" />
       </article>
     </section>
@@ -54,7 +53,7 @@ onBeforeMount(async () => {
     <section class="request" v-if="loaded && outgoing.length !== 0">
       <p>Outgoing Friend Requests</p>
       <article v-for="request in outgoing" :key="request._id">
-        <UserComponent :overrideUsername="request.to" />
+        <p class="username">{{ request.to }}</p>
       </article>
     </section>
     <p v-else-if="loaded">No outgoing friend requests</p>
