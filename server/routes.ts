@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, User, WebSession } from "./app";
+import { AIAgent, Friend, Interest, Post, User, WebSession } from "./app";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -28,7 +28,11 @@ class Routes {
   @Router.post("/users")
   async createUser(session: WebSessionDoc, username: string, password: string) {
     WebSession.isLoggedOut(session);
-    return await User.create(username, password);
+    const user = await User.create(username, password);
+    if (user.user?._id) {
+      await Interest.create(user.user?._id);
+    }
+    return user;
   }
 
   @Router.patch("/users")
@@ -41,6 +45,7 @@ class Routes {
   async deleteUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     WebSession.end(session);
+    await Interest.delete(user);
     return await User.delete(user);
   }
 
@@ -135,6 +140,35 @@ class Routes {
     const user = WebSession.getUser(session);
     const fromId = (await User.getUserByUsername(from))._id;
     return await Friend.rejectRequest(fromId, user);
+  }
+
+  @Router.patch("/interests/:interest")
+  async addInterest(session: WebSessionDoc, interest: string) {
+    const user = WebSession.getUser(session);
+    return await Interest.update(user, interest);
+  }
+
+  @Router.get("/news")
+  async addNews(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    const tmp = await Interest.getNews(user);
+    console.log(tmp);
+    return tmp;
+  }
+
+  @Router.get("/chatbox")
+  async addMessages(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await AIAgent.getByUser(user);
+  }
+
+  @Router.patch("/aiagent/:decision")
+  async getHelp(session: WebSessionDoc, decision: string) {
+    const user = WebSession.getUser(session);
+    await AIAgent.send(user, decision);
+    const responce = await AIAgent.getResponce(user, decision);
+    console.log(responce);
+    return responce;
   }
 }
 
