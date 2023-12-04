@@ -7,7 +7,7 @@ const emit = defineEmits(["refreshChatbox"]);
 
 const sendText = async (decision: string) => {
   try {
-    await fetchy("/api/aiagent/:decision", "PATCH", {
+    await fetchy("/api/aiagent/send", "PATCH", {
       body: { decision },
     });
   } catch (_) {
@@ -15,6 +15,14 @@ const sendText = async (decision: string) => {
   }
   emit("refreshChatbox");
   emptyForm();
+  try {
+    await fetchy("/api/aiagent/receive", "PATCH", {
+      body: { decision },
+    });
+  } catch (_) {
+    return;
+  }
+  emit("refreshChatbox");
 };
 
 const emptyForm = () => {
@@ -23,28 +31,44 @@ const emptyForm = () => {
 </script>
 
 <template>
-  <form @submit.prevent="sendText(text)">
-    <textarea id="content" v-model="text" placeholder="Type your message!" required> </textarea>
-    <button type="submit" class="pure-button-primary pure-button">Send</button>
+  <form class="message-input" @submit.prevent="sendText(text)">
+    <input type="text" v-model="text" placeholder="Type your message ..." required />
+    <button type="submit"><i class="fa fa-send-o"></i></button>
   </form>
 </template>
 
 <style scoped>
-form {
-  background-color: var(--base-bg);
-  border-radius: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  padding: 1em;
+.message-input {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 90%;
+  display: block;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 8px;
 }
 
-textarea {
-  font-family: inherit;
-  font-size: inherit;
-  height: 6em;
-  padding: 0.5em;
+.message-input input[type="text"] {
+  display: inline;
+  flex: 1;
+  width: 80%;
+  border: none;
+  padding: 8px;
   border-radius: 4px;
-  resize: none;
+  margin-right: 8px;
+  outline: none;
+}
+
+.message-input button {
+  display: inline;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 100px;
+  background-color: #2979ff;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
 }
 </style>

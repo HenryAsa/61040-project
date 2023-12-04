@@ -1,43 +1,62 @@
 <script setup lang="ts">
 const props = defineProps(["message"]);
+const isAI = props.message.author === "ai";
 </script>
 <template>
-  <p>{{ props.message.content }}</p>
+  <section :class="{ 'bubble right': isAI, 'bubble left': !isAI }">
+    <p markdown="block">{{ props.message.text }}</p>
+    <!-- <VueMarkdown :source="src"></VueMarkdown> -->
+  </section>
 </template>
 
 <style scoped>
-p {
-  margin: 0em;
-}
-
-.author {
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-menu {
-  list-style-type: none;
+.message {
+  width: 50%; /* Adjust as needed */
+  margin-bottom: 10px; /* Optional: Adds space between messages */
+  padding: 10px;
+  border-radius: 5px;
   display: flex;
-  flex-direction: row;
-  gap: 1em;
-  padding: 0;
-  margin: 0;
+  justify-content: center;
+  clear: both;
+  overflow: hidden;
 }
 
-.timestamp {
-  display: flex;
+.ai {
+  left: 0px;
+  right: auto;
+  color: var(--white);
+  background-color: blue;
+  justify-content: flex-start;
+}
+
+.self {
+  right: 0px;
+  left: auto;
+  color: var(--dark);
+  background-color: #eceff1;
   justify-content: flex-end;
-  font-size: 0.9em;
-  font-style: italic;
 }
 
-.base {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.bubble {
+  --r: 25px; /* the radius */
+  --t: 30px; /* the size of the tail */
 
-.base article:only-child {
-  margin-left: auto;
+  max-width: 300px;
+  padding: calc(2 * var(--r) / 3);
+  background: linear-gradient(135deg, #fe6d00, #1384c5) border-box;
+  border-radius: 45px;
+  color: #fff;
+}
+.left {
+  --_d: 0%;
+  border-left: var(--t) solid #0000;
+  margin-right: var(--t);
+  place-self: start;
+}
+.right {
+  --_d: 100%;
+  border-right: var(--t) solid #0000;
+  margin-left: var(--t);
+  place-self: end;
 }
 </style>

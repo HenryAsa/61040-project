@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { ref } from "vue";
 const props = defineProps(["article"]);
+const url = ref(props.article?.url);
 </script>
 
 <template>
-  <p class="author">{{ props.article.source.name }}</p>
+  <div class="title">
+    <a :href="props.article.url" target="_blank" style="text-decoration: none">{{ props.article.title }}</a>
+  </div>
+  <img :src="props.article.urlToImage" style="width: 200px; height: auto" />
   <p>{{ props.article.description }}</p>
   <div class="base">
     <article class="timestamp">
@@ -17,11 +22,20 @@ p {
   margin: 0em;
 }
 
-.author {
-  font-weight: bold;
-  font-size: 1.2em;
+/* Example styles for news article titles */
+.title {
+  font-size: 24px; /* Adjust the font size */
+  font-weight: bold; /* Bold font */
+  color: #333; /* Text color */
+  margin-bottom: 10px; /* Optional: Spacing below the title */
+  /* Other styles such as text-align, font-family, etc. */
 }
 
+/* Hover effect example */
+.title:hover {
+  color: #ff6600; /* Change color on hover */
+  /* Other hover effects if desired */
+}
 menu {
   list-style-type: none;
   display: flex;

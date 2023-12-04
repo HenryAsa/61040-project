@@ -3,7 +3,7 @@ import ArticleListComponent from "../components/News/ArticleListComponent.vue";
 </script>
 
 <template>
-  <main>
+  <main class="body">
     <h1>News</h1>
     <ArticleListComponent />
   </main>

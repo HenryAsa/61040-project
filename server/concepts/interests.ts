@@ -27,9 +27,9 @@ export default class InterestConcept {
     return (await this.getInterests({ user }))[0];
   }
 
-  async update(user: ObjectId, interest: string) {
-    const interests = (await this.getByUser(user)).interests;
-    interests.push(interest);
+  async update(user: ObjectId, interests: Array<string>) {
+    // const interests = (await this.getByUser(user)).interests;
+    // interests.push(interest);
     await this.tags.updateOne({ user }, { interests });
     return { msg: "Interests successfully updated!" };
   }

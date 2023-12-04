@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import AddInterestForm from "@/components/News/AddInterestForm.vue";
 import ArticleComponent from "@/components/News/ArticleComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+import UpdateInterestForm from "./UpdateInterestForm.vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
@@ -29,10 +29,9 @@ onBeforeMount(async () => {
 
 <template>
   <section v-if="isLoggedIn">
-    <h2>Create a post:</h2>
-    <AddInterestForm @refreshArticles="getArticles" />
+    <UpdateInterestForm @refreshArticles="getArticles" />
   </section>
-  <section class="posts" v-if="loaded && articles.length !== 0">
+  <section class="articles" v-if="loaded && articles.length !== 0">
     <article v-for="article in articles" :key="article">
       <ArticleComponent :article="article" />
     </article>

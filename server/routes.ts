@@ -31,6 +31,7 @@ class Routes {
     const user = await User.create(username, password);
     if (user.user?._id) {
       await Interest.create(user.user?._id);
+      await AIAgent.create(user.user?._id);
     }
     return user;
   }
@@ -142,17 +143,22 @@ class Routes {
     return await Friend.rejectRequest(fromId, user);
   }
 
-  @Router.patch("/interests/:interest")
-  async addInterest(session: WebSessionDoc, interest: string) {
+  @Router.patch("/interests")
+  async addInterest(session: WebSessionDoc, interests: Array<string>) {
     const user = WebSession.getUser(session);
-    return await Interest.update(user, interest);
+    return await Interest.update(user, interests);
+  }
+
+  @Router.get("/interests")
+  async getInterests(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return (await Interest.getByUser(user)).interests;
   }
 
   @Router.get("/news")
   async addNews(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     const tmp = await Interest.getNews(user);
-    console.log(tmp);
     return tmp;
   }
 
@@ -162,12 +168,24 @@ class Routes {
     return await AIAgent.getByUser(user);
   }
 
-  @Router.patch("/aiagent/:decision")
+  @Router.patch("/aiagent")
   async getHelp(session: WebSessionDoc, decision: string) {
     const user = WebSession.getUser(session);
     await AIAgent.send(user, decision);
     const responce = await AIAgent.getResponce(user, decision);
-    console.log(responce);
+    return responce;
+  }
+
+  @Router.patch("/aiagent/send")
+  async send(session: WebSessionDoc, decision: string) {
+    const user = WebSession.getUser(session);
+    return await AIAgent.send(user, decision);
+  }
+
+  @Router.patch("/aiagent/receive")
+  async receive(session: WebSessionDoc, decision: string) {
+    const user = WebSession.getUser(session);
+    const responce = await AIAgent.getResponce(user, decision);
     return responce;
   }
 }

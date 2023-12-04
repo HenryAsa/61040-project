@@ -46,8 +46,16 @@ export default class ChatConcept {
     return { msg: "Post successfully updated!" };
   }
 
+  async removeLast(user: ObjectId) {
+    const messages = (await this.getByUser(user)).messages;
+    messages.pop();
+    await this.chatboxes.updateOne({ user }, { messages });
+    return { msg: "Post successfully updated!" };
+  }
+
   async send(user: ObjectId, text: string) {
     await this.update(user, text, "self");
+    await this.update(user, "Analyzing ...", "ai");
     return { msg: "Message is received" };
   }
 
@@ -59,6 +67,7 @@ export default class ChatConcept {
   async getResponce(user: ObjectId, prompt: string) {
     const news = await this.getNews(prompt);
     const responce = await this.generateResponce(prompt, news!);
+    await this.removeLast(user);
     await this.update(user, responce!, "ai");
     return responce;
   }
@@ -68,12 +77,13 @@ export default class ChatConcept {
     const headlines = await newsAPI.getEverything({
       q: keywords!,
       qInTitle: "stock",
-      sources: ["bbc-news"],
+      sources: [],
       language: "en",
       sortBy: "relevancy",
       pageSize: 20,
       page: 1,
     });
+    console.log(headlines["articles"]);
     return headlines["articles"][0].content;
   }
 
