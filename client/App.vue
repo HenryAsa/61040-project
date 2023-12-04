@@ -35,7 +35,8 @@ onBeforeMount(async () => {
           <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
         </li>
         <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"> Settings </RouterLink>
+          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"> <i class="fa fa-gear" style="font-size: 24px"></i> </RouterLink>
+          <RouterLink :to="{ name: 'News' }" :class="{ underline: currentRouteName == 'News' }"> <i class="fa fa-newspaper-o" style="font-size: 24px"></i> </RouterLink>
         </li>
         <li v-else>
           <RouterLink :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
@@ -45,18 +46,32 @@ onBeforeMount(async () => {
     <article v-if="toast !== null" class="toast" :class="toast.style">
       <p>{{ toast.message }}</p>
     </article>
+    <div class="help" v-if="isLoggedIn">
+      <RouterLink :to="{ name: 'AI' }" :class="{ underline: currentRouteName == 'AI' }"> <i class="fa fa-question-circle" style="font-size: 48px; color: black"></i> </RouterLink>
+    </div>
   </header>
-  <RouterView />
+  <div class="page">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
 @import "./assets/toast.css";
 
 nav {
+  position: fixed;
+  top: 0;
+  width: 95%;
   padding: 1em 2em;
   background-color: var(--dark-background);
   display: flex;
   align-items: center;
+  /* margin: 20px; */
+}
+
+.page {
+  position: inherit;
+  padding-top: 70px;
 }
 
 h1 {
@@ -100,5 +115,12 @@ ul {
 
 .underline {
   text-decoration: underline;
+}
+
+.help {
+  position: fixed;
+  bottom: 20px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  z-index: 999;
 }
 </style>
