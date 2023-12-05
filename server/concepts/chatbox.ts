@@ -4,7 +4,7 @@ import NewsAPI from "ts-newsapi";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { NotAllowedError } from "./errors";
 
-const apiKey = process.env["NEWSAPI_KEY"];
+const apiKey = process.env["NEWS_API_KEY"];
 const newsAPI = new NewsAPI(apiKey!);
 
 const openai = new OpenAI({
@@ -64,12 +64,12 @@ export default class ChatConcept {
     return { msg: "Post deleted successfully!" };
   }
 
-  async getResponce(user: ObjectId, prompt: string) {
+  async getResponse(user: ObjectId, prompt: string) {
     const news = await this.getNews(prompt);
-    const responce = await this.generateResponce(prompt, news!);
+    const response = await this.generateResponse(prompt, news!);
     await this.removeLast(user);
-    await this.update(user, responce!, "ai");
-    return responce;
+    await this.update(user, response!, "ai");
+    return response;
   }
 
   private async getNews(prompt: string) {
@@ -93,7 +93,7 @@ export default class ChatConcept {
     Consider economic indicators, industry news, and geopolitical events. Keywords should include terms such as 
     'stock market,' 'economic forecast,' 'industry performance,' 'global trade,' 'central bank policies,' 
     and any other relevant terms that might impact investment decisions.
-    You keyword must be ralted to this prompt ${prompt}. I am trying to use eyour keyword to search news.
+    You keyword must be related to this prompt ${prompt}. I am trying to use eyour keyword to search news.
     your output must be only a keyword, nothing more, no quotation marks, no new line mark, no dash, only use space between words.`;
 
     const response = await openai.chat.completions.create({
@@ -112,7 +112,7 @@ export default class ChatConcept {
     return message.message.content;
   }
 
-  private async generateResponce(decision: string, news: string) {
+  private async generateResponse(decision: string, news: string) {
     // prompt to be fed into the chat-gpt-api
     const prompt = `You are a financial analyst analyzing a trading decision. 
     The decision is to ${decision}. Here is the recent news related to this decision: 

@@ -172,8 +172,8 @@ class Routes {
   async getHelp(session: WebSessionDoc, decision: string) {
     const user = WebSession.getUser(session);
     await AIAgent.send(user, decision);
-    const responce = await AIAgent.getResponce(user, decision);
-    return responce;
+    const response = await AIAgent.getResponse(user, decision);
+    return response;
   }
 
   @Router.patch("/aiagent/send")
@@ -185,8 +185,8 @@ class Routes {
   @Router.patch("/aiagent/receive")
   async receive(session: WebSessionDoc, decision: string) {
     const user = WebSession.getUser(session);
-    const responce = await AIAgent.getResponce(user, decision);
-    return responce;
+    const response = await AIAgent.getResponse(user, decision);
+    return response;
   }
 }
 

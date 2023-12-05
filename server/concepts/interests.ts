@@ -2,7 +2,7 @@ import { Filter, ObjectId } from "mongodb";
 import NewsAPI from "ts-newsapi";
 import DocCollection, { BaseDoc } from "../framework/doc";
 
-const apiKey = process.env["NEWSAPI_KEY"];
+const apiKey = process.env["NEWS_API_KEY"];
 const newsAPI = new NewsAPI(apiKey!);
 
 export interface InterestDoc extends BaseDoc {
