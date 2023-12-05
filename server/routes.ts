@@ -13,17 +13,20 @@ class Routes {
   @Router.get("/session")
   async getSessionUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    return await User.getUserById(user);
+    const user_object = await User.getUserById(user);
+    return Responses.user(user_object);
   }
 
   @Router.get("/users")
   async getUsers() {
-    return await User.getUsers();
+    const users = await User.getUsers();
+    return Responses.users(users);
   }
 
   @Router.get("/users/:username")
   async getUser(username: string) {
-    return await User.getUserByUsername(username);
+    const user = await User.getUserByUsername(username);
+    return await Responses.user(user);
   }
 
   @Router.get("/usersSearchByUsername")
@@ -34,7 +37,7 @@ class Routes {
     } else {
       users = await User.getUsers();
     }
-    return users;
+    return Responses.users(users);
   }
 
   @Router.post("/users")
@@ -45,7 +48,7 @@ class Routes {
       await Interest.create(user.user?._id);
       await AIAgent.create(user.user?._id);
     }
-    return user;
+    return Responses.user(user.user);
   }
 
   @Router.patch("/users")

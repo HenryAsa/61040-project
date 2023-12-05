@@ -5,7 +5,7 @@ import { NotAllowedError, NotFoundError } from "./errors";
 
 export interface MediaDoc extends BaseDoc {
   creator: ObjectId;
-  media_url: String;
+  media_url: string;
   target?: ObjectId;
 }
 
