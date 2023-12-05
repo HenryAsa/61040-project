@@ -21,8 +21,7 @@ export default class AssetConcept {
 
   private sanitizeAsset(asset: AssetDoc) {
     // eslint-disable-next-line
-    const { password, ...rest } = asset; // remove password
-    return rest;
+    return asset;
   }
 
   private sanitizeAssets(assets: Array<AssetDoc>) {
