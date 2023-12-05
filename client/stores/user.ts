@@ -16,11 +16,14 @@ export const useUserStore = defineStore(
 
     const isLoggedIn = computed(() => currentUsername.value !== "");
 
+    const currentFriends = ref(new Array<string>());
+
     const resetStore = () => {
       currentUsername.value = "";
       currentUserFirstName.value = "";
       currentUserLastName.value = "";
       currentUserProfilePhoto.value = "";
+      currentFriends.value = [];
     };
 
     const createUser = async (username: string, password: string, first_name: string, last_name: string, profile_photo: string) => {
@@ -42,6 +45,8 @@ export const useUserStore = defineStore(
         currentUserFirstName.value = first_name;
         currentUserLastName.value = last_name;
         currentUserProfilePhoto.value = profile_photo;
+        const friends = await fetchy("/api/friends", "GET");
+        currentFriends.value = friends;
         console.log("Update Session WORKED");
       } catch (_) {
         console.log(await fetchy("/api/session", "GET", { alert: false }));
@@ -50,6 +55,8 @@ export const useUserStore = defineStore(
         currentUserFirstName.value = "";
         currentUserLastName.value = "";
         currentUserProfilePhoto.value = "";
+        currentUsername.value = "";
+        currentFriends.value = [];
         console.log("Update Session NOT WORKING");
       }
     };
@@ -74,6 +81,7 @@ export const useUserStore = defineStore(
       currentUserLastName,
       currentUserProfilePhoto,
       isLoggedIn,
+      currentFriends,
       createUser,
       loginUser,
       updateSession,
