@@ -8,7 +8,7 @@ import { RouterLink, RouterView, useRoute } from "vue-router";
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
-const { isLoggedIn } = storeToRefs(userStore);
+const { isLoggedIn, currentUserProfilePhoto } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 
 // Make sure to update the session before mounting the app in case the user is already logged in
@@ -25,18 +25,16 @@ onBeforeMount(async () => {
   <header>
     <nav>
       <div class="title">
-        <img src="@/assets/images/logo.png" />
-        <RouterLink :to="{ name: 'Home' }">
-          <h1 class="logo-text">Sharefolio</h1>
-        </RouterLink>
+        <RouterLink :to="{ name: 'Home' }"><img src="@/assets/images/logo.png" /></RouterLink>
+        <RouterLink :to="{ name: 'Home' }"><h1 class="logo-text">Sharefolio</h1> </RouterLink>
       </div>
       <ul>
         <li>
           <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
         </li>
-        <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"> <i class="fa fa-gear" style="font-size: 24px"></i> </RouterLink>
+        <li v-if="isLoggedIn" class="isLoggedIn">
           <RouterLink :to="{ name: 'News' }" :class="{ underline: currentRouteName == 'News' }"> <i class="fa fa-newspaper-o" style="font-size: 24px"></i> </RouterLink>
+          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"><img class="profile_picture" v-bind:src="currentUserProfilePhoto" /> </RouterLink>
         </li>
         <li v-else>
           <RouterLink :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
@@ -62,7 +60,7 @@ nav {
   position: fixed;
   top: 0;
   width: 95%;
-  padding: 1em 2em;
+  padding: 0em 2em;
   background-color: var(--dark-background);
   display: flex;
   align-items: center;
@@ -71,7 +69,7 @@ nav {
 
 .page {
   position: inherit;
-  padding-top: 70px;
+  padding-top: 8em;
 }
 
 h1 {
@@ -86,7 +84,17 @@ h1 {
 }
 
 img {
-  height: 2em;
+  height: 3em;
+}
+
+.profile_picture {
+  width: 3.5em;
+  height: 3.5em;
+  /* object-fit: cover; */
+  align-self: auto;
+  border: 3px solid var(--subtle-gray);
+  border-radius: 16px;
+  /* display: flex; */
 }
 
 a {
@@ -97,6 +105,15 @@ a {
 }
 
 ul {
+  list-style-type: none;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.isLoggedIn {
   list-style-type: none;
   margin-left: auto;
   display: flex;
