@@ -10,8 +10,10 @@ import RegisterForm from "@/components/Login/RegisterForm.vue";
       <span class="logo-text">Sharefolio</span>, the Community Investment Platform!
     </h1>
     <h2>Please login or register!</h2>
-    <LoginForm />
-    <RegisterForm />
+    <div>
+      <LoginForm />
+      <RegisterForm />
+    </div>
   </main>
 </template>
 
