@@ -85,14 +85,6 @@ h1 {
   gap: 0.5em;
 }
 
-.logo-text {
-  background: -webkit-linear-gradient(0deg, var(--dark-gold), var(--light-gold), var(--dark-gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: "Tangerine";
-  font-weight: bold;
-}
-
 img {
   height: 2em;
 }
