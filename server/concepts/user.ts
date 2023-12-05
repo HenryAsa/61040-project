@@ -10,6 +10,13 @@ export interface UserDoc extends BaseDoc {
   profile_photo: ObjectId; // string maybe?
 }
 
+export interface SanitizedUserDoc extends BaseDoc {
+  username: string;
+  first_name: string;
+  last_name: string;
+  profile_photo: ObjectId; // string maybe?
+}
+
 export default class UserConcept {
   public readonly users = new DocCollection<UserDoc>("users");
 
