@@ -7,20 +7,20 @@ export interface UserDoc extends BaseDoc {
   password: string;
   first_name: string;
   last_name: string;
-  profile_photo: ObjectId; // string maybe?
+  profile_photo: string; // ObjectId maybe?
 }
 
 export interface SanitizedUserDoc extends BaseDoc {
   username: string;
   first_name: string;
   last_name: string;
-  profile_photo: ObjectId; // string maybe?
+  profile_photo: string; // ObjectId maybe?
 }
 
 export default class UserConcept {
   public readonly users = new DocCollection<UserDoc>("users");
 
-  async create(username: string, password: string, first_name: string, last_name: string, profile_photo: ObjectId) {
+  async create(username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
     await this.canCreate(username, password, first_name, last_name, profile_photo);
     const _id = await this.users.createOne({ username: username, password: password, first_name: first_name, last_name: last_name, profile_photo: profile_photo });
     return { msg: "User created successfully!", user: await this.getUserById(_id) };
@@ -126,7 +126,7 @@ export default class UserConcept {
     return false;
   }
 
-  private async canCreate(username: string, password: string, first_name: string, last_name: string, profile_photo: ObjectId) {
+  private async canCreate(username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
     if (!username) {
       throw new BadValuesError("The username cannot be empty");
     }

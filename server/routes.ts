@@ -14,19 +14,19 @@ class Routes {
   async getSessionUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     const user_object = await User.getUserById(user);
-    return Responses.user(user_object);
+    return user_object;
   }
 
   @Router.get("/users")
   async getUsers() {
     const users = await User.getUsers();
-    return Responses.users(users);
+    return users;
   }
 
   @Router.get("/users/:username")
   async getUser(username: string) {
     const user = await User.getUserByUsername(username);
-    return await Responses.user(user);
+    return user;
   }
 
   @Router.get("/usersSearchByUsername")
@@ -37,18 +37,18 @@ class Routes {
     } else {
       users = await User.getUsers();
     }
-    return Responses.users(users);
+    return users;
   }
 
   @Router.post("/users")
-  async createUser(session: WebSessionDoc, username: string, password: string, first_name: string, last_name: string, profile_photo: ObjectId) {
+  async createUser(session: WebSessionDoc, username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
     WebSession.isLoggedOut(session);
     const user = await User.create(username, password, first_name, last_name, profile_photo);
     if (user.user?._id) {
       await Interest.create(user.user?._id);
       await AIAgent.create(user.user?._id);
     }
-    return Responses.user(user.user);
+    return user.user;
   }
 
   @Router.patch("/users")

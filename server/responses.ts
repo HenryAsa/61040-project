@@ -33,29 +33,29 @@ export default class Responses {
     return await Promise.all(posts.map((post) => this.post(post)));
   }
 
-  /**
-   * Convert UserDoc into more readable format for the frontend by converting the media id into a url.
-   */
-  static async user(user: SanitizedUserDoc | null) {
-    if (!user) {
-      return user;
-    }
-    // const users = await User.idsToUsernames(activity.members);
-    const user_profile_photo = await Media.getMediaById(user.profile_photo);
-    return { ...user, profile_photo: user_profile_photo.media_url };
-  }
+  // /**
+  //  * Convert UserDoc into more readable format for the frontend by converting the media id into a url.
+  //  */
+  // static async user(user: SanitizedUserDoc | null) {
+  //   if (!user) {
+  //     return user;
+  //   }
+  //   // const users = await User.idsToUsernames(activity.members);
+  //   const user_profile_photo = await Media.getMediaById(user.profile_photo);
+  //   return { ...user, profile_photo: user_profile_photo.media_url };
+  // }
 
-  /**
-   * Same as {@link user} but for an array of UserDoc for improved performance.
-   */
-  static async users(users: SanitizedUserDoc | SanitizedUserDoc[] | null) {
-    if (!users) {
-      return users;
-    } else if (!("length" in users)) {
-      return await [this.user(users)];
-    }
-    return await Promise.all(users.map((user) => this.user(user)));
-  }
+  // /**
+  //  * Same as {@link user} but for an array of UserDoc for improved performance.
+  //  */
+  // static async users(users: SanitizedUserDoc | SanitizedUserDoc[] | null) {
+  //   if (!users) {
+  //     return users;
+  //   } else if (!("length" in users)) {
+  //     return await [this.user(users)];
+  //   }
+  //   return await Promise.all(users.map((user) => this.user(user)));
+  // }
 
   /**
    * Convert FriendRequestDoc into more readable format for the frontend
