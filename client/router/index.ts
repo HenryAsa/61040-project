@@ -2,8 +2,11 @@ import { storeToRefs } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
+import AIView from "../views/AIView.vue";
+import ArticleView from "../views/ArticleView.vue";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
+import NewsView from "../views/NewsView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import SettingView from "../views/SettingView.vue";
 
@@ -22,6 +25,18 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: "/news_",
+      name: "News",
+      component: NewsView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/ai",
+      name: "AI",
+      component: AIView,
+      meta: { requiresAuth: true },
+    },
+    {
       path: "/login",
       name: "Login",
       component: LoginView,
@@ -32,6 +47,11 @@ const router = createRouter({
           return { name: "Settings" };
         }
       },
+    },
+    {
+      path: "/article/:url",
+      name: "Article",
+      component: ArticleView,
     },
     {
       path: "/:catchAll(.*)",
