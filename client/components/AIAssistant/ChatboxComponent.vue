@@ -40,7 +40,7 @@ onBeforeMount(async () => {
       <TextComponent :message="message" @refreshPosts="getMessages" />
     </article>
   </section>
-  <p v-else>Loading...</p>
+  <p v-else-if="!loaded">Loading...</p>
   <section>
     <SendText @refreshChatbox="getMessages" />
   </section>
