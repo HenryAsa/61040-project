@@ -2,7 +2,8 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { AIAgent, Friend, Interest, Post, User, WebSession } from "./app";
+import { AIAgent, Asset, Friend, Interest, Post, User, WebSession } from "./app";
+import { AssetDoc } from "./concepts/asset";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -187,6 +188,107 @@ class Routes {
     const user = WebSession.getUser(session);
     const response = await AIAgent.getResponse(user, decision);
     return response;
+  }
+
+  ///////////
+  // ASSET //
+  ///////////
+
+  @Router.get("/assets")
+  async getAssets(asset_name?: string) {
+    let assets;
+    if (asset_name) {
+      assets = await Asset.getAssetByName(asset_name);
+    } else {
+      assets = await Asset.getAssets();
+    }
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/assetsSearchByName")
+  async getAssetsByName(asset_name?: string) {
+    let assets;
+    if (asset_name) {
+      assets = await Asset.searchAssetsByName(asset_name);
+    } else {
+      assets = await Asset.getAssets();
+    }
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/assetsUserIsShareholderOf")
+  async getAssetsUserIsShareholderOf(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    const assets = await Asset.getAssetsByShareholderId(user);
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/assets/shareholders/:username")
+  async getAssetsByShareholderUsername(username: string) {
+    const user = await User.getUserByUsername(username);
+    const assets = await Asset.getAssetsByShareholderId(user._id);
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/asset/id/:id")
+  async getAssetById(id: ObjectId) {
+    const asset = await Asset.getAssetById(id);
+    return Responses.asset(asset);
+  }
+
+  @Router.get("/asset/:ticker")
+  async getAssetByTicker(asset_ticker: string) {
+    const asset = await Asset.getAssetByTicker(asset_ticker);
+    return Responses.asset(asset);
+  }
+
+  @Router.get("/asset/name/:name")
+  async getAssetByName(asset_name: string) {
+    const asset = await Asset.getAssetByName(asset_name);
+    return Responses.asset(asset);
+  }
+
+  @Router.post("/asset")
+  async createAsset(session: WebSessionDoc, asset_name: string, asset_ticker: string, current_price: number) {
+    const asset = await Asset.create(asset_name, asset_ticker, current_price);
+    return { msg: asset.msg, asset: asset.asset };
+  }
+
+  @Router.patch("/assets/addShareholder/:ticker")
+  async addAssetShareholder(session: WebSessionDoc, asset_ticker: string, user?: ObjectId) {
+    if (!user) {
+      user = WebSession.getUser(session);
+    }
+    const asset = await Asset.getAssetByTicker(asset_ticker);
+    const shareholders = await Asset.addShareholderToAsset(asset._id, user);
+    return {
+      msg: `User has been successfully added to '${asset.ticker}'s list of shareholders`,
+      shareholders: shareholders,
+    };
+  }
+
+  @Router.patch("/assets/removeShareholder/:ticker")
+  async removeAssetShareholder(session: WebSessionDoc, asset_ticker: string, user?: ObjectId) {
+    if (!user) {
+      user = WebSession.getUser(session);
+    }
+    const asset = await Asset.getAssetByTicker(asset_ticker);
+    await Asset.removeShareholderFromAsset(asset._id, user);
+    return { msg: `User '${user}' has successfully been removed from '${asset.ticker}'s list of shareholders` };
+  }
+
+  @Router.patch("/assets/:_id")
+  async updateAsset(session: WebSessionDoc, asset_id: ObjectId, update: Partial<AssetDoc>) {
+    const user = WebSession.getUser(session);
+    await Asset.isShareholder(asset_id, user);
+    return await Asset.update(asset_id, update);
+  }
+
+  @Router.delete("/assets/:_id")
+  async deleteAsset(session: WebSessionDoc, asset_id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Asset.isShareholder(asset_id, user, true);
+    return Asset.delete(asset_id);
   }
 }
 
