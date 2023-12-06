@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Filter, ObjectId } from "mongodb";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
@@ -159,6 +160,30 @@ export default class AssetConcept {
     if (maybeAsset === null) {
       throw new NotFoundError(`Asset not found!`);
     }
+  }
+
+  async getCurrentPrice() {
+    // SWTUCJXHOH2T4ZLQ
+    const symbol = "AAPL";
+    const API_KEY = "SWTUCJXHOH2T4ZLQ";
+    const BASE_URL = "https://www.alphavantage.co/";
+    const response = await axios.get(`${BASE_URL}query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`);
+    const data = await response.data;
+    const currentPrice = await data["Global Quote"];
+
+    return currentPrice;
+  }
+
+  async getHistory() {
+    const symbol = "AAPL";
+    const API_KEY = "SWTUCJXHOH2T4ZLQ";
+    const BASE_URL = "https://www.alphavantage.co/";
+    const response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&outputsize=full&apikey=${API_KEY}`);
+    const data = await response.data;
+    const currentPrice = await data["Time Series (5min)"];
+    const dates = Object.keys(currentPrice).reverse();
+    const prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    return { dates, prices };
   }
 
   private async canCreate(asset_name: string, asset_ticker: string) {

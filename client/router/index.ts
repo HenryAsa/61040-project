@@ -9,6 +9,7 @@ import LoginView from "../views/LoginView.vue";
 import NewsView from "../views/NewsView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import SettingView from "../views/SettingView.vue";
+import StocksView from "../views/StocksView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -29,6 +30,11 @@ const router = createRouter({
       name: "News",
       component: NewsView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: "/stocks",
+      name: "Stocks",
+      component: StocksView,
     },
     {
       path: "/ai",

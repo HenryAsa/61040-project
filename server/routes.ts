@@ -376,6 +376,11 @@ class Routes {
     await Asset.isShareholder(asset_id, user, true);
     return Asset.delete(asset_id);
   }
+
+  @Router.get("/assets/price")
+  async getCurrentPrice() {
+    return await Asset.getHistory();
+  }
 }
 
 export default getExpressRouter(new Routes());
