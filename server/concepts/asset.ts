@@ -30,6 +30,7 @@ export default class AssetConcept {
   }
 
   async getAssetById(_id: ObjectId) {
+    // GETS ASSET BY ITS OBJECTID
     const asset = await this.assets.readOne({ _id });
     if (asset === null) {
       throw new NotFoundError(`Asset not found!`);
@@ -38,6 +39,7 @@ export default class AssetConcept {
   }
 
   async getAssetByName(asset_name: string) {
+    // GETS ASSET BY ITS NAME
     const asset = await this.assets.readOne({ name: asset_name });
     if (asset === null) {
       throw new NotFoundError(`Asset with the name "${asset_name}" was not found!`);
@@ -46,6 +48,7 @@ export default class AssetConcept {
   }
 
   async getAssetByTicker(asset_ticker: string) {
+    // GETS ASSET BY ITS TICKER
     const asset = await this.assets.readOne({ ticker: asset_ticker });
     if (asset === null) {
       throw new NotFoundError(`Asset with the ticker "${asset_ticker}" was not found!`);
@@ -124,7 +127,7 @@ export default class AssetConcept {
   }
 
   async isShareholder(asset_id: ObjectId, user_id: ObjectId, throw_error: boolean = true) {
-    // CHECKS WHETHER A USER IS A SHAREHOLDER OF AN ASSET, BY DEFAULT THROWS AN ERROR IF CONDITION IS NOT SATISFIED
+    // CHECKS WHETHER A USER IS A SHAREHOLDER OF AN ASSET, BY DEFAULT THROWS AN ERROR IF THE USER IS NOT A SHAREHOLDER
     const asset = await this.getAssetById(asset_id);
     const is_shareholder = asset.shareholders.some((id) => id.toString() === user_id.toString());
     if (!throw_error) return is_shareholder;
@@ -132,6 +135,7 @@ export default class AssetConcept {
   }
 
   async isNotShareholder(asset_id: ObjectId, user_id: ObjectId, throw_error: boolean = true) {
+    // CHECKS WHETHER A USER IS NOT A SHAREHOLDER OF AN ASSET, BY DEFAULT THROWS AN ERROR IF THE USER IS A SHAREHOLDER
     const is_not_shareholder = !(await this.isShareholder(asset_id, user_id, false));
     if (!throw_error) return is_not_shareholder;
     if (!is_not_shareholder) throw new AlreadyShareholderError(user_id, asset_id);
