@@ -49,7 +49,6 @@ export const useUserStore = defineStore(
         currentFriends.value = friends;
         console.log("Update Session WORKED");
       } catch (_) {
-        console.log(await fetchy("/api/session", "GET", { alert: false }));
         console.log(_);
         currentUsername.value = "";
         currentUserFirstName.value = "";

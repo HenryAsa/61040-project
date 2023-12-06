@@ -16,7 +16,6 @@ async function register() {
   if (profile_picture.value === "") {
     return;
   }
-  console.log(username.value, password.value, first_name.value, last_name.value, profile_picture.value);
   console.log(`THIS IS THE PROFILE URL:   ${profile_picture.value}`);
   await createUser(username.value, password.value, first_name.value, last_name.value, profile_picture.value);
   await loginUser(username.value, password.value);
@@ -32,7 +31,6 @@ async function assignURL(url: string) {
 
 function assignPassword(userPassword: string) {
   password.value = userPassword;
-  console.log(password.value);
 }
 </script>
 

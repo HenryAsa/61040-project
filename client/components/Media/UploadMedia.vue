@@ -44,7 +44,6 @@ const uploadImage = async () => {
   const imageRef = firebaseRef(storage, `images/${file.name}`);
 
   await uploadBytes(imageRef, imageUpload.value).then(async (response) => {
-    console.log(response);
     await getDownloadURL(firebaseRef(storage, response.ref.fullPath)).then(async (url) => {
       console.log(`GOT THE URL ${url}`);
       imageURL.value = url;
