@@ -36,7 +36,7 @@ onBeforeMount(async () => {
       <ArticleComponent :article="article" />
     </article>
   </section>
-  <p v-else-if="loaded">No posts found</p>
+  <p v-else-if="loaded">No articles found</p>
   <p v-else>Loading...</p>
 </template>
 
