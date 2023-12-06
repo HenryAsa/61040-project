@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
-import { storeToRefs } from "pinia";
 import { onBeforeMount, onUpdated, ref } from "vue";
 import SendText from "./SendText.vue";
 import TextComponent from "./TextComponent.vue";
-
-const { isLoggedIn } = storeToRefs(useUserStore());
 
 const loaded = ref(false);
 let messages = ref<Array<Record<string, string>>>([]);
