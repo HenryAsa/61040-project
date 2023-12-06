@@ -14,6 +14,11 @@
   /* SHAREFOLIO LOGO COLOR SCHEME */
 }
 
+body {
+  /* background-color: #797979; */
+  /* color: white; */
+}
+
 button.btn-small {
   font-size: 80%;
 }
@@ -38,4 +43,12 @@ a.button {
   justify-content: center;
   align-items: center;
   gap: 1em;
+}
+
+.logo-text {
+  background: -webkit-linear-gradient(0deg, var(--dark-gold), var(--light-gold), var(--dark-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Tangerine";
+  font-weight: bold;
 }

@@ -2,7 +2,8 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { AIAgent, Friend, Interest, Post, User, WebSession } from "./app";
+import { AIAgent, Friend, Interest, Media, Post, User, WebSession } from "./app";
+import { MediaDoc } from "./concepts/media";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -12,28 +13,42 @@ class Routes {
   @Router.get("/session")
   async getSessionUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    return await User.getUserById(user);
+    const user_object = await User.getUserById(user);
+    return user_object;
   }
 
   @Router.get("/users")
   async getUsers() {
-    return await User.getUsers();
+    const users = await User.getUsers();
+    return users;
   }
 
   @Router.get("/users/:username")
   async getUser(username: string) {
-    return await User.getUserByUsername(username);
+    const user = await User.getUserByUsername(username);
+    return user;
+  }
+
+  @Router.get("/usersSearchByUsername")
+  async searchUsersByUsername(username?: string) {
+    let users;
+    if (username) {
+      users = await User.searchUsersByUsername(username);
+    } else {
+      users = await User.getUsers();
+    }
+    return users;
   }
 
   @Router.post("/users")
-  async createUser(session: WebSessionDoc, username: string, password: string) {
+  async createUser(session: WebSessionDoc, username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
     WebSession.isLoggedOut(session);
-    const user = await User.create(username, password);
+    const user = await User.create(username, password, first_name, last_name, profile_photo);
     if (user.user?._id) {
       await Interest.create(user.user?._id);
       await AIAgent.create(user.user?._id);
     }
-    return user;
+    return user.user;
   }
 
   @Router.patch("/users")
@@ -45,8 +60,24 @@ class Routes {
   @Router.delete("/users")
   async deleteUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    WebSession.end(session);
+
+    // Delete all media associated with the User
+    const user_media = await Media.getMediaByCreator(user);
+    await Promise.all(user_media.map((media) => Media.delete(media._id, user)));
+
+    // Delete all posts associated with the User
+    const posts = await Post.getPostsByAuthor(user);
+    for (const post of posts) {
+      // Delete all of the comments underneath the post
+      // await Comment.deleteByRoot(post._id);
+
+      await Post.delete(post._id);
+    }
+
+    // Delete user Interests
     await Interest.delete(user);
+
+    WebSession.end(session);
     return await User.delete(user);
   }
 
@@ -63,12 +94,59 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
+  ///////////////
+  //// MEDIA ////
+  ///////////////
+
+  @Router.post("/media")
+  async createMedia(session: WebSessionDoc, media_url: string, target?: ObjectId) {
+    const user = WebSession.getUser(session);
+    const media = await Media.create(user, media_url, target);
+    return { msg: media.msg, media: media.media };
+  }
+
+  @Router.get("/media/:id")
+  async getMediaById(id: ObjectId) {
+    const media = await Media.getMediaById(id);
+    return { msg: `Successfully retrieved the media '${id}'`, media: media };
+  }
+
+  @Router.get("/media/byUsername/:username")
+  async getMediaByUsername(username: string) {
+    const user = await User.getUserByUsername(username);
+    const media = await Media.getMediaByCreator(user._id);
+    return { msg: `Successfully retrieved the media ${user.username} uploaded`, media: media };
+  }
+
+  @Router.get("/media/byTarget/:target")
+  async getMediaByTarget(target: ObjectId) {
+    return await Media.getMediaByTarget(target);
+  }
+
+  @Router.patch("/media/:_id")
+  async updateMedia(session: WebSessionDoc, _id: ObjectId, update: Partial<MediaDoc>) {
+    const user = WebSession.getUser(session);
+    await Media.isCreator(_id, user, true);
+    return await Media.update(_id, update);
+  }
+
+  @Router.delete("/media/:_id")
+  async deleteMedia(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Media.isCreator(_id, user, true);
+    return Media.delete(_id, user);
+  }
+
+  ///////////////
+  //// POSTS ////
+  ///////////////
+
   @Router.get("/posts")
   async getPosts(author?: string) {
     let posts;
     if (author) {
       const id = (await User.getUserByUsername(author))._id;
-      posts = await Post.getByAuthor(id);
+      posts = await Post.getPostsByAuthor(id);
     } else {
       posts = await Post.getPosts({});
     }
@@ -95,6 +173,10 @@ class Routes {
     await Post.isAuthor(user, _id);
     return Post.delete(_id);
   }
+
+  /////////////////
+  //// FRIENDS ////
+  /////////////////
 
   @Router.get("/friends")
   async getFriends(session: WebSessionDoc) {
@@ -167,6 +249,10 @@ class Routes {
     const user = WebSession.getUser(session);
     return await AIAgent.getByUser(user);
   }
+
+  //////////////////
+  //// AI AGENT ////
+  //////////////////
 
   @Router.patch("/aiagent")
   async getHelp(session: WebSessionDoc, decision: string) {
