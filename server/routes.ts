@@ -126,14 +126,14 @@ class Routes {
   @Router.patch("/media/:_id")
   async updateMedia(session: WebSessionDoc, _id: ObjectId, update: Partial<MediaDoc>) {
     const user = WebSession.getUser(session);
-    await Media.isCreator(_id, user);
+    await Media.isCreator(_id, user, true);
     return await Media.update(_id, update);
   }
 
   @Router.delete("/media/:_id")
   async deleteMedia(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    await Media.isCreator(_id, user);
+    await Media.isCreator(_id, user, true);
     return Media.delete(_id, user);
   }
 

@@ -54,19 +54,19 @@ export default class MediaConcept {
   }
 
   async delete(_id: ObjectId, user: ObjectId) {
-    await this.isCreator(_id, user);
+    await this.isCreator(_id, user, true);
     await this.media.deleteOne({ _id });
     return { msg: "Media deleted successfully!" };
   }
 
-  async isCreator(_id: ObjectId, user: ObjectId, throw_error: boolean = true) {
+  async isCreator(_id: ObjectId, user: ObjectId, throw_error: boolean = false) {
     const media = await this.getMediaById(_id);
     const is_creator = media.creator.toString() !== user.toString();
     if (!throw_error) return is_creator;
     if (!is_creator) throw new MediaCreatorNotMatchError(user, _id);
   }
 
-  async isNotCreator(_id: ObjectId, user: ObjectId, throw_error: boolean = true) {
+  async isNotCreator(_id: ObjectId, user: ObjectId, throw_error: boolean = false) {
     const is_not_creator = !this.isCreator(_id, user, false);
     if (!throw_error) return is_not_creator;
     if (!is_not_creator) throw new NotAllowedError("This user is the creator of the media");
