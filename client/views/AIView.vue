@@ -5,7 +5,7 @@ import ChatboxComponent from "../components/AIAssistant/ChatboxComponent.vue";
 <template>
   <main>
     <div class="header">
-      I am an AI financial analyst and here to help you. Plesee type in what you are thinking or what trading you want to do. I will look into the recent news and give you feedback.
+      I am an AI financial analyst and I'm here to help you. Please type in what you are thinking or what trading you want to do. I will look into the recent news and give you feedback.
     </div>
     <p>
       <ChatboxComponent />
