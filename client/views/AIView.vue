@@ -24,7 +24,7 @@ import ChatboxComponent from "../components/AIAssistant/ChatboxComponent.vue";
   /* transform: translate(-50%, -50%); */
   background-color: #e0e0e0;
   border-radius: 10px;
-  padding-top: 5px;
+  padding: 5px;
   display: block;
 }
 </style>
