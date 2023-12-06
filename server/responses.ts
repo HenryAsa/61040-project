@@ -1,8 +1,7 @@
-import { Media, User } from "./app";
+import { User } from "./app";
 import { AssetDoc } from "./concepts/asset";
 import { AlreadyFriendsError, FriendNotFoundError, FriendRequestAlreadyExistsError, FriendRequestDoc, FriendRequestNotFoundError } from "./concepts/friend";
 import { PostAuthorNotMatchError, PostDoc } from "./concepts/post";
-import { SanitizedUserDoc } from "./concepts/user";
 import { Router } from "./framework/router";
 
 /**
@@ -80,6 +79,30 @@ export default class Responses {
   //   }
   //   return await Promise.all(users.map((user) => this.user(user)));
   // }
+
+  /**
+   * Convert AssetDoc into more readable format for the frontend by converting the author id into a username.
+   */
+  static async asset(asset: AssetDoc | null) {
+    if (!asset) {
+      return asset;
+    }
+    // const users = await User.idsToUsernames(asset.members);
+    const asset_shareholders = await Promise.all(asset.shareholders.map((shareholder) => User.getUserById(shareholder)));
+    return { ...asset, shareholders: asset_shareholders };
+  }
+
+  /**
+   * Same as {@link asset} but for an array of AssetDoc for improved performance.
+   */
+  static async assets(assets: AssetDoc | AssetDoc[] | null) {
+    if (!assets) {
+      return assets;
+    } else if (!("length" in assets)) {
+      return await [this.asset(assets)];
+    }
+    return await Promise.all(assets.map((asset) => this.asset(asset)));
+  }
 
   /**
    * Convert FriendRequestDoc into more readable format for the frontend
