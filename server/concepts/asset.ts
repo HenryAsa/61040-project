@@ -3,10 +3,10 @@ import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 
 export interface AssetDoc extends BaseDoc {
-  asset_name: string;
-  asset_ticker: string;
+  name: string;
+  ticker: string;
   current_price: number;
-  price_history: Array<number>;
+  price_history: ObjectId; // data2d object
   shareholders: Array<ObjectId>;
 }
 
@@ -15,7 +15,7 @@ export default class AssetConcept {
 
   async create(asset_name: string, asset_ticker: string, current_price: number) {
     await this.canCreate(asset_name, asset_ticker);
-    const _id = await this.assets.createOne({ asset_name: asset_name, asset_ticker: asset_ticker, current_price: current_price });
+    const _id = await this.assets.createOne({ name: asset_name, ticker: asset_ticker.toLocaleUpperCase(), current_price: current_price });
     return { msg: "Asset created successfully!", asset: await this.getAssetById(_id) };
   }
 
@@ -37,19 +37,36 @@ export default class AssetConcept {
     return this.sanitizeAsset(asset);
   }
 
-  async getAssetByAsset_name(asset_name: string) {
-    const asset = await this.assets.readOne({ asset_name: asset_name });
+  async getAssetByName(asset_name: string) {
+    const asset = await this.assets.readOne({ name: asset_name });
     if (asset === null) {
-      throw new NotFoundError(`Asset not found!`);
+      throw new NotFoundError(`Asset with the name "${asset_name}" was not found!`);
     }
     return this.sanitizeAsset(asset);
   }
 
-  async searchAssetsByAsset_name(asset_name: string) {
-    // REGEX SEARCHES FOR USERNAMES THAT MATCH
+  async getAssetByTicker(asset_ticker: string) {
+    const asset = await this.assets.readOne({ ticker: asset_ticker });
+    if (asset === null) {
+      throw new NotFoundError(`Asset with the ticker "${asset_ticker}" was not found!`);
+    }
+    return this.sanitizeAsset(asset);
+  }
+
+  async getAssetsByShareholderId(user_id: ObjectId) {
+    // GETS ALL OF THE ASSETS OWNED BY A USER
+    const assets = await this.assets.readMany({ shareholders: { $elemMatch: { $eq: user_id } } });
+    if (assets.length === 0) {
+      throw new NotFoundError(`This user is not a shareholder of any assets`);
+    }
+    return this.sanitizeAssets(assets);
+  }
+
+  async searchAssetsByName(asset_name: string) {
+    // REGEX SEARCHES FOR ASSET NAMES THAT MATCH
     let query: Filter<AssetDoc> = {};
     if (asset_name) {
-      query = { asset_name: { $regex: `${asset_name}`, $options: "i" } };
+      query = { name: { $regex: `${asset_name}`, $options: "i" } };
     } else {
       query = {};
     }
@@ -60,12 +77,26 @@ export default class AssetConcept {
     return await this.sanitizeAssets(assets);
   }
 
-  async idsToAsset_names(ids: ObjectId[]) {
-    const assets = await this.assets.readMany({ _id: { $in: ids } });
+  async searchAssetsByTicker(asset_ticker: string) {
+    // REGEX SEARCHES FOR ASSET TICKERS THAT MATCH
+    let query: Filter<AssetDoc> = {};
+    if (asset_ticker) {
+      query = { ticker: { $regex: `${asset_ticker}`, $options: "i" } };
+    } else {
+      query = {};
+    }
+    const assets = await this.assets.readMany(query);
+    if (assets === null) {
+      throw new NotFoundError(`Asset not found!`);
+    }
+    return await this.sanitizeAssets(assets);
+  }
 
+  async idsToNames(ids: ObjectId[]) {
+    const assets = await this.assets.readMany({ _id: { $in: ids } });
     // Store strings in Map because ObjectId comparison by reference is wrong
     const idToAsset = new Map(assets.map((asset) => [asset._id.toString(), asset]));
-    return ids.map((id) => idToAsset.get(id.toString())?.asset_name ?? "DELETED_USER");
+    return ids.map((id) => idToAsset.get(id.toString())?.name ?? "DELETED_USER");
   }
 
   async getAssets(asset_name?: string) {
@@ -75,17 +106,40 @@ export default class AssetConcept {
     return assets;
   }
 
-  async authenticate(asset_name: string, password: string) {
-    const asset = await this.assets.readOne({ asset_name: asset_name, password: password });
-    if (!asset) {
-      throw new NotAllowedError("Asset_name or password is incorrect.");
-    }
-    return { msg: "Successfully authenticated.", _id: asset._id };
+  async addShareholderToAsset(asset_id: ObjectId, user_id: ObjectId) {
+    // ADDS A SHAREHOLDER (OWNER) TO THE LIST OF OWNERS
+    const asset = await this.getAssetById(asset_id);
+    await this.isShareholder(asset_id, user_id, true);
+    await this.update(user_id, { shareholders: asset.shareholders.concat(user_id) });
+    return asset.shareholders;
+  }
+
+  async removeShareholderFromAsset(asset_id: ObjectId, user_to_remove: ObjectId) {
+    // REMOVES A SHAREHOLDER FROM THE LIST OF OWNERS
+    const asset = await this.getAssetById(asset_id);
+    await this.isNotShareholder(asset_id, user_to_remove, true);
+    const shareholders = asset.shareholders.filter((users) => users.toString() !== user_to_remove.toString());
+    await this.update(asset_id, { shareholders: shareholders });
+    return { msg: `Successfully removed the shareholder '${user_to_remove}' from the asset '${asset_id}'` };
+  }
+
+  async isShareholder(asset_id: ObjectId, user_id: ObjectId, throw_error: boolean = true) {
+    // CHECKS WHETHER A USER IS A SHAREHOLDER OF AN ASSET, BY DEFAULT THROWS AN ERROR IF CONDITION IS NOT SATISFIED
+    const asset = await this.getAssetById(asset_id);
+    const is_shareholder = asset.shareholders.some((id) => id.toString() === user_id.toString());
+    if (!throw_error) return is_shareholder;
+    if (!is_shareholder) throw new NotShareholderError(user_id, asset_id);
+  }
+
+  async isNotShareholder(asset_id: ObjectId, user_id: ObjectId, throw_error: boolean = true) {
+    const is_not_shareholder = !(await this.isShareholder(asset_id, user_id, false));
+    if (!throw_error) return is_not_shareholder;
+    if (!is_not_shareholder) throw new AlreadyShareholderError(user_id, asset_id);
   }
 
   async update(_id: ObjectId, update: Partial<AssetDoc>) {
-    if (update.asset_name !== undefined) {
-      await this.isAssetNameUnique(update.asset_name);
+    if (update.name !== undefined) {
+      await this.isNameUnique(update.name);
     }
     await this.assets.updateOne({ _id }, update);
     return { msg: "Asset updated successfully!" };
@@ -107,21 +161,39 @@ export default class AssetConcept {
     if (!asset_name) {
       throw new BadValuesError("The asset_name cannot be empty");
     }
-    if (!this.isAssetTickerUnique(asset_ticker)) {
+    if (!this.isTickerUnique(asset_ticker)) {
       throw new BadValuesError("Make the asset's ticker is at most 4 characters long and does not currently exist");
     }
-    await this.isAssetNameUnique(asset_name);
+    await this.isNameUnique(asset_name);
   }
 
-  private async isAssetNameUnique(asset_name: string) {
+  private async isNameUnique(asset_name: string) {
     if (await this.assets.readOne({ asset_name })) {
       throw new NotAllowedError(`Asset with asset_name ${asset_name} already exists!`);
     }
   }
 
-  private async isAssetTickerUnique(asset_ticker: string) {
+  private async isTickerUnique(asset_ticker: string) {
     if (await this.assets.readOne({ asset_ticker })) {
       throw new NotAllowedError(`Asset with asset_ticker ${asset_ticker} already exists!`);
     }
+  }
+}
+
+export class AlreadyShareholderError extends NotAllowedError {
+  constructor(
+    public readonly user: ObjectId,
+    public readonly asset_id: ObjectId,
+  ) {
+    super("This user is already a shareholder of this asset!", user, asset_id);
+  }
+}
+
+export class NotShareholderError extends NotAllowedError {
+  constructor(
+    public readonly user_id: ObjectId,
+    public readonly asset_id: ObjectId,
+  ) {
+    super("{0} is not a shareholder of the asset {1}!", user_id, asset_id);
   }
 }
