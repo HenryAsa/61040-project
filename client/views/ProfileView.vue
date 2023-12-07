@@ -16,7 +16,7 @@ onBeforeMount(async () => {});
   <div class="full-wrapper">
     <div class="profile-wrapper">
       <p class="username">{{ props.username }}</p>
-      <FriendOptionComponent v-if="isLoggedIn" :from="$props.username" :to="currentUsername" :outgoing="true" />
+      <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
     </div>
     <PostListComponent :searchEnabled="false" :startingFilter="props.username" />
   </div>
