@@ -3,39 +3,19 @@ import PostListComponent from "../components/Post/PostListComponent.vue";
 import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { fetchy } from "../utils/fetchy";
-import { onBeforeMount, onUpdated, ref } from "vue";
+import { onBeforeMount } from "vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
 
-let karma = ref(0);
-
-async function getKarma() {
-  let karmaResults;
-  try {
-    karmaResults = await fetchy(`/api/users/${props.username}/karma`, "GET");
-  } catch (_) {
-    return;
-  }
-  karma.value = karmaResults;
-}
-
-onBeforeMount(async () => {
-  await getKarma();
-});
-
-onUpdated(async () => {
-  await getKarma();
-});
+onBeforeMount(async () => {});
 </script>
 
 <template>
   <div class="full-wrapper">
     <div class="profile-wrapper">
       <p class="username">{{ props.username }}</p>
-      <p class="karma">{{ karma > 0 ? "+" : karma < 0 ? "-" : "" }}{{ Math.abs(karma) }} realness</p>
       <FriendOptionComponent v-if="isLoggedIn" :from="$props.username" :to="currentUsername" :outgoing="true" />
     </div>
     <h2>Posts by {{ props.username }}</h2>
