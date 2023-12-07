@@ -10,7 +10,7 @@ import SearchPostForm from "./SearchPostForm.vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
-const props = defineProps(["searchEnabled", "startingFilter"]);
+const props = defineProps(["searchEnabled", "createPostEnabled", "startingFilter"]);
 
 const loaded = ref(false);
 let posts = ref<Array<Record<string, string>>>([]);
@@ -44,14 +44,14 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn && props.searchEnabled">
+  <section v-if="isLoggedIn && props.createPostEnabled">
     <h2>Create a post:</h2>
     <CreatePostForm @refreshPosts="getPosts" />
   </section>
   <div class="row">
     <h2 v-if="!searchAuthor">Posts:</h2>
     <h2 v-else>Posts by {{ searchAuthor }}:</h2>
-    <SearchPostForm @getPostsByAuthor="getPosts" />
+    <SearchPostForm v-if="props.searchEnabled" @getPostsByAuthor="getPosts" />
   </div>
   <section class="posts" v-if="loaded && posts.length !== 0">
     <article v-for="post in posts" :key="post._id">
