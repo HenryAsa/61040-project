@@ -10,6 +10,8 @@ import SearchPostForm from "./SearchPostForm.vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
+const props = defineProps(["startingFilter"]);
+
 const loaded = ref(false);
 let posts = ref<Array<Record<string, string>>>([]);
 let editing = ref("");
@@ -32,7 +34,11 @@ function updateEditing(id: string) {
 }
 
 onBeforeMount(async () => {
-  await getPosts();
+  if (props.startingFilter) {
+    await getPosts(props.startingFilter);
+  } else {
+    await getPosts();
+  }
   loaded.value = true;
 });
 </script>
