@@ -335,7 +335,7 @@ class Routes {
     return { msg: asset.msg, asset: asset.asset };
   }
 
-  @Router.patch("/assets/addShareholder/:ticker")
+  @Router.put("/assets/:ticker/:shareholder")
   async addAssetShareholder(session: WebSessionDoc, asset_ticker: string, user?: ObjectId) {
     if (!user) {
       user = WebSession.getUser(session);
@@ -348,7 +348,7 @@ class Routes {
     };
   }
 
-  @Router.patch("/assets/removeShareholder/:ticker")
+  @Router.delete("/assets/:ticker/:shareholder")
   async removeAssetShareholder(session: WebSessionDoc, asset_ticker: string, user?: ObjectId) {
     if (!user) {
       user = WebSession.getUser(session);
