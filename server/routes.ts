@@ -281,13 +281,8 @@ class Routes {
   ///////////
 
   @Router.get("/assets")
-  async getAssets(asset_name?: string) {
-    let assets;
-    if (asset_name) {
-      assets = await Asset.getAssetByName(asset_name);
-    } else {
-      assets = await Asset.getAssets();
-    }
+  async getAssets() {
+    const assets = await Asset.getAssets();
     return Responses.assets(assets);
   }
 
