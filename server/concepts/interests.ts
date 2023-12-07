@@ -1,9 +1,9 @@
+import axios from "axios";
 import { Filter, ObjectId } from "mongodb";
-import NewsAPI from "ts-newsapi";
 import DocCollection, { BaseDoc } from "../framework/doc";
 
-const apiKey = process.env["NEWS_API_KEY"];
-const newsAPI = new NewsAPI(apiKey!);
+// const apiKey = process.env["NEWS_API_KEY"];
+// const newsAPI = new NewsAPI(apiKey!);
 
 export interface InterestDoc extends BaseDoc {
   user: ObjectId;
@@ -52,25 +52,25 @@ export default class InterestConcept {
     let q = "";
     for (const topic of interests) {
       q += topic;
-      q += ", ";
+      q += ",";
     }
-    const headlines = await newsAPI.getEverything({
-      q: q,
-      qInTitle: "stock",
-      sources: ["abc-news"],
-      language: "en",
-      sortBy: "relevancy",
-      pageSize: 20,
-      page: 1,
-    });
-    // const topHeadlines = await newsAPI.getTopHeadlines({
-    //   q: '',
-    //   country: "us",
-    //   category: "business",
+    // const headlines = await newsAPI.getEverything({
+    //   q: q,
+    //   qInTitle: "stock",
+    //   sources: ["abc-news"],
+    //   language: "en",
+    //   sortBy: "relevancy",
     //   pageSize: 20,
     //   page: 1,
     // });
-    // console.log(topHeadlines);
-    return headlines["articles"];
+    // SWTUCJXHOH2T4ZLQ
+    // const symbol = "AAPL";
+    const API_KEY = "SWTUCJXHOH2T4ZLQ";
+    const BASE_URL = "https://www.alphavantage.co/";
+    console.log(q);
+    const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=APPL&apikey=${API_KEY}`);
+    console.log(response);
+    const data = await response.data;
+    return await data["feed"];
   }
 }

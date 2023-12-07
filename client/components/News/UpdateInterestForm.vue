@@ -34,19 +34,19 @@ onBeforeMount(async () => {
   <form @submit.prevent="updateInterests(checkedNames)">
     <fieldset>
       <legend>Which stocks do you want to get updates on?</legend>
-      <label class="container" for="apple">
+      <label class="container" for="APPLE">
         APPL
-        <input type="checkbox" id="apple" value="apple" v-model="checkedNames" />
+        <input type="checkbox" id="APPLE" value="APPLE" v-model="checkedNames" />
         <span class="checkmark"></span>
       </label>
-      <label class="container" for="amazon">
+      <label class="container" for="AMZN">
         AMZN
-        <input type="checkbox" id="amazon" value="amazon" v-model="checkedNames" />
+        <input type="checkbox" id="AMZN" value="AMZN" v-model="checkedNames" />
         <span class="checkmark"></span>
       </label>
-      <label class="container" for="tesla">
+      <label class="container" for="TSLA">
         TSLA
-        <input type="checkbox" id="tesla" value="tesla" v-model="checkedNames" />
+        <input type="checkbox" id="TSLA" value="TSLA" v-model="checkedNames" />
         <span class="checkmark"></span>
       </label>
       <div>

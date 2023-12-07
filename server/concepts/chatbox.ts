@@ -73,7 +73,16 @@ export default class ChatConcept {
   }
 
   private async getNews(prompt: string) {
+    // // SWTUCJXHOH2T4ZLQ
+    // const symbol = "AAPL";
+    // const API_KEY = "SWTUCJXHOH2T4ZLQ";
+    // const BASE_URL = "https://www.alphavantage.co/";
+    // const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=COIN,CRYPTO:BTC,FOREX:USD&time_from=20220410T0130&limit=1000&apikey=demo`);
+    // const data = await response.data;
+    // const currentPrice = await data["Global Quote"];
+
     const keywords = await this.generateKeyWords(prompt);
+    console.log(keywords);
     const headlines = await newsAPI.getEverything({
       q: keywords!,
       qInTitle: "stock",
