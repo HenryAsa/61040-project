@@ -22,7 +22,7 @@ const friendListRef = ref();
     </div>
     <div class="split-wrapper" v-else>
       <div class="split left">
-        <PostListComponent :searchEnabled="true" />
+        <PostListComponent :searchEnabled="true" :createPostEnabled="true" />
       </div>
       <div class="split right">
         <FriendListComponent :username="currentUsername" ref="friendListRef" />
