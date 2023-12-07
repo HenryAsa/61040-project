@@ -286,7 +286,7 @@ class Routes {
     return Responses.assets(assets);
   }
 
-  @Router.get("/assetsSearchByName")
+  @Router.get("/assets/search/:name")
   async getAssetsByName(asset_name?: string) {
     let assets;
     if (asset_name) {
