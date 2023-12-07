@@ -316,8 +316,8 @@ class Routes {
   }
 
   @Router.get("/asset/ticker/:ticker")
-  async getAssetByTicker(asset_ticker: string) {
-    const asset = await Asset.getAssetByTicker(asset_ticker);
+  async getAssetByTicker(ticker: string) {
+    const asset = await Asset.getAssetByTicker(ticker);
     return Responses.asset(asset);
   }
 
@@ -328,17 +328,17 @@ class Routes {
   }
 
   @Router.post("/asset")
-  async createAsset(session: WebSessionDoc, asset_name: string, asset_ticker: string, current_price: number) {
-    const asset = await Asset.create(asset_name, asset_ticker, current_price);
+  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string, current_price: number) {
+    const asset = await Asset.create(asset_name, ticker, current_price);
     return { msg: asset.msg, asset: asset.asset };
   }
 
   @Router.put("/assets/:ticker/:shareholder")
-  async addAssetShareholder(session: WebSessionDoc, asset_ticker: string, user?: ObjectId) {
+  async addAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
     if (!user) {
       user = WebSession.getUser(session);
     }
-    const asset = await Asset.getAssetByTicker(asset_ticker);
+    const asset = await Asset.getAssetByTicker(ticker);
     const shareholders = await Asset.addShareholderToAsset(asset._id, user);
     return {
       msg: `User has been successfully added to '${asset.ticker}'s list of shareholders`,
@@ -347,11 +347,11 @@ class Routes {
   }
 
   @Router.delete("/assets/:ticker/:shareholder")
-  async removeAssetShareholder(session: WebSessionDoc, asset_ticker: string, user?: ObjectId) {
+  async removeAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
     if (!user) {
       user = WebSession.getUser(session);
     }
-    const asset = await Asset.getAssetByTicker(asset_ticker);
+    const asset = await Asset.getAssetByTicker(ticker);
     await Asset.removeShareholderFromAsset(asset._id, user);
     return { msg: `User '${user}' has successfully been removed from '${asset.ticker}'s list of shareholders` };
   }
