@@ -18,11 +18,11 @@ const friendListRef = ref();
       <h1 v-else>Please login!</h1>
     </section>
     <div v-if="!isLoggedIn">
-      <PostListComponent />
+      <PostListComponent :isFullView="true" />
     </div>
     <div class="split-wrapper" v-else>
       <div class="split left">
-        <PostListComponent />
+        <PostListComponent :isFullView="true" />
       </div>
       <div class="split right">
         <FriendListComponent :username="currentUsername" ref="friendListRef" />
