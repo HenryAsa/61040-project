@@ -297,17 +297,15 @@ class Routes {
     return Responses.assets(assets);
   }
 
-  @Router.get("/assetsUserIsShareholderOf")
-  async getAssetsUserIsShareholderOf(session: WebSessionDoc) {
-    const user = WebSession.getUser(session);
-    const assets = await Asset.getAssetsByShareholderId(user);
-    return Responses.assets(assets);
-  }
-
   @Router.get("/assets/shareholders/:username")
-  async getAssetsByShareholderUsername(username: string) {
-    const user = await User.getUserByUsername(username);
-    const assets = await Asset.getAssetsByShareholderId(user._id);
+  async getAssetsByShareholderUsername(session: WebSessionDoc, username?: string) {
+    let user;
+    if (!username) {
+      user = WebSession.getUser(session);
+    } else {
+      user = (await User.getUserByUsername(username))._id;
+    }
+    const assets = await Asset.getAssetsByShareholderId(user);
     return Responses.assets(assets);
   }
 
