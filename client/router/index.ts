@@ -9,6 +9,7 @@ import LoginView from "../views/LoginView.vue";
 import NewsView from "../views/NewsView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import SettingView from "../views/SettingView.vue";
+import ProfileView from "../views/ProfileView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -47,6 +48,12 @@ const router = createRouter({
           return { name: "Settings" };
         }
       },
+    },
+    {
+      path: "/profile/:username",
+      name: "Profile",
+      component: ProfileView,
+      props: true,
     },
     {
       path: "/article/:url",
