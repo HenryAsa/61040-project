@@ -106,10 +106,10 @@ class Routes {
     return { msg: media.msg, media: media.media };
   }
 
-  @Router.get("/media/:id")
-  async getMediaById(id: ObjectId) {
-    const media = await Media.getMediaById(id);
-    return { msg: `Successfully retrieved the media '${id}'`, media: media };
+  @Router.get("/media/:_id")
+  async getMediaById(_id: ObjectId) {
+    const media = await Media.getMediaById(_id);
+    return { msg: `Successfully retrieved the media '${_id}'`, media: media };
   }
 
   @Router.get("/media/byUsername/:username")
@@ -309,9 +309,9 @@ class Routes {
     return Responses.assets(assets);
   }
 
-  @Router.get("/asset/id/:id")
-  async getAssetById(id: ObjectId) {
-    const asset = await Asset.getAssetById(id);
+  @Router.get("/asset/id/:_id")
+  async getAssetById(_id: ObjectId) {
+    const asset = await Asset.getAssetById(_id);
     return Responses.asset(asset);
   }
 
