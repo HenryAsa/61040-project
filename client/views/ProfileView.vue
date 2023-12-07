@@ -18,7 +18,6 @@ onBeforeMount(async () => {});
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :from="$props.username" :to="currentUsername" :outgoing="true" />
     </div>
-    <h2>Posts by {{ props.username }}</h2>
     <PostListComponent :searchEnabled="false" :startingFilter="props.username" />
   </div>
 </template>
