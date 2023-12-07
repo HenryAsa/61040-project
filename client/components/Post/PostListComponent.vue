@@ -10,7 +10,7 @@ import SearchPostForm from "./SearchPostForm.vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
-const props = defineProps(["isFullView", "startingFilter"]);
+const props = defineProps(["searchEnabled", "startingFilter"]);
 
 const loaded = ref(false);
 let posts = ref<Array<Record<string, string>>>([]);
@@ -44,7 +44,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn && props.isFullView">
+  <section v-if="isLoggedIn && props.searchEnabled">
     <h2>Create a post:</h2>
     <CreatePostForm @refreshPosts="getPosts" />
   </section>
