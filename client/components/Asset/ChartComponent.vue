@@ -1,43 +1,21 @@
-<template>
-  <canvas id="doughnut" />
-</template>
-
 <script lang="ts">
-import Chart from "chart.js";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { CategoryScale, Chart as ChartJS, Legend, LineElement, LinearScale, PointElement, Title, Tooltip } from "chart.js";
+import { Bar } from "vue-chartjs";
+import * as chartConfig from "./chartConfig.js";
 
-@Component
-export default class Doughnut extends Vue {
-  @Prop({ default: [] }) readonly labels!: Array<string>;
-  @Prop({ default: [] }) readonly colors!: Array<string>;
-  @Prop({ default: [] }) readonly data!: Array<number>;
-  @Prop({
-    default: () => {
-      return Chart.defaults.doughnut;
-    },
-  })
-  readonly options: object | undefined;
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-  mounted() {
-    this.createChart({
-      datasets: [
-        {
-          data: this.data,
-          backgroundColor: this.colors,
-        },
-      ],
-      labels: this.labels,
-    });
-  }
-
-  createChart(chartData: object) {
-    const canvas = document.getElementById("doughnut") as HTMLCanvasElement;
-    const options = {
-      type: "doughnut",
-      data: chartData,
-      options: this.options,
-    };
-    new Chart(canvas, options);
-  }
-}
+export default {
+  name: "App",
+  components: {
+    Bar,
+  },
+  data() {
+    return chartConfig;
+  },
+};
 </script>
+
+<template>
+  <Line :data="data" :options="options" />
+</template>

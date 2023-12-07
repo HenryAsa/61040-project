@@ -49,27 +49,10 @@ export default class InterestConcept {
 
   async getNews(user: ObjectId) {
     const interests = (await this.getByUser(user)).interests;
-    let q = "";
-    for (const topic of interests) {
-      q += topic;
-      q += ",";
-    }
-    // const headlines = await newsAPI.getEverything({
-    //   q: q,
-    //   qInTitle: "stock",
-    //   sources: ["abc-news"],
-    //   language: "en",
-    //   sortBy: "relevancy",
-    //   pageSize: 20,
-    //   page: 1,
-    // });
-    // SWTUCJXHOH2T4ZLQ
-    // const symbol = "AAPL";
-    const API_KEY = "SWTUCJXHOH2T4ZLQ";
+    const q = interests.join(",");
+    const API_KEY = "KZHRUF576K9VJM0S";
     const BASE_URL = "https://www.alphavantage.co/";
-    console.log(q);
-    const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=APPL&apikey=${API_KEY}`);
-    console.log(response);
+    const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=${q}&time_from=20220410T0130&limit=1000&sort=LATEST&apikey=${API_KEY}`);
     const data = await response.data;
     return await data["feed"];
   }
