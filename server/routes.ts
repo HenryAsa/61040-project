@@ -30,7 +30,7 @@ class Routes {
     return user;
   }
 
-  @Router.get("/usersSearchByUsername")
+  @Router.get("/users/search/:username")
   async searchUsersByUsername(username?: string) {
     let users;
     if (username) {
