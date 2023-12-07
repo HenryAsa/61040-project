@@ -317,7 +317,7 @@ class Routes {
     return Responses.asset(asset);
   }
 
-  @Router.get("/asset/:ticker")
+  @Router.get("/asset/ticker/:ticker")
   async getAssetByTicker(asset_ticker: string) {
     const asset = await Asset.getAssetByTicker(asset_ticker);
     return Responses.asset(asset);
