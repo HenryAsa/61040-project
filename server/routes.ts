@@ -3,7 +3,6 @@ import { ObjectId } from "mongodb";
 import { Router, getExpressRouter } from "./framework/router";
 
 import { Friend, Money, Portfolio, Post, User, WebSession } from "./app";
-import { NotAllowedError } from "./concepts/errors";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -173,99 +172,99 @@ class Routes {
     return Portfolio.create(name, user, isPublic);
   }
 
-  @Router.get("portfolio/value/:name")
-  async getPortfolioValue(session: WebSessionDoc, name: string) {
-    const user = WebSession.getUser(session);
-    const isPublic = await Portfolio.portfolioIsPublic(name);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(name);
-    if (!isPublic && portfolioOwner !== user) {
-      throw new NotAllowedError("Cannot view private portfolio which user does not own");
-    }
-    const assetIds = await Portfolio.getPortfolioShares(name);
-    let value = 0;
-    for (const id of assetIds) {
-      const asset = await Asset.getAssetById(id);
-      value += await Asset.getCurrentPrice(asset.ticker);
-    }
-    return value;
-  }
+  // @Router.get("portfolio/value/:name")
+  // async getPortfolioValue(session: WebSessionDoc, name: string) {
+  //   const user = WebSession.getUser(session);
+  //   const isPublic = await Portfolio.portfolioIsPublic(name);
+  //   const portfolioOwner = await Portfolio.getPortfolioOwner(name);
+  //   if (!isPublic && portfolioOwner !== user) {
+  //     throw new NotAllowedError("Cannot view private portfolio which user does not own");
+  //   }
+  //   const assetIds = await Portfolio.getPortfolioShares(name);
+  //   let value = 0;
+  //   for (const id of assetIds) {
+  //     const asset = await Asset.getAssetById(id);
+  //     value += await Asset.getCurrentPrice(asset.ticker);
+  //   }
+  //   return value;
+  // }
 
-  @Router.patch("portfolio/purchase/:portfolioName/:ticker")
-  async addStockToPortfolio(session: WebSessionDoc, portfolioName: string, ticker: string) {
-    const user = WebSession.getUser(session);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(portfolioName);
-    if (portfolioOwner !== user) {
-      throw new NotAllowedError("Cannot add stock to portfolio which user does not own");
-    }
-    const asset = await Asset.getAssetByTicker(ticker);
-    Asset.addShareholderToAsset(asset._id, user);
-    Portfolio.addAssetToPortfolio();
-  }
+  // @Router.patch("portfolio/purchase/:portfolioName/:ticker")
+  // async addStockToPortfolio(session: WebSessionDoc, portfolioName: string, ticker: string) {
+  //   const user = WebSession.getUser(session);
+  //   const portfolioOwner = await Portfolio.getPortfolioOwner(portfolioName);
+  //   if (portfolioOwner !== user) {
+  //     throw new NotAllowedError("Cannot add stock to portfolio which user does not own");
+  //   }
+  //   const asset = await Asset.getAssetByTicker(ticker);
+  //   Asset.addShareholderToAsset(asset._id, user);
+  //   Portfolio.addAssetToPortfolio();
+  // }
 
-  @Router.patch("portfolio/copy/:srcName/:dstName/:isPublic")
-  async copyInvest(session: WebSessionDoc, srcName: string, dstName: string, isPublic: boolean) {
-    const user = WebSession.getUser(session);
-    const srcIsPublic = await Portfolio.portfolioIsPublic(srcName);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(srcName);
-    if (!srcIsPublic && portfolioOwner !== user) {
-      throw new NotAllowedError("Cannot copy private portfolio which user does not own");
-    }
-    const dstPortfolio = Portfolio.create(dstName, user, isPublic);
-    const assetIds = await Portfolio.getPortfolioShares(srcName);
-    for (const id of assetIds) {
-      await Asset.addShareholderToAsset(asset._id, user);
-      await Portfolio.addAssetToPortfolio(dstName, id);
-    }
-  }
+  // @Router.patch("portfolio/copy/:srcName/:dstName/:isPublic")
+  // async copyInvest(session: WebSessionDoc, srcName: string, dstName: string, isPublic: boolean) {
+  //   const user = WebSession.getUser(session);
+  //   const srcIsPublic = await Portfolio.portfolioIsPublic(srcName);
+  //   const portfolioOwner = await Portfolio.getPortfolioOwner(srcName);
+  //   if (!srcIsPublic && portfolioOwner !== user) {
+  //     throw new NotAllowedError("Cannot copy private portfolio which user does not own");
+  //   }
+  //   const dstPortfolio = Portfolio.create(dstName, user, isPublic);
+  //   const assetIds = await Portfolio.getPortfolioShares(srcName);
+  //   for (const id of assetIds) {
+  //     await Asset.addShareholderToAsset(asset._id, user);
+  //     await Portfolio.addAssetToPortfolio(dstName, id);
+  //   }
+  // }
 
-  @Router.get("portfolio/topassets/:name")
-  async getTopAssets(session: WebSessionDoc, name: string) {
-    const user = WebSession.getUser(session);
-    const isPublic = await Portfolio.portfolioIsPublic(name);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(name);
-    if (!isPublic && portfolioOwner !== user) {
-      throw new NotAllowedError("Cannot view private portfolio which user does not own");
-    }
-    const assetIds = await Portfolio.getPortfolioShares(name);
-    const assetValues = new Map<string, number>();
-    for (const id of assetIds) {
-      const asset = await Asset.getAssetById(id);
-      const ticker = asset.ticker;
-      const value = await Asset.getCurrentPrice(ticker);
-      if (!assetValues.has(ticker)) {
-        assetValues.set(ticker, value);
-      } else {
-        const prevTotal = assetValues.get(ticker);
-        assetValues.set(ticker, prevTotal + value);
-      }
-    }
-    // ugly ;(
-    const topValues = new Array<number>(0, 0, 0);
-    const topAssets = new Array<string>("", "", "");
-    for (const [ticker, value] of assetValues) {
-      if (value > topValues[2]) {
-        if (value > topValues[1]) {
-          if (value > topValues[0]) {
-            topValues[2] = topValues[1];
-            topAssets[2] = topAssets[1];
-            topValues[1] = topValues[0];
-            topAssets[1] = topAssets[0];
-            topValues[0] = value;
-            topAssets[0] = ticker;
-          } else {
-            topValues[2] = topValues[1];
-            topAssets[2] = topAssets[1];
-            topValues[1] = value;
-            topAssets[1] = ticker;
-          }
-        } else {
-          topValues[2] = value;
-          topAssets[2] = ticker;
-        }
-      }
-    }
-    return topAssets;
-  }
+  // @Router.get("portfolio/topassets/:name")
+  // async getTopAssets(session: WebSessionDoc, name: string) {
+  //   const user = WebSession.getUser(session);
+  //   const isPublic = await Portfolio.portfolioIsPublic(name);
+  //   const portfolioOwner = await Portfolio.getPortfolioOwner(name);
+  //   if (!isPublic && portfolioOwner !== user) {
+  //     throw new NotAllowedError("Cannot view private portfolio which user does not own");
+  //   }
+  //   const assetIds = await Portfolio.getPortfolioShares(name);
+  //   const assetValues = new Map<string, number>();
+  //   for (const id of assetIds) {
+  //     const asset = await Asset.getAssetById(id);
+  //     const ticker = asset.ticker;
+  //     const value = await Asset.getCurrentPrice(ticker);
+  //     if (!assetValues.has(ticker)) {
+  //       assetValues.set(ticker, value);
+  //     } else {
+  //       const prevTotal = assetValues.get(ticker);
+  //       assetValues.set(ticker, prevTotal + value);
+  //     }
+  //   }
+  //   // ugly ;(
+  //   const topValues = new Array<number>(0, 0, 0);
+  //   const topAssets = new Array<string>("", "", "");
+  //   for (const [ticker, value] of assetValues) {
+  //     if (value > topValues[2]) {
+  //       if (value > topValues[1]) {
+  //         if (value > topValues[0]) {
+  //           topValues[2] = topValues[1];
+  //           topAssets[2] = topAssets[1];
+  //           topValues[1] = topValues[0];
+  //           topAssets[1] = topAssets[0];
+  //           topValues[0] = value;
+  //           topAssets[0] = ticker;
+  //         } else {
+  //           topValues[2] = topValues[1];
+  //           topAssets[2] = topAssets[1];
+  //           topValues[1] = value;
+  //           topAssets[1] = ticker;
+  //         }
+  //       } else {
+  //         topValues[2] = value;
+  //         topAssets[2] = ticker;
+  //       }
+  //     }
+  //   }
+  //   return topAssets;
+  // }
 }
 
 export default getExpressRouter(new Routes());
