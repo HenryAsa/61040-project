@@ -57,16 +57,10 @@ const router = createRouter({
       },
     },
     {
-      path: "/portfolio",
+      path: "/portfolio/:username",
       name: "Portfolio",
       component: PortfolioView,
-      meta: { requiresAuth: false },
-      beforeEnter: (to, from) => {
-        const { isLoggedIn } = storeToRefs(useUserStore());
-        if (!isLoggedIn.value) {
-          return { name: "Settings" };
-        }
-      },
+      props: true,
     },
     {
       path: "/profile/:username",

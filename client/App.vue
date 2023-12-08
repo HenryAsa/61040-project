@@ -8,7 +8,7 @@ import { RouterLink, RouterView, useRoute } from "vue-router";
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
-const { isLoggedIn, currentUserProfilePhoto } = storeToRefs(userStore);
+const { currentUsername, isLoggedIn, currentUserProfilePhoto } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 
 // Make sure to update the session before mounting the app in case the user is already logged in
@@ -33,7 +33,7 @@ onBeforeMount(async () => {
           <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
         </li>
         <li v-if="isLoggedIn" class="isLoggedIn">
-          <RouterLink :to="{ name: 'Portfolio' }" :class="{ underline: currentRouteName == 'Portfolio' }"> Portfolio </RouterLink>
+          <RouterLink :to="{ name: 'Portfolio', params: { username: currentUsername } }" :class="{ underline: currentRouteName == 'Portfolio' } "> Portfolio </RouterLink>
           <RouterLink :to="{ name: 'News' }" :class="{ underline: currentRouteName == 'News' }"> <i class="fa fa-newspaper-o" style="font-size: 24px"></i> </RouterLink>
           <RouterLink :to="{ name: 'Stocks' }" :class="{ underline: currentRouteName == 'Stocks' }"> Stocks </RouterLink>
           <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"><img class="profile_picture" v-bind:src="currentUserProfilePhoto" /> </RouterLink>

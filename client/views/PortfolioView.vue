@@ -24,8 +24,7 @@ onBeforeMount(async () => {
 <template>
   <main>
     <section>
-      <h1 v-if="!isLoggedIn">Please login!</h1>
-      <h1 v-else>{{ currentUsername }}</h1>
+      <h1>{{ props.username }}</h1>
     </section>
     <PortfolioListComponent :username="props.username" />
     <MoneyComponent />
