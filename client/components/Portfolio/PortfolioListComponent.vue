@@ -36,7 +36,6 @@ onBeforeMount(async () => {
 
 <template>
   <section v-if="isLoggedIn">
-    <h2>Create a portfolio:</h2>
     <CreatePortfolioComponent @refreshPosts="getPosts" />
   </section>
   <section class="portfolios" v-if="loaded && portfolios.length !== 0">
