@@ -45,7 +45,6 @@ const uploadImage = async () => {
 
   await uploadBytes(imageRef, imageUpload.value).then(async (response) => {
     await getDownloadURL(firebaseRef(storage, response.ref.fullPath)).then(async (url) => {
-      console.log(`GOT THE URL ${url}`);
       imageURL.value = url;
       await createMedia(url);
       emit("update:imageURL", url);

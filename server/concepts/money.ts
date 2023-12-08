@@ -35,7 +35,6 @@ export default class MoneyConcept {
   async getBalance(_id: ObjectId) {
     const user = await this.accounts.readOne({ _id });
     const balance = user === null ? 0 : user.balance;
-    console.log("user", _id, "has balance", balance);
     return balance;
   }
 
@@ -46,7 +45,6 @@ export default class MoneyConcept {
    */
   async setBalance(_id: ObjectId, newBalance: number) {
     if (!this.userExists(_id)) {
-      console.log("could not set balance for user", _id, "because they do not exist in the database");
       throw new NotFoundError(`User not found!`);
     }
     const filter = { _id };
@@ -65,7 +63,6 @@ export default class MoneyConcept {
       throw new NotAllowedError("Cannot deposit a negative quantity");
     }
     let balance = await this.getBalance(_id);
-    console.log("depositing $", amount, "to account ", _id.toString(), "with balance", balance);
     balance += amount;
     await this.setBalance(_id, balance);
     return balance;
@@ -82,7 +79,6 @@ export default class MoneyConcept {
       throw new NotAllowedError("Cannot withdraw a negative quantity");
     }
     let balance = await this.getBalance(_id);
-    console.log("withdrawing $", amount, "from account ", _id.toString(), "with balance", balance);
     if (balance < amount) {
       throw new NotAllowedError("Cannot overdraw from account");
     }

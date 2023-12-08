@@ -1,8 +1,7 @@
-import { Media, User } from "./app";
+import { User } from "./app";
 import { AssetDoc } from "./concepts/asset";
 import { AlreadyFriendsError, FriendNotFoundError, FriendRequestAlreadyExistsError, FriendRequestDoc, FriendRequestNotFoundError } from "./concepts/friend";
 import { PostAuthorNotMatchError, PostDoc } from "./concepts/post";
-import { SanitizedUserDoc } from "./concepts/user";
 import { Router } from "./framework/router";
 
 /**
