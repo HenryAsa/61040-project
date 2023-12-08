@@ -1,9 +1,9 @@
+import axios from "axios";
 import { Filter, ObjectId } from "mongodb";
-import NewsAPI from "ts-newsapi";
 import DocCollection, { BaseDoc } from "../framework/doc";
 
-const apiKey = process.env["NEWS_API_KEY"];
-const newsAPI = new NewsAPI(apiKey!);
+// const apiKey = process.env["NEWS_API_KEY"];
+// const newsAPI = new NewsAPI(apiKey!);
 
 export interface InterestDoc extends BaseDoc {
   user: ObjectId;
@@ -49,28 +49,11 @@ export default class InterestConcept {
 
   async getNews(user: ObjectId) {
     const interests = (await this.getByUser(user)).interests;
-    let q = "";
-    for (const topic of interests) {
-      q += topic;
-      q += ", ";
-    }
-    const headlines = await newsAPI.getEverything({
-      q: q,
-      qInTitle: "stock",
-      sources: ["abc-news"],
-      language: "en",
-      sortBy: "relevancy",
-      pageSize: 20,
-      page: 1,
-    });
-    // const topHeadlines = await newsAPI.getTopHeadlines({
-    //   q: '',
-    //   country: "us",
-    //   category: "business",
-    //   pageSize: 20,
-    //   page: 1,
-    // });
-    // console.log(topHeadlines);
-    return headlines["articles"];
+    const q = interests.join(",");
+    const API_KEY = "KZHRUF576K9VJM0S";
+    const BASE_URL = "https://www.alphavantage.co/";
+    const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=${q}&time_from=20220410T0130&limit=1000&sort=LATEST&apikey=${API_KEY}`);
+    const data = await response.data;
+    return await data["feed"];
   }
 }

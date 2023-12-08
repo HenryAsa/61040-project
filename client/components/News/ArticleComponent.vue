@@ -8,11 +8,11 @@ const url = ref(props.article?.url);
   <div class="title">
     <a :href="props.article.url" target="_blank" style="text-decoration: none">{{ props.article.title }}</a>
   </div>
-  <img :src="props.article.urlToImage" style="width: 200px; height: auto" />
+  <img :src="props.article.banner_image" style="width: 200px; height: auto" />
   <p>{{ props.article.description }}</p>
   <div class="base">
     <article class="timestamp">
-      <p>{{ props.article.publishedAt }}</p>
+      <p>{{ props.article.time_published }}</p>
     </article>
   </div>
 </template>
