@@ -405,6 +405,7 @@ class Routes {
 
   @Router.post("/portfolio/create/:name/:isPublic")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
+    const user = WebSession.getUser(session);
     return Portfolio.create(name, user, isPublic);
   }
 
