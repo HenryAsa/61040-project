@@ -35,9 +35,6 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
-    <CreatePortfolioComponent @refreshPosts="getPosts" />
-  </section>
   <section class="portfolios" v-if="loaded && portfolios.length !== 0">
     <article v-for="portfolio in portfolios" :key="portfolio._id">
       <PortfolioComponent />
@@ -45,6 +42,9 @@ onBeforeMount(async () => {
   </section>
   <p v-else-if="loaded">No portfolios found</p>
   <p v-else>Loading...</p>
+  <section v-if="isLoggedIn">
+    <CreatePortfolioComponent @refreshPosts="getPosts" />
+  </section>
 </template>
 
 <style scoped>
