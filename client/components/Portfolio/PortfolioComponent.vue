@@ -26,13 +26,6 @@ onBeforeMount(async () => {
     portfolioValue.value = await fetchy(`/api/portfolios/${props.portfolio._id}/value`, "GET");
   } catch (_) {
     console.log(_);
-    try {
-      await fetchy(`/api/portfolios`, "POST", {
-        body: { isPublic: true },
-      });
-    } catch (_) {
-      console.log(_);
-    }
   }
 });
 </script>
