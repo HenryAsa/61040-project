@@ -26,10 +26,8 @@ const friendListRef = ref();
         <PostListComponent />
       </div>
       <div class="split right">
-        <FriendListComponent :username="currentUsername" ref="friendListRef" />
-      </div>
-      <div>
         <MoneyComponent />
+        <FriendListComponent :username="currentUsername" ref="friendListRef" />
       </div>
     </div>
   </main>
