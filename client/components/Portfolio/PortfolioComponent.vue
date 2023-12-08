@@ -11,14 +11,14 @@ const emit = defineEmits(["refreshPortfolios"]);
 
 const portfolioValue = ref(0);
 
-const deletePortfolio = async () => {
+async function deletePortfolio() {
   try {
     await fetchy(`/api/portfolios/${props.portfolio._id}`, "DELETE");
-  } catch {
+  } catch (_) {
     return;
   }
   emit("refreshPortfolios");
-};
+}
 
 onBeforeMount(async () => {
   try {
