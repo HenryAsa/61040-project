@@ -103,7 +103,7 @@ export default class PortfolioConcept {
 
   async portfolioNameExists(name: string) {
     const maybePortfolio = await this.portfolios.readOne({ name });
-    return maybePortfolio === null;
+    return maybePortfolio !== null;
   }
 
   private async canCreate(name: string) {
