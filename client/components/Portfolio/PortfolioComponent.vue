@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const props = defineProps(["portfolioName"]);
 
-let portfolioValue: number = 0;
+const portfolioValue = ref(0);
 
 onBeforeMount(async () => {
   try {
-    portfolioValue = await fetchy(`/api/portfolios/${props.portfolioName}/value`, "GET");
+    portfolioValue.value = await fetchy(`/api/portfolios/${props.portfolioName}/value`, "GET");
   } catch (_) {
     console.log(_);
     try {
@@ -29,7 +29,8 @@ onBeforeMount(async () => {
 <template>
   <main>
     <div class="flex-container">
-      <div class="flex-text" id="balance">Portfolio Value: ${{ portfolioValue }}</div>
+      <p>{{ props.portfolioName }}</p>
+      <p>Portfolio Value: ${{ portfolioValue }}</p>
     </div>
   </main>
 </template>
@@ -41,6 +42,7 @@ h1 {
 .flex-container {
   margin: 2em;
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 </style>
