@@ -11,7 +11,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 const props = defineProps(["username"]);
 
 const loaded = ref(false);
-let portfolios = ref<Array<{}>>([]);
+let portfolios = ref<Array<{ _id: 0; ownerName: ""; isPublic: false }>>([]);
 
 async function getPortfolios(owner?: string) {
   let query: Record<string, string> = owner !== undefined ? { owner } : {};
