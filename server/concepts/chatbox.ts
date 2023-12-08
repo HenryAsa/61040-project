@@ -70,7 +70,7 @@ export default class ChatConcept {
 
   private async getNews(prompt: string) {
     const keywords = await this.generateKeyWords(prompt);
-    const q = keywords!.join(",");
+    const q = keywords!;
     const API_KEY = "KZHRUF576K9VJM0S";
     const BASE_URL = "https://www.alphavantage.co/";
     const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=${q}&time_from=20220410T0130&limit=1000&sort=LATEST&apikey=${API_KEY}`);
