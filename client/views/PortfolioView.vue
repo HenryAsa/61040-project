@@ -3,7 +3,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount } from "vue";
 import MoneyComponent from "../components/Money/MoneyComponent.vue";
-import PortfolioComponent from "../components/Portfolio/PortfolioComponent.vue";
+import PortfolioListComponent from "../components/Portfolio/PortfolioListComponent.vue";
 import { fetchy } from "../utils/fetchy";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
@@ -25,7 +25,7 @@ onBeforeMount(async () => {
       <h1 v-if="!isLoggedIn">Please login!</h1>
       <h1 v-else>{{ currentUsername }}</h1>
     </section>
-    <PortfolioComponent />
+    <PortfolioListComponent />
     <MoneyComponent />
     <div class="holdings">
       <h1>Your Holdings</h1>
