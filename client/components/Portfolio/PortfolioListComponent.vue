@@ -8,7 +8,7 @@ import { onBeforeMount, ref } from "vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
-const props = defineProps(["searchEnabled", "createPostEnabled", "startingFilter"]);
+const props = defineProps(["startingFilter"]);
 
 const loaded = ref(false);
 let portfolios = ref<Array<Record<string, string>>>([]);
