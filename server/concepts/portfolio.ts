@@ -1,9 +1,11 @@
 import { Filter, ObjectId } from "mongodb";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
+import { User } from "../app";
 
 export interface PortfolioDoc extends BaseDoc {
   name: string;
+  ownerName: string;
   owner: ObjectId;
   isPublic: boolean;
   shares: Array<ObjectId>;
@@ -16,6 +18,7 @@ export default class PortfolioConcept {
     await this.canCreate(name);
     const shares = Array<ObjectId>();
     const _id = await this.portfolios.createOne({ name, owner, isPublic, shares });
+    await this.update(_id, { ownerName: await this.getOwnerName(_id) });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
 
@@ -24,6 +27,16 @@ export default class PortfolioConcept {
       sort: { dateUpdated: -1 },
     });
     return posts;
+  }
+
+  async getOwnerName(_id: ObjectId) {
+    const portfolio = await this.portfolios.readOne({ _id });
+    if (portfolio) {
+      const ownerName = (await User.getUserById(portfolio.owner)).username;
+      return ownerName;
+    } else {
+      throw new NotFoundError(`portfolio not found`);
+    }
   }
 
   async getPortfoliosByOwner(owner: ObjectId) {
