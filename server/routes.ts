@@ -452,7 +452,7 @@ class Routes {
       await Portfolio.addAssetToPortfolio(dstName, id);
     }
   }
-  
+
   @Router.get("portfolio/topassets/:name")
   async getTopAssets(session: WebSessionDoc, name: string) {
     const user = WebSession.getUser(session);
