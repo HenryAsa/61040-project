@@ -421,6 +421,16 @@ class Routes {
     return Portfolio.create(name, user, isPublic);
   }
 
+  @Router.delete("/portfolios/:name")
+  async deletePortfolio(session: WebSessionDoc, name: string) {
+    const user = WebSession.getUser(session);
+    const portfolio = await Portfolio.getPortfolioByName(name);
+    if (user !== portfolio.owner) {
+      throw new NotAllowedError("Cannot delete a portfolio which user does not own!");
+    }
+    await Portfolio.delete(portfolio._id);
+  }
+
   @Router.get("/portfolios/:name/value")
   async getPortfolioValue(session: WebSessionDoc, name: string) {
     const user = WebSession.getUser(session);
