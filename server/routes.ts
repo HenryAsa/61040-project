@@ -419,7 +419,7 @@ class Routes {
   @Router.post("/portfolios")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
     const user = WebSession.getUser(session);
-    return Portfolio.create(name, user, isPublic);
+    return Portfolio.create(name, user, (await User.getUserById(user)).username, isPublic);
   }
 
   @Router.delete("/portfolios/:_id")

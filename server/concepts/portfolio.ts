@@ -14,11 +14,10 @@ export interface PortfolioDoc extends BaseDoc {
 export default class PortfolioConcept {
   public readonly portfolios = new DocCollection<PortfolioDoc>("portfolios");
 
-  async create(name: string, owner: ObjectId, isPublic: boolean) {
+  async create(name: string, owner: ObjectId, ownerName: string, isPublic: boolean) {
     await this.canCreate(name);
     const shares = Array<ObjectId>();
-    const _id = await this.portfolios.createOne({ name, owner, isPublic, shares });
-    await this.update(_id, { ownerName: await this.getOwnerName(_id) });
+    const _id = await this.portfolios.createOne({ name, owner, ownerName, isPublic, shares });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
 
