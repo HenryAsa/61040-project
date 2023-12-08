@@ -7,8 +7,18 @@ import { fetchy } from "../../utils/fetchy";
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const props = defineProps(["portfolio"]);
+const emit = defineEmits(["refreshPortfolios"]);
 
 const portfolioValue = ref(0);
+
+const deletePortfolio = async () => {
+  try {
+    await fetchy(`/api/portfolios/${props.portfolio._id}`, "DELETE");
+  } catch {
+    return;
+  }
+  emit("refreshPortfolios");
+};
 
 onBeforeMount(async () => {
   try {
