@@ -10,6 +10,7 @@ const props = defineProps(["portfolio"]);
 const emit = defineEmits(["refreshPortfolios"]);
 
 const portfolioValue = ref(0);
+const topAssets = ref(new Array<string>("AAPL", "TSLA", "AMZN"));
 
 async function deletePortfolio() {
   try {
@@ -23,6 +24,7 @@ async function deletePortfolio() {
 onBeforeMount(async () => {
   try {
     portfolioValue.value = await fetchy(`/api/portfolios/${props.portfolio._id}/value`, "GET");
+    topAssets.value = await fetchy(`/api/portfolios/${props.portfolio._id}/topAssets`, "GET");
   } catch (_) {
     console.log(_);
   }
@@ -35,6 +37,8 @@ onBeforeMount(async () => {
       <h3>{{ props.portfolio.name }}</h3>
       <p>Portfolio Value: ${{ portfolioValue }}</p>
       <button v-if="props.portfolio.ownerName == currentUsername" class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
+      <h3>Top Holdings</h3>
+      <p v-for="asset in topAssets" :key="asset">{{ asset }}</p>
     </div>
   </main>
 </template>
@@ -47,5 +51,9 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+p {
+  margin: auto;
 }
 </style>
