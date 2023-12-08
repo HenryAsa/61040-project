@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
-
+import { NotAllowedError } from "./concepts/errors";
 import { AIAgent, Asset, Friend, Interest, Media, Money, Post, User, WebSession, Portfolio } from "./app";
 import { AssetDoc } from "./concepts/asset";
 import { MediaDoc } from "./concepts/media";
