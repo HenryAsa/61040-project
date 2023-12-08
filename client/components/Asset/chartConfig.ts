@@ -1,15 +1,28 @@
-export const data = {
-  labels: ["January", "February", "March", "April", "May", "June", "July"],
-  datasets: [
-    {
-      label: "Data One",
-      backgroundColor: "#f87979",
-      data: [40, 39, 10, 40, 39, 80, 40],
-    },
-  ],
-};
+// import { fetchy } from "@/utils/fetchy";
 
-export const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-};
+// async function getPriceHistory() {
+//   let results;
+//   try {
+//     results = await fetchy("/api/assets/history", "GET", {});
+//   } catch (_) {
+//     return;
+//   }
+//   return results;
+// }
+
+// const responce = await getPriceHistory();
+// export const data = {
+//   labels: responce.dates,
+//   datasets: [
+//     {
+//       label: "Last 24 hours price history",
+//       backgroundColor: "#f87979",
+//       data: responce.prices,
+//     },
+//   ],
+// };
+
+// export const options = {
+//   responsive: true,
+//   maintainAspectRatio: false,
+// };

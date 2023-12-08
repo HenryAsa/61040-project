@@ -370,9 +370,14 @@ class Routes {
     return Asset.delete(asset_id);
   }
 
-  @Router.get("/assets/price")
-  async getCurrentPrice() {
-    return await Asset.getHistory();
+  @Router.get("/assets/price/:ticker")
+  async getCurrentPrice(ticker: string) {
+    return await Asset.getCurrentPrice(ticker);
+  }
+
+  @Router.get("/assets/history/:ticker")
+  async getHistoryPrice(ticker: string) {
+    return await Asset.getHistory(ticker);
   }
 }
 

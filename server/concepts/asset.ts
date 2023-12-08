@@ -162,25 +162,22 @@ export default class AssetConcept {
     }
   }
 
-  async getCurrentPrice() {
-    // SWTUCJXHOH2T4ZLQ
-    const symbol = "AAPL";
-    const API_KEY = "SWTUCJXHOH2T4ZLQ";
+  async getCurrentPrice(symbol: string) {
+    const API_KEY = "KZHRUF576K9VJM0S";
     const BASE_URL = "https://www.alphavantage.co/";
     const response = await axios.get(`${BASE_URL}query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`);
     const data = await response.data;
-    const currentPrice = await data["Global Quote"];
+    const currentPrice = await data["Global Quote"]["05. price"];
 
     return currentPrice;
   }
 
-  async getHistory() {
-    const symbol = "AAPL";
-    const API_KEY = "SWTUCJXHOH2T4ZLQ";
+  async getHistory(symbol: string) {
+    const API_KEY = "KZHRUF576K9VJM0S";
     const BASE_URL = "https://www.alphavantage.co/";
-    const response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&outputsize=full&apikey=${API_KEY}`);
+    const response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=${API_KEY}`);
     const data = await response.data;
-    const currentPrice = await data["Time Series (5min)"];
+    const currentPrice = await data["Time Series (30min)"];
     const dates = Object.keys(currentPrice).reverse();
     const prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
     return { dates, prices };

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import ChartComponent from "../components/Asset/ChartComponent.vue";
+import StockListComponent from "../components/Asset/StockListComponent.vue";
 </script>
 
 <template>
   <main>
     <p>
-      <ChartComponent />
+      <StockListComponent />
     </p>
   </main>
 </template>

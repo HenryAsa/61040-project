@@ -1,12 +1,8 @@
+import axios from "axios";
 import { Filter, ObjectId } from "mongodb";
 import OpenAI from "openai";
-import NewsAPI from "ts-newsapi";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { NotAllowedError } from "./errors";
-
-const apiKey = process.env["NEWS_API_KEY"];
-const newsAPI = new NewsAPI(apiKey!);
-
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
 });
@@ -73,27 +69,13 @@ export default class ChatConcept {
   }
 
   private async getNews(prompt: string) {
-    // // SWTUCJXHOH2T4ZLQ
-    // const symbol = "AAPL";
-    // const API_KEY = "SWTUCJXHOH2T4ZLQ";
-    // const BASE_URL = "https://www.alphavantage.co/";
-    // const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=COIN,CRYPTO:BTC,FOREX:USD&time_from=20220410T0130&limit=1000&apikey=demo`);
-    // const data = await response.data;
-    // const currentPrice = await data["Global Quote"];
-
     const keywords = await this.generateKeyWords(prompt);
-    console.log(keywords);
-    const headlines = await newsAPI.getEverything({
-      q: keywords!,
-      qInTitle: "stock",
-      sources: [],
-      language: "en",
-      sortBy: "relevancy",
-      pageSize: 20,
-      page: 1,
-    });
-    console.log(headlines["articles"]);
-    return headlines["articles"][0].content;
+    const q = keywords!.join(",");
+    const API_KEY = "KZHRUF576K9VJM0S";
+    const BASE_URL = "https://www.alphavantage.co/";
+    const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=${q}&time_from=20220410T0130&limit=1000&sort=LATEST&apikey=${API_KEY}`);
+    const data = await response.data;
+    return await data["feed"];
   }
 
   private async generateKeyWords(prompt: string) {
