@@ -30,7 +30,7 @@ async function checkRequested() {
   try {
     const requests = await fetchy(`/api/friend/requests`, "GET");
     for (const request of requests) {
-      if (request.from == props.other) {
+      if (request.from == props.other && request.status == "pending") {
         requested.value = true;
       }
     }
@@ -105,7 +105,9 @@ onBeforeMount(async () => {
   } else {
     isFriend.value = checkFriend();
   }
-  await checkRequested();
+  if (props.outgoing) {
+    await checkRequested();
+  }
 });
 </script>
 
