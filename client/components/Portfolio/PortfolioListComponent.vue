@@ -37,7 +37,7 @@ onBeforeMount(async () => {
 <template>
   <section class="portfolios">
     <div v-if="loaded && portfolios.length !== 0">
-      <h2>Private portfolios are hidden!</h2>
+      <h2 v-if="username !== currentUsername">Private portfolios are hidden!</h2>
       <article v-for="portfolio in portfolios" :key="portfolio._id">
         <PortfolioComponent v-if="portfolio.ownerName == currentUsername || portfolio.isPublic" :portfolio="portfolio" @refreshPortfolios="getPortfolios" />
       </article>
