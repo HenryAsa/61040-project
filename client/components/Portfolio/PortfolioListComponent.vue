@@ -72,7 +72,7 @@ article {
   padding: 1em;
 }
 
-.posts {
+.portfolios {
   padding: 1em;
 }
 
