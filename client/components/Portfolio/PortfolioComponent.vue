@@ -10,7 +10,6 @@ const props = defineProps(["portfolio"]);
 const emit = defineEmits(["refreshPortfolios"]);
 
 const portfolioValue = ref(0);
-const username = ref("");
 
 const deletePortfolio = async () => {
   try {
