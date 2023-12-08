@@ -5,8 +5,20 @@ import RegisterForm from "@/components/Login/RegisterForm.vue";
 
 <template>
   <main class="column">
-    <h1>Please login or register!</h1>
-    <LoginForm />
-    <RegisterForm />
+    <h1>
+      Welcome to
+      <span class="logo-text">Sharefolio</span>, the Community Investment Platform!
+    </h1>
+    <h2>Please login or register!</h2>
+    <div>
+      <LoginForm />
+      <RegisterForm />
+    </div>
   </main>
 </template>
+
+<style scoped>
+.h1 {
+  font-size: 1px;
+}
+</style>

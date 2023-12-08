@@ -1,7 +1,5 @@
 # 6.1040 Sharefolio Repository
 
-This is the GitHub Repository for the Sharefolio Team.
-
 ## [Sharefolio Vercel Deployment](https://sharefolio.vercel.app/)
 
 ## Team Contacts

@@ -8,7 +8,7 @@ import { RouterLink, RouterView, useRoute } from "vue-router";
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
-const { isLoggedIn } = storeToRefs(userStore);
+const { isLoggedIn, currentUserProfilePhoto } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 
 // Make sure to update the session before mounting the app in case the user is already logged in
@@ -25,20 +25,18 @@ onBeforeMount(async () => {
   <header>
     <nav>
       <div class="title">
-        <img src="@/assets/images/logo.png" />
-        <RouterLink :to="{ name: 'Home' }">
-          <h1 class="logo-text">Sharefolio</h1>
-        </RouterLink>
+        <RouterLink :to="{ name: 'Home' }"><img src="@/assets/images/logo.png" /></RouterLink>
+        <RouterLink :to="{ name: 'Home' }"><h1 class="logo-text">Sharefolio</h1> </RouterLink>
       </div>
       <ul>
         <li>
           <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
         </li>
-        <li v-if="isLoggedIn">
+        <li v-if="isLoggedIn" class="isLoggedIn">
           <RouterLink :to="{ name: 'Portfolio' }" :class="{ underline: currentRouteName == 'Portfolio' }"> Portfolio </RouterLink>
-        </li>
-        <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"> Settings </RouterLink>
+          <RouterLink :to="{ name: 'News' }" :class="{ underline: currentRouteName == 'News' }"> <i class="fa fa-newspaper-o" style="font-size: 24px"></i> </RouterLink>
+          <RouterLink :to="{ name: 'Stocks' }" :class="{ underline: currentRouteName == 'Stocks' }"> Stocks </RouterLink>
+          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"><img class="profile_picture" v-bind:src="currentUserProfilePhoto" /> </RouterLink>
         </li>
         <li v-else>
           <RouterLink :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
@@ -48,18 +46,32 @@ onBeforeMount(async () => {
     <article v-if="toast !== null" class="toast" :class="toast.style">
       <p>{{ toast.message }}</p>
     </article>
+    <div class="help" v-if="isLoggedIn">
+      <RouterLink :to="{ name: 'AI' }" :class="{ underline: currentRouteName == 'AI' }"> <i class="fa fa-question-circle" style="font-size: 48px; color: black"></i> </RouterLink>
+    </div>
   </header>
-  <RouterView />
+  <div class="page">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
 @import "./assets/toast.css";
 
 nav {
-  padding: 1em 2em;
+  position: fixed;
+  top: 0;
+  width: 95%;
+  padding: 0em 2em;
   background-color: var(--dark-background);
   display: flex;
   align-items: center;
+  /* margin: 20px; */
+}
+
+.page {
+  position: inherit;
+  padding-top: 8em;
 }
 
 h1 {
@@ -73,16 +85,18 @@ h1 {
   gap: 0.5em;
 }
 
-.logo-text {
-  background: -webkit-linear-gradient(0deg, var(--dark-gold), var(--light-gold), var(--dark-gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: "Tangerine";
-  font-weight: bold;
+img {
+  height: 3em;
 }
 
-img {
-  height: 2em;
+.profile_picture {
+  width: 3.5em;
+  height: 3.5em;
+  /* object-fit: cover; */
+  align-self: auto;
+  border: 3px solid var(--subtle-gray);
+  border-radius: 16px;
+  /* display: flex; */
 }
 
 a {
@@ -101,7 +115,23 @@ ul {
   gap: 1em;
 }
 
+.isLoggedIn {
+  list-style-type: none;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 1em;
+}
+
 .underline {
   text-decoration: underline;
+}
+
+.help {
+  position: fixed;
+  bottom: 20px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  z-index: 999;
 }
 </style>

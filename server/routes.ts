@@ -2,7 +2,9 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Money, Portfolio, Post, User, WebSession } from "./app";
+import { AIAgent, Asset, Friend, Interest, Media, Money, Post, User, WebSession } from "./app";
+import { AssetDoc } from "./concepts/asset";
+import { MediaDoc } from "./concepts/media";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -12,30 +14,47 @@ class Routes {
   @Router.get("/session")
   async getSessionUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    return await User.getUserById(user);
+    const user_object = await User.getUserById(user);
+    return user_object;
   }
 
   @Router.get("/users")
   async getUsers() {
-    return await User.getUsers();
+    const users = await User.getUsers();
+    return users;
   }
 
   @Router.get("/users/:username")
   async getUser(username: string) {
-    return await User.getUserByUsername(username);
+    const user = await User.getUserByUsername(username);
+    return user;
+  }
+
+  @Router.get("/users/search/:username")
+  async searchUsersByUsername(username?: string) {
+    let users;
+    if (username) {
+      users = await User.searchUsersByUsername(username);
+    } else {
+      users = await User.getUsers();
+    }
+    return users;
   }
 
   @Router.post("/users")
-  async createUser(session: WebSessionDoc, username: string, password: string) {
+  async createUser(session: WebSessionDoc, username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
     WebSession.isLoggedOut(session);
-    const res = await User.create(username, password);
-    const user = res.user;
+    const user = await User.create(username, password, first_name, last_name, profile_photo);
+    if (user.user?._id) {
+      await Interest.create(user.user?._id);
+      await AIAgent.create(user.user?._id);
+    }
     // create a new account balance associated with this user
     if (user !== null) {
       const userId = user._id;
       await Money.create(userId);
     }
-    return res;
+    return user.user;
   }
 
   @Router.patch("/users")
@@ -47,6 +66,23 @@ class Routes {
   @Router.delete("/users")
   async deleteUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
+
+    // Delete all media associated with the User
+    const user_media = await Media.getMediaByCreator(user);
+    await Promise.all(user_media.map((media) => Media.delete(media._id, user)));
+
+    // Delete all posts associated with the User
+    const posts = await Post.getPostsByAuthor(user);
+    for (const post of posts) {
+      // Delete all of the comments underneath the post
+      // await Comment.deleteByRoot(post._id);
+
+      await Post.delete(post._id);
+    }
+
+    // Delete user Interests
+    await Interest.delete(user);
+
     WebSession.end(session);
     return await User.delete(user);
   }
@@ -64,12 +100,59 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
+  ///////////////
+  //// MEDIA ////
+  ///////////////
+
+  @Router.post("/media")
+  async createMedia(session: WebSessionDoc, media_url: string, target?: ObjectId) {
+    const user = WebSession.getUser(session);
+    const media = await Media.create(user, media_url, target);
+    return { msg: media.msg, media: media.media };
+  }
+
+  @Router.get("/media/:_id")
+  async getMediaById(_id: ObjectId) {
+    const media = await Media.getMediaById(_id);
+    return { msg: `Successfully retrieved the media '${_id}'`, media: media };
+  }
+
+  @Router.get("/media/byUsername/:username")
+  async getMediaByUsername(username: string) {
+    const user = await User.getUserByUsername(username);
+    const media = await Media.getMediaByCreator(user._id);
+    return { msg: `Successfully retrieved the media ${user.username} uploaded`, media: media };
+  }
+
+  @Router.get("/media/byTarget/:target")
+  async getMediaByTarget(target: ObjectId) {
+    return await Media.getMediaByTarget(target);
+  }
+
+  @Router.patch("/media/:_id")
+  async updateMedia(session: WebSessionDoc, _id: ObjectId, update: Partial<MediaDoc>) {
+    const user = WebSession.getUser(session);
+    await Media.isCreator(_id, user, true);
+    return await Media.update(_id, update);
+  }
+
+  @Router.delete("/media/:_id")
+  async deleteMedia(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Media.isCreator(_id, user, true);
+    return Media.delete(_id, user);
+  }
+
+  ///////////////
+  //// POSTS ////
+  ///////////////
+
   @Router.get("/posts")
   async getPosts(author?: string) {
     let posts;
     if (author) {
       const id = (await User.getUserByUsername(author))._id;
-      posts = await Post.getByAuthor(id);
+      posts = await Post.getPostsByAuthor(id);
     } else {
       posts = await Post.getPosts({});
     }
@@ -96,6 +179,10 @@ class Routes {
     await Post.isAuthor(user, _id);
     return Post.delete(_id);
   }
+
+  /////////////////
+  //// FRIENDS ////
+  /////////////////
 
   @Router.get("/friends")
   async getFriends(session: WebSessionDoc) {
@@ -144,127 +231,159 @@ class Routes {
     return await Friend.rejectRequest(fromId, user);
   }
 
-  @Router.get("/balance")
-  async getBalance(session: WebSessionDoc) {
+  @Router.patch("/interests")
+  async addInterest(session: WebSessionDoc, interests: Array<string>) {
     const user = WebSession.getUser(session);
-    return await Money.getBalance(user);
+    return await Interest.update(user, interests);
   }
 
-  @Router.patch("/balance/withdraw/:amount")
-  async withdraw(session: WebSessionDoc, amount: number) {
+  @Router.get("/interests")
+  async getInterests(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    return await Money.withdraw(user, amount);
+    return (await Interest.getByUser(user)).interests;
   }
 
-  @Router.patch("/balance/deposit/:amount")
-  async deposit(session: WebSessionDoc, amount: number) {
+  @Router.get("/news")
+  async addNews(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    return await Money.deposit(user, amount);
+    const tmp = await Interest.getNews(user);
+    return tmp;
   }
 
-  ///////////////
-  // Portfolio
-  ///////////////
-
-  @Router.post("/portfolio/create/:name/:isPublic")
-  async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
+  @Router.get("/chatbox")
+  async addMessages(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    return Portfolio.create(name, user, isPublic);
+    return await AIAgent.getByUser(user);
   }
 
-  // @Router.get("portfolio/value/:name")
-  // async getPortfolioValue(session: WebSessionDoc, name: string) {
-  //   const user = WebSession.getUser(session);
-  //   const isPublic = await Portfolio.portfolioIsPublic(name);
-  //   const portfolioOwner = await Portfolio.getPortfolioOwner(name);
-  //   if (!isPublic && portfolioOwner !== user) {
-  //     throw new NotAllowedError("Cannot view private portfolio which user does not own");
-  //   }
-  //   const assetIds = await Portfolio.getPortfolioShares(name);
-  //   let value = 0;
-  //   for (const id of assetIds) {
-  //     const asset = await Asset.getAssetById(id);
-  //     value += await Asset.getCurrentPrice(asset.ticker);
-  //   }
-  //   return value;
-  // }
+  //////////////////
+  //// AI AGENT ////
+  //////////////////
 
-  // @Router.patch("portfolio/purchase/:portfolioName/:ticker")
-  // async addStockToPortfolio(session: WebSessionDoc, portfolioName: string, ticker: string) {
-  //   const user = WebSession.getUser(session);
-  //   const portfolioOwner = await Portfolio.getPortfolioOwner(portfolioName);
-  //   if (portfolioOwner !== user) {
-  //     throw new NotAllowedError("Cannot add stock to portfolio which user does not own");
-  //   }
-  //   const asset = await Asset.getAssetByTicker(ticker);
-  //   Asset.addShareholderToAsset(asset._id, user);
-  //   Portfolio.addAssetToPortfolio();
-  // }
+  @Router.patch("/aiagent")
+  async getHelp(session: WebSessionDoc, decision: string) {
+    const user = WebSession.getUser(session);
+    await AIAgent.send(user, decision);
+    const response = await AIAgent.getResponse(user, decision);
+    return response;
+  }
 
-  // @Router.patch("portfolio/copy/:srcName/:dstName/:isPublic")
-  // async copyInvest(session: WebSessionDoc, srcName: string, dstName: string, isPublic: boolean) {
-  //   const user = WebSession.getUser(session);
-  //   const srcIsPublic = await Portfolio.portfolioIsPublic(srcName);
-  //   const portfolioOwner = await Portfolio.getPortfolioOwner(srcName);
-  //   if (!srcIsPublic && portfolioOwner !== user) {
-  //     throw new NotAllowedError("Cannot copy private portfolio which user does not own");
-  //   }
-  //   const dstPortfolio = Portfolio.create(dstName, user, isPublic);
-  //   const assetIds = await Portfolio.getPortfolioShares(srcName);
-  //   for (const id of assetIds) {
-  //     await Asset.addShareholderToAsset(asset._id, user);
-  //     await Portfolio.addAssetToPortfolio(dstName, id);
-  //   }
-  // }
+  @Router.patch("/aiagent/send")
+  async send(session: WebSessionDoc, decision: string) {
+    const user = WebSession.getUser(session);
+    return await AIAgent.send(user, decision);
+  }
 
-  // @Router.get("portfolio/topassets/:name")
-  // async getTopAssets(session: WebSessionDoc, name: string) {
-  //   const user = WebSession.getUser(session);
-  //   const isPublic = await Portfolio.portfolioIsPublic(name);
-  //   const portfolioOwner = await Portfolio.getPortfolioOwner(name);
-  //   if (!isPublic && portfolioOwner !== user) {
-  //     throw new NotAllowedError("Cannot view private portfolio which user does not own");
-  //   }
-  //   const assetIds = await Portfolio.getPortfolioShares(name);
-  //   const assetValues = new Map<string, number>();
-  //   for (const id of assetIds) {
-  //     const asset = await Asset.getAssetById(id);
-  //     const ticker = asset.ticker;
-  //     const value = await Asset.getCurrentPrice(ticker);
-  //     if (!assetValues.has(ticker)) {
-  //       assetValues.set(ticker, value);
-  //     } else {
-  //       const prevTotal = assetValues.get(ticker);
-  //       assetValues.set(ticker, prevTotal + value);
-  //     }
-  //   }
-  //   // ugly ;(
-  //   const topValues = new Array<number>(0, 0, 0);
-  //   const topAssets = new Array<string>("", "", "");
-  //   for (const [ticker, value] of assetValues) {
-  //     if (value > topValues[2]) {
-  //       if (value > topValues[1]) {
-  //         if (value > topValues[0]) {
-  //           topValues[2] = topValues[1];
-  //           topAssets[2] = topAssets[1];
-  //           topValues[1] = topValues[0];
-  //           topAssets[1] = topAssets[0];
-  //           topValues[0] = value;
-  //           topAssets[0] = ticker;
-  //         } else {
-  //           topValues[2] = topValues[1];
-  //           topAssets[2] = topAssets[1];
-  //           topValues[1] = value;
-  //           topAssets[1] = ticker;
-  //         }
-  //       } else {
-  //         topValues[2] = value;
-  //         topAssets[2] = ticker;
-  //       }
-  //     }
-  //   }
-  //   return topAssets;
-  // }
+  @Router.patch("/aiagent/receive")
+  async receive(session: WebSessionDoc, decision: string) {
+    const user = WebSession.getUser(session);
+    const response = await AIAgent.getResponse(user, decision);
+    return response;
+  }
+
+  ///////////
+  // ASSET //
+  ///////////
+
+  @Router.get("/assets")
+  async getAssets() {
+    const assets = await Asset.getAssets();
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/assets/search/:name")
+  async getAssetsByName(asset_name?: string) {
+    let assets;
+    if (asset_name) {
+      assets = await Asset.searchAssetsByName(asset_name);
+    } else {
+      assets = await Asset.getAssets();
+    }
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/assets/shareholders/:username")
+  async getAssetsByShareholderUsername(session: WebSessionDoc, username?: string) {
+    let user;
+    if (!username) {
+      user = WebSession.getUser(session);
+    } else {
+      user = (await User.getUserByUsername(username))._id;
+    }
+    const assets = await Asset.getAssetsByShareholderId(user);
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/asset/id/:_id")
+  async getAssetById(_id: ObjectId) {
+    const asset = await Asset.getAssetById(_id);
+    return Responses.asset(asset);
+  }
+
+  @Router.get("/asset/ticker/:ticker")
+  async getAssetByTicker(ticker: string) {
+    const asset = await Asset.getAssetByTicker(ticker);
+    return Responses.asset(asset);
+  }
+
+  @Router.get("/asset/name/:name")
+  async getAssetByName(asset_name: string) {
+    const asset = await Asset.getAssetByName(asset_name);
+    return Responses.asset(asset);
+  }
+
+  @Router.post("/asset")
+  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string, current_price: number) {
+    const asset = await Asset.create(asset_name, ticker, current_price);
+    return { msg: asset.msg, asset: asset.asset };
+  }
+
+  @Router.put("/assets/:ticker/:shareholder")
+  async addAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
+    if (!user) {
+      user = WebSession.getUser(session);
+    }
+    const asset = await Asset.getAssetByTicker(ticker);
+    const shareholders = await Asset.addShareholderToAsset(asset._id, user);
+    return {
+      msg: `User has been successfully added to '${asset.ticker}'s list of shareholders`,
+      shareholders: shareholders,
+    };
+  }
+
+  @Router.delete("/assets/:ticker/:shareholder")
+  async removeAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
+    if (!user) {
+      user = WebSession.getUser(session);
+    }
+    const asset = await Asset.getAssetByTicker(ticker);
+    await Asset.removeShareholderFromAsset(asset._id, user);
+    return { msg: `User '${user}' has successfully been removed from '${asset.ticker}'s list of shareholders` };
+  }
+
+  @Router.patch("/assets/:_id")
+  async updateAsset(session: WebSessionDoc, asset_id: ObjectId, update: Partial<AssetDoc>) {
+    const user = WebSession.getUser(session);
+    await Asset.isShareholder(asset_id, user);
+    return await Asset.update(asset_id, update);
+  }
+
+  @Router.delete("/assets/:_id")
+  async deleteAsset(session: WebSessionDoc, asset_id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Asset.isShareholder(asset_id, user, true);
+    return Asset.delete(asset_id);
+  }
+
+  @Router.get("/assets/price/:ticker")
+  async getCurrentPrice(ticker: string) {
+    return await Asset.getCurrentPrice(ticker);
+  }
+
+  @Router.get("/assets/history/:ticker")
+  async getHistoryPrice(ticker: string) {
+    return await Asset.getHistory(ticker);
+  }
 }
 
 export default getExpressRouter(new Routes());
