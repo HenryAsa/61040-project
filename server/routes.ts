@@ -425,7 +425,7 @@ class Routes {
   async deletePortfolio(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
     const portfolio = await Portfolio.getPortfolioById(_id);
-    if (user !== portfolio.owner) {
+    if (!user.equals(portfolio.owner)) {
       throw new NotAllowedError("Cannot delete a portfolio which user does not own!");
     }
     await Portfolio.delete(_id);
