@@ -40,7 +40,8 @@ onBeforeMount(async () => {
   <main>
     <div class="flex-container">
       <p>{{ props.portfolio.name }}</p>
-      <p>Portfolio Value: ${{ portfolioValue }}</p>
+      <p>Portfolio Value: ${{ portfolioValue }} {{ props.portfolio.owner }}</p>
+      <button class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
     </div>
   </main>
 </template>
