@@ -10,6 +10,7 @@ const props = defineProps(["portfolio"]);
 const emit = defineEmits(["refreshPortfolios"]);
 
 const portfolioValue = ref(0);
+const username = ref("");
 
 const deletePortfolio = async () => {
   try {
@@ -26,7 +27,7 @@ onBeforeMount(async () => {
   } catch (_) {
     console.log(_);
     try {
-      await fetchy(`/api/portfolios/${props.portfolio._id}`, "POST", {
+      await fetchy(`/api/portfolios`, "POST", {
         body: { isPublic: true },
       });
     } catch (_) {
