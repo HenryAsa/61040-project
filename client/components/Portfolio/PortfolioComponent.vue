@@ -9,7 +9,7 @@ let portfolioValue: number = 0;
 
 onBeforeMount(async () => {
   try {
-    portfolioValue = await fetchy(`/api/portfolio/value/${currentUsername}`, "GET");
+    portfolioValue = await fetchy(`/api/portfolio/value/${currentUsername.value}`, "GET");
   } catch {
     console.log("could not get value of portfolio");
     try {
