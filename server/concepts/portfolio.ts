@@ -35,7 +35,7 @@ export default class PortfolioConcept {
       const ownerName = (await User.getUserById(portfolio.owner)).username;
       return ownerName;
     } else {
-      throw new NotFoundError(`portfolio not found`);
+      throw new NotFoundError(`Portfolio not found!`);
     }
   }
 
@@ -48,7 +48,7 @@ export default class PortfolioConcept {
     if (portfolio) {
       return portfolio.isPublic;
     } else {
-      throw new NotFoundError(`portfolio not found`);
+      throw new NotFoundError(`Portfolio not found!`);
     }
   }
 
@@ -57,7 +57,7 @@ export default class PortfolioConcept {
     if (portfolio) {
       return portfolio.owner;
     } else {
-      throw new NotFoundError(`portfolio not found`);
+      throw new NotFoundError(`Portfolio not found!`);
     }
   }
 
@@ -66,7 +66,7 @@ export default class PortfolioConcept {
     if (portfolio) {
       return portfolio.shares;
     } else {
-      throw new NotFoundError(`portfolio not found`);
+      throw new NotFoundError(`Portfolio not found!`);
     }
   }
 
