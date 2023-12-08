@@ -9,6 +9,7 @@ import LoginView from "../views/LoginView.vue";
 import NewsView from "../views/NewsView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import PortfolioView from "../views/PortfolioView.vue";
+import ProfileView from "../views/ProfileView.vue";
 import SettingView from "../views/SettingView.vue";
 import StocksView from "../views/StocksView.vue";
 
@@ -66,6 +67,12 @@ const router = createRouter({
           return { name: "Settings" };
         }
       },
+    },
+    {
+      path: "/profile/:username",
+      name: "Profile",
+      component: ProfileView,
+      props: true,
     },
     {
       path: "/article/:url",
