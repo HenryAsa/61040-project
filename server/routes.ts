@@ -415,7 +415,7 @@ class Routes {
     return portfolio;
   }
 
-  @Router.post("/portfolios/:name")
+  @Router.post("/portfolios")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
     const user = WebSession.getUser(session);
     return Portfolio.create(name, user, isPublic);
@@ -466,7 +466,7 @@ class Routes {
     }
   }
 
-  @Router.get("/portfolios/:name/topassets")
+  @Router.get("/portfolios/:name/topAssets")
   async getTopAssets(session: WebSessionDoc, name: string) {
     const user = WebSession.getUser(session);
     const isPublic = await Portfolio.portfolioIsPublic(name);

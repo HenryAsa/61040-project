@@ -12,11 +12,11 @@ let portfolioValue: number = 0;
 
 onBeforeMount(async () => {
   try {
-    portfolioValue = await fetchy(`/api/portfolio/value/${props.portfolioName}`, "GET");
+    portfolioValue = await fetchy(`/api/portfolios/${props.portfolioName}/value`, "GET");
   } catch (_) {
     console.log(_);
     try {
-      await fetchy(`/api/portfolio/${props.portfolioName}`, "POST", {
+      await fetchy(`/api/portfolios/${props.portfolioName}`, "POST", {
         body: { isPublic: true },
       });
     } catch (_) {
