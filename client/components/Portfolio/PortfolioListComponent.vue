@@ -38,7 +38,7 @@ onBeforeMount(async () => {
   <section class="portfolios">
     <div v-if="loaded && portfolios.length !== 0">
       <article v-for="portfolio in portfolios" :key="portfolio._id">
-        <PortfolioComponent :portfolioName="portfolio.name" />
+        <PortfolioComponent :portfolio="portfolio" />
       </article>
     </div>
     <p v-else-if="loaded">No portfolios found</p>

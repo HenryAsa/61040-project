@@ -6,17 +6,17 @@ import { fetchy } from "../../utils/fetchy";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
-const props = defineProps(["portfolioName"]);
+const props = defineProps(["portfolio"]);
 
 const portfolioValue = ref(0);
 
 onBeforeMount(async () => {
   try {
-    portfolioValue.value = await fetchy(`/api/portfolios/${props.portfolioName}/value`, "GET");
+    portfolioValue.value = await fetchy(`/api/portfolios/${props.portfolio._id}/value`, "GET");
   } catch (_) {
     console.log(_);
     try {
-      await fetchy(`/api/portfolios/${props.portfolioName}`, "POST", {
+      await fetchy(`/api/portfolios/${props.portfolio._id}`, "POST", {
         body: { isPublic: true },
       });
     } catch (_) {
@@ -29,7 +29,7 @@ onBeforeMount(async () => {
 <template>
   <main>
     <div class="flex-container">
-      <p>{{ props.portfolioName }}</p>
+      <p>{{ props.portfolio.name }}</p>
       <p>Portfolio Value: ${{ portfolioValue }}</p>
     </div>
   </main>
