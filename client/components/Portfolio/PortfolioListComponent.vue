@@ -44,7 +44,7 @@ onBeforeMount(async () => {
       <PortfolioComponent />
     </article>
   </section>
-  <p v-else-if="loaded">No posts found</p>
+  <p v-else-if="loaded">No portfolios found</p>
   <p v-else>Loading...</p>
 </template>
 
