@@ -449,7 +449,7 @@ class Routes {
     const dstPortfolio = Portfolio.create(dstName, user, isPublic);
     const assetIds = await Portfolio.getPortfolioShares(srcName);
     for (const id of assetIds) {
-      await Asset.addShareholderToAsset(asset._id, user);
+      await Asset.addShareholderToAsset(id, user);
       await Portfolio.addAssetToPortfolio(dstName, id);
     }
   }
