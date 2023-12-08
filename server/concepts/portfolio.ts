@@ -45,7 +45,7 @@ export default class PortfolioConcept {
 
   async getViewablePortfoliosByOwner(owner: ObjectId, viewer: ObjectId) {
     if (viewer.equals(owner)) {
-      return await this.getPortfolioOwner(owner);
+      return await this.getPortfoliosByOwner(owner);
     }
     return await this.getPortfolios({ owner: owner, isPublic: true });
   }
