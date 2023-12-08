@@ -16,17 +16,14 @@ async function register() {
   if (profile_picture.value === "") {
     return;
   }
-  console.log(`THIS IS THE PROFILE URL:   ${profile_picture.value}`);
   await createUser(username.value, password.value, first_name.value, last_name.value, profile_picture.value);
   await loginUser(username.value, password.value);
   await updateSession();
-  console.log("Going to Home");
   void router.push({ name: "Home" });
 }
 
 async function assignURL(url: string) {
   profile_picture.value = url;
-  console.log(`JUST SET THE URL           ${url}`);
 }
 
 function assignPassword(userPassword: string) {
