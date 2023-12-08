@@ -185,7 +185,7 @@ class Routes {
     let value = 0;
     for (const id of assetIds) {
       const asset = await Asset.getAssetById(id);
-      value += Asset.getCurrentPrice(asset.ticker);
+      value += await Asset.getCurrentPrice(asset.ticker);
     }
     return value;
   }
@@ -216,6 +216,55 @@ class Routes {
       await Asset.addShareholderToAsset(asset._id, user);
       await Portfolio.addAssetToPortfolio(dstName, id);
     }
+  }
+
+  @Router.get("portfolio/topassets/:name")
+  async getTopAssets(session: WebSessionDoc, name: string) {
+    const user = WebSession.getUser(session);
+    const isPublic = await Portfolio.portfolioIsPublic(name);
+    const portfolioOwner = await Portfolio.getPortfolioOwner(name);
+    if (!isPublic && portfolioOwner !== user) {
+      throw new NotAllowedError("Cannot view private portfolio which user does not own");
+    }
+    const assetIds = await Portfolio.getPortfolioShares(name);
+    const assetValues = new Map<string, number>();
+    for (const id of assetIds) {
+      const asset = await Asset.getAssetById(id);
+      const ticker = asset.ticker;
+      const value = await Asset.getCurrentPrice(ticker);
+      if (!assetValues.has(ticker)) {
+        assetValues.set(ticker, value);
+      } else {
+        const prevTotal = assetValues.get(ticker);
+        assetValues.set(ticker, prevTotal + value);
+      }
+    }
+    // ugly ;(
+    const topValues = new Array<number>(0, 0, 0);
+    const topAssets = new Array<string>("", "", "");
+    for (const [ticker, value] of assetValues) {
+      if (value > topValues[2]) {
+        if (value > topValues[1]) {
+          if (value > topValues[0]) {
+            topValues[2] = topValues[1];
+            topAssets[2] = topAssets[1];
+            topValues[1] = topValues[0];
+            topAssets[1] = topAssets[0];
+            topValues[0] = value;
+            topAssets[0] = ticker;
+          } else {
+            topValues[2] = topValues[1];
+            topAssets[2] = topAssets[1];
+            topValues[1] = value;
+            topAssets[1] = ticker;
+          }
+        } else {
+          topValues[2] = value;
+          topAssets[2] = ticker;
+        }
+      }
+    }
+    return topAssets;
   }
 }
 
