@@ -298,7 +298,7 @@ class Routes {
   async deposit(session: WebSessionDoc, amount: number) {
     const user = WebSession.getUser(session);
     return await Money.deposit(user, amount);
-=======
+  }
   ///////////
   // ASSET //
   ///////////
