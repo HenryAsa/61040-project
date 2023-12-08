@@ -6,7 +6,7 @@ import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 
-const { isLoggedIn } = storeToRefs(useUserStore());
+const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
 
@@ -37,8 +37,9 @@ onBeforeMount(async () => {
 <template>
   <section class="portfolios">
     <div v-if="loaded && portfolios.length !== 0">
+      <h2>Private portfolios are hidden!</h2>
       <article v-for="portfolio in portfolios" :key="portfolio._id">
-        <PortfolioComponent :portfolio="portfolio" @refreshPortfolios="getPortfolios" />
+        <PortfolioComponent v-if="portfolio.ownerName == currentUsername || portfolio.isPublic" :portfolio="portfolio" @refreshPortfolios="getPortfolios" />
       </article>
     </div>
     <p v-else-if="loaded">No portfolios found</p>
@@ -74,5 +75,9 @@ article {
 
 .portfolios {
   padding: 1em;
+}
+
+h2 {
+  text-align: center;
 }
 </style>
