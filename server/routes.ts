@@ -403,7 +403,7 @@ class Routes {
     return await Asset.getHistory(ticker);
   }
 
-  @Router.post("/portfolio/create/:name")
+  @Router.post("/portfolio/:name")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
     const user = WebSession.getUser(session);
     return Portfolio.create(name, user, isPublic);
