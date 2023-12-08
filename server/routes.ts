@@ -435,7 +435,7 @@ class Routes {
     }
     const asset = await Asset.getAssetByTicker(ticker);
     await Asset.addShareholderToAsset(asset._id, user);
-    await Portfolio.addAssetToPortfolio();
+    await Portfolio.addAssetToPortfolio(portfolioName, asset._id);
   }
 
   @Router.patch("portfolio/copy/:srcName/:dstName/:isPublic")
