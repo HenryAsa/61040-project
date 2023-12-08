@@ -403,6 +403,18 @@ class Routes {
     return await Asset.getHistory(ticker);
   }
 
+  @Router.get("/portfolio")
+  async getPortfolios(owner?: string) {
+    let portfolio;
+    if (owner) {
+      const id = (await User.getUserByUsername(owner))._id;
+      portfolio = await Portfolio.getPortfoliosByOwner(id);
+    } else {
+      portfolio = await Portfolio.getPortfolios({});
+    }
+    return portfolio;
+  }
+
   @Router.post("/portfolio/:name")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
     const user = WebSession.getUser(session);
