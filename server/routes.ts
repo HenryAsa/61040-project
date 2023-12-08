@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { AIAgent, Asset, Friend, Interest, Media, Money, Post, User, WebSession } from "./app";
+import { AIAgent, Asset, Friend, Interest, Media, Post, User, WebSession } from "./app";
 import { AssetDoc } from "./concepts/asset";
 import { MediaDoc } from "./concepts/media";
 import { PostDoc, PostOptions } from "./concepts/post";
