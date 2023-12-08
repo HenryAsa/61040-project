@@ -105,7 +105,9 @@ onBeforeMount(async () => {
   } else {
     isFriend.value = checkFriend();
   }
-  await checkRequested();
+  if (props.outgoing) {
+    await checkRequested();
+  }
 });
 </script>
 

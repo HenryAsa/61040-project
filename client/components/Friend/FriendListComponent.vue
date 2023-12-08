@@ -6,7 +6,7 @@ import { storeToRefs } from "pinia";
 import FriendOptionComponent from "../Friend/FriendOptionComponent.vue";
 import PendingFriendListComponent from "./PendingFriendListComponent.vue";
 
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+const { currentUsername, isLoggedIn, currentFriends } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
 
@@ -27,7 +27,11 @@ async function updateFriends() {
 }
 
 onBeforeMount(async () => {
-  await updateFriends();
+  if (props.username == currentUsername.value) {
+    friends.value = currentFriends.value;
+  } else {
+    await updateFriends();
+  }
   loaded.value = true;
 });
 
