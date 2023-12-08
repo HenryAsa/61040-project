@@ -19,6 +19,33 @@ export default class PortfolioConcept {
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
 
+  async portfolioIsPublic(name: string) {
+    const portfolio = await this.portfolios.readOne({ name });
+    if (portfolio) {
+      return portfolio.isPublic;
+    } else {
+      throw new NotFoundError(`portfolio not found`);
+    }
+  }
+
+  async getPortfolioOwner(name: string) {
+    const portfolio = await this.portfolios.readOne({ name });
+    if (portfolio) {
+      return portfolio.owner;
+    } else {
+      throw new NotFoundError(`portfolio not found`);
+    }
+  }
+
+  async getPortfolioShares(name: string) {
+    const portfolio = await this.portfolios.readOne({ name });
+    if (portfolio) {
+      return portfolio.shares;
+    } else {
+      throw new NotFoundError(`portfolio not found`);
+    }
+  }
+
   async getPortfolioById(_id: ObjectId) {
     const portfolio = await this.portfolios.readOne({ _id });
     if (portfolio === null) {
@@ -35,10 +62,10 @@ export default class PortfolioConcept {
     return portfolio;
   }
 
-  async addAssetToPortfolio(_id: ObjectId, share: ObjectId) {
-    const portfolio = await this.getPortfolioById(_id);
-    await this.update(_id, { shares: portfolio.shares.concat(share) });
-    return { msg: `Successfully added share '${share}' to portfolio '${_id}'` };
+  async addAssetToPortfolio(name: string, share: ObjectId) {
+    const portfolio = await this.getPortfolioByName(name);
+    await this.update(portfolio._id, { shares: portfolio.shares.concat(share) });
+    return { msg: `Successfully added share '${share}' to portfolio '${name}'` };
   }
 
   async removeAssetFromPortfolio(_id: ObjectId, share: ObjectId) {
