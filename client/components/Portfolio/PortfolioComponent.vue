@@ -32,7 +32,7 @@ onBeforeMount(async () => {
 <template>
   <main>
     <div class="flex-container">
-      <p>{{ props.portfolio.name }}</p>
+      <h3>{{ props.portfolio.name }}</h3>
       <p>Portfolio Value: ${{ portfolioValue }}</p>
       <button v-if="props.portfolio.ownerName == currentUsername" class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
     </div>
