@@ -7,7 +7,7 @@ const emit = defineEmits(["refreshPortfolios"]);
 
 const createPortfolio = async (content: string) => {
   try {
-    await fetchy("/api/posts", "POST", {
+    await fetchy(`/api/portfolio/${content}`, "POST", {
       body: { content },
     });
   } catch (_) {
