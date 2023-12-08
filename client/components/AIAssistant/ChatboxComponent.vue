@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
-import { storeToRefs } from "pinia";
 import { onBeforeMount, onUpdated, ref } from "vue";
 import SendText from "./SendText.vue";
 import TextComponent from "./TextComponent.vue";
-
-const { isLoggedIn } = storeToRefs(useUserStore());
 
 const loaded = ref(false);
 let messages = ref<Array<Record<string, string>>>([]);
@@ -40,8 +36,7 @@ onBeforeMount(async () => {
       <TextComponent :message="message" @refreshPosts="getMessages" />
     </article>
   </section>
-  <p v-else-if="loaded">No posts found</p>
-  <p v-else>Loading...</p>
+  <p v-else-if="!loaded">Loading...</p>
   <section>
     <SendText @refreshChatbox="getMessages" />
   </section>

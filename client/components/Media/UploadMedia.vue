@@ -85,6 +85,5 @@ const uploadImage = async () => {
 }
 .h3 {
   text-align: center;
-  text: center;
 }
 </style>
