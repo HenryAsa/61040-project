@@ -51,7 +51,7 @@ class Routes {
     }
     // create a new account balance associated with this user
     if (user !== null) {
-      const userId = user._id;
+      const userId = user.user._id;
       await Money.create(userId);
     }
     return user.user;
