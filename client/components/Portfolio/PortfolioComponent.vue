@@ -5,15 +5,18 @@ import { onBeforeMount } from "vue";
 import { fetchy } from "../../utils/fetchy";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+
+const props = defineProps(["portfolioName"]);
+
 let portfolioValue: number = 0;
 
 onBeforeMount(async () => {
   try {
-    portfolioValue = await fetchy(`/api/portfolio/value/${currentUsername.value}`, "GET");
+    portfolioValue = await fetchy(`/api/portfolio/value/${props.portfolioName}`, "GET");
   } catch (_) {
     console.log(_);
     try {
-      await fetchy(`/api/portfolio/${currentUsername.value}`, "POST", {
+      await fetchy(`/api/portfolio/${props.portfolioName}`, "POST", {
         body: { isPublic: true },
       });
     } catch (_) {
