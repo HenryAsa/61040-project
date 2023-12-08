@@ -482,7 +482,7 @@ class Routes {
     const user = WebSession.getUser(session);
     const isPublic = await Portfolio.portfolioIsPublic(_id);
     const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
-    if (!isPublic && portfolioOwner !== user) {
+    if (!isPublic && !user.equals(portfolioOwner)) {
       throw new NotAllowedError("Cannot view private portfolio which user does not own");
     }
     const assetIds = await Portfolio.getPortfolioShares(_id);
