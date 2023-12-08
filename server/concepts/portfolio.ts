@@ -26,6 +26,10 @@ export default class PortfolioConcept {
     return posts;
   }
 
+  async getPortfoliosByOwner(owner: ObjectId) {
+    return await this.getPortfolios({ owner: owner });
+  }
+
   async portfolioIsPublic(name: string) {
     const portfolio = await this.portfolios.readOne({ name });
     if (portfolio) {
