@@ -47,7 +47,6 @@ export const useUserStore = defineStore(
         currentUserProfilePhoto.value = profile_photo;
         const friends = await fetchy("/api/friends", "GET");
         currentFriends.value = friends;
-        console.log("Update Session WORKED");
       } catch (_) {
         console.log(_);
         currentUsername.value = "";
@@ -56,7 +55,6 @@ export const useUserStore = defineStore(
         currentUserProfilePhoto.value = "";
         currentUsername.value = "";
         currentFriends.value = [];
-        console.log("Update Session NOT WORKING");
       }
     };
 
