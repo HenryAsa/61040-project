@@ -10,14 +10,14 @@ let portfolioValue: number = 0;
 onBeforeMount(async () => {
   try {
     portfolioValue = await fetchy(`/api/portfolio/value/${currentUsername.value}`, "GET");
-  } catch {
-    console.log("could not get value of portfolio");
+  } catch (_) {
+    console.log(_);
     try {
       await fetchy(`/api/portfolio/${currentUsername.value}`, "POST", {
         body: { isPublic: true },
       });
-    } catch {
-      console.log("could not create new portfolio");
+    } catch (_) {
+      console.log(_);
     }
   }
 });
