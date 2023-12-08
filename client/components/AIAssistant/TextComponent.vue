@@ -2,6 +2,7 @@
 const props = defineProps(["message"]);
 const isAI = props.message.author === "ai";
 </script>
+
 <template>
   <section :class="{ 'bubble right': isAI, 'bubble left': !isAI }">
     <p markdown="block">{{ props.message.text }}</p>

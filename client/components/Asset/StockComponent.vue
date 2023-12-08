@@ -1,43 +1,36 @@
 <script setup lang="ts">
-import ArticleComponent from "@/components/News/ArticleComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
-import UpdateInterestForm from "./UpdateInterestForm.vue";
+import ChartComponent from "./ChartComponent.vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
+const props = defineProps(["ticker"]);
+const currentPrice = ref<number>(0);
 
-const loaded = ref(false);
-let articles = ref([]);
-
-async function getArticles() {
-  let newsResults;
+async function getCurrentPrice() {
+  let results;
   try {
-    newsResults = await fetchy("/api/news", "GET", {});
+    results = await fetchy(`/api/assets/price/${props.ticker}`, "GET", {});
   } catch (_) {
     return;
   }
-  articles.value = newsResults;
+  currentPrice.value = results;
+  return;
 }
 
 onBeforeMount(async () => {
-  await getArticles();
-  loaded.value = true;
+  await getCurrentPrice();
 });
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
-    <UpdateInterestForm @refreshArticles="getArticles" />
-  </section>
-  <section class="articles" v-if="loaded && articles.length !== 0">
-    <article v-for="article in articles" :key="article">
-      <ArticleComponent :article="article" />
-    </article>
-  </section>
-  <p v-else-if="loaded">No articles found</p>
-  <p v-else>Loading...</p>
+  <p>{{ props.ticker }}</p>
+  <p>current price: {{ currentPrice }}</p>
+  <dev>
+    <ChartComponent :ticker="props.ticker" />
+  </dev>
 </template>
 
 <style scoped>
