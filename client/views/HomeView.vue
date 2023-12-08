@@ -3,6 +3,7 @@ import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
 import PostListComponent from "@/components/Post/PostListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import MoneyComponent from "../components/Money/MoneyComponent.vue";
 import { ref } from "vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
@@ -25,6 +26,7 @@ const friendListRef = ref();
         <PostListComponent :searchEnabled="true" :createPostEnabled="true" />
       </div>
       <div class="split right">
+        <MoneyComponent />
         <FriendListComponent :username="currentUsername" ref="friendListRef" />
       </div>
     </div>
