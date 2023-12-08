@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Filter, ObjectId } from "mongodb";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 
@@ -17,6 +17,13 @@ export default class PortfolioConcept {
     const shares = Array<ObjectId>();
     const _id = await this.portfolios.createOne({ name, owner, isPublic, shares });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
+  }
+
+  async getPortfolios(query: Filter<PortfolioDoc>) {
+    const posts = await this.portfolios.readMany(query, {
+      sort: { dateUpdated: -1 },
+    });
+    return posts;
   }
 
   async portfolioIsPublic(name: string) {
