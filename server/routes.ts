@@ -421,25 +421,25 @@ class Routes {
     return Portfolio.create(name, user, isPublic);
   }
 
-  @Router.delete("/portfolios/:name")
-  async deletePortfolio(session: WebSessionDoc, name: string) {
+  @Router.delete("/portfolios/:_id")
+  async deletePortfolio(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    const portfolio = await Portfolio.getPortfolioByName(name);
+    const portfolio = await Portfolio.getPortfolioById(_id);
     if (user !== portfolio.owner) {
       throw new NotAllowedError("Cannot delete a portfolio which user does not own!");
     }
-    await Portfolio.delete(portfolio._id);
+    await Portfolio.delete(_id);
   }
 
-  @Router.get("/portfolios/:name/value")
-  async getPortfolioValue(session: WebSessionDoc, name: string) {
+  @Router.get("/portfolios/:_id/value")
+  async getPortfolioValue(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    const isPublic = await Portfolio.portfolioIsPublic(name);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(name);
+    const isPublic = await Portfolio.portfolioIsPublic(_id);
+    const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
     if (!isPublic && portfolioOwner !== user) {
       throw new NotAllowedError("Cannot view private portfolio which user does not own");
     }
-    const assetIds = await Portfolio.getPortfolioShares(name);
+    const assetIds = await Portfolio.getPortfolioShares(_id);
     let value = 0;
     for (const id of assetIds) {
       const asset = await Asset.getAssetById(id);
@@ -448,43 +448,43 @@ class Routes {
     return value;
   }
 
-  @Router.patch("/portfolios/purchase/:portfolioName/:ticker")
-  async addStockToPortfolio(session: WebSessionDoc, portfolioName: string, ticker: string) {
+  @Router.patch("/portfolios/purchase/:_id/:ticker")
+  async addStockToPortfolio(session: WebSessionDoc, _id: ObjectId, ticker: string) {
     const user = WebSession.getUser(session);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(portfolioName);
+    const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
     if (portfolioOwner !== user) {
       throw new NotAllowedError("Cannot add stock to portfolio which user does not own");
     }
     const asset = await Asset.getAssetByTicker(ticker);
     await Asset.addShareholderToAsset(asset._id, user);
-    await Portfolio.addAssetToPortfolio(portfolioName, asset._id);
+    await Portfolio.addAssetToPortfolio(_id, asset._id);
   }
 
-  @Router.patch("/portfolios/copy/:srcName/:dstName/:isPublic")
-  async copyInvest(session: WebSessionDoc, srcName: string, dstName: string, isPublic: boolean) {
+  @Router.patch("/portfolios/copy/:srcId/:dstId/:isPublic")
+  async copyInvest(session: WebSessionDoc, srcId: ObjectId, dstId: ObjectId, isPublic: boolean) {
     const user = WebSession.getUser(session);
-    const srcIsPublic = await Portfolio.portfolioIsPublic(srcName);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(srcName);
+    const srcIsPublic = await Portfolio.portfolioIsPublic(srcId);
+    const portfolioOwner = await Portfolio.getPortfolioOwner(srcId);
     if (!srcIsPublic && portfolioOwner !== user) {
       throw new NotAllowedError("Cannot copy private portfolio which user does not own");
     }
-    const dstPortfolio = Portfolio.create(dstName, user, isPublic);
-    const assetIds = await Portfolio.getPortfolioShares(srcName);
+    //const dstPortfolio = Portfolio.create(dstName, user, isPublic);
+    const assetIds = await Portfolio.getPortfolioShares(srcId);
     for (const id of assetIds) {
       await Asset.addShareholderToAsset(id, user);
-      await Portfolio.addAssetToPortfolio(dstName, id);
+      await Portfolio.addAssetToPortfolio(dstId, id);
     }
   }
 
-  @Router.get("/portfolios/:name/topAssets")
-  async getTopAssets(session: WebSessionDoc, name: string) {
+  @Router.get("/portfolios/:_id/topAssets")
+  async getTopAssets(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    const isPublic = await Portfolio.portfolioIsPublic(name);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(name);
+    const isPublic = await Portfolio.portfolioIsPublic(_id);
+    const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
     if (!isPublic && portfolioOwner !== user) {
       throw new NotAllowedError("Cannot view private portfolio which user does not own");
     }
-    const assetIds = await Portfolio.getPortfolioShares(name);
+    const assetIds = await Portfolio.getPortfolioShares(_id);
     const assetValues = new Map<string, number>();
     for (const id of assetIds) {
       const asset = await Asset.getAssetById(id);
