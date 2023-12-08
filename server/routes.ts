@@ -434,8 +434,8 @@ class Routes {
       throw new NotAllowedError("Cannot add stock to portfolio which user does not own");
     }
     const asset = await Asset.getAssetByTicker(ticker);
-    Asset.addShareholderToAsset(asset._id, user);
-    Portfolio.addAssetToPortfolio();
+    await Asset.addShareholderToAsset(asset._id, user);
+    await Portfolio.addAssetToPortfolio();
   }
 
   @Router.patch("portfolio/copy/:srcName/:dstName/:isPublic")
