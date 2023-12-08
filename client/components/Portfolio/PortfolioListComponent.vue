@@ -13,7 +13,7 @@ const props = defineProps(["username"]);
 const loaded = ref(false);
 let portfolios = ref<Array<Record<string, string>>>([]);
 
-async function getPosts(owner?: string) {
+async function getPortfolios(owner?: string) {
   let query: Record<string, string> = owner !== undefined ? { owner } : {};
   let portfolioResults;
   try {
@@ -26,9 +26,9 @@ async function getPosts(owner?: string) {
 
 onBeforeMount(async () => {
   if (props.username) {
-    await getPosts(props.username);
+    await getPortfolios(props.username);
   } else {
-    await getPosts();
+    await getPortfolios();
   }
   loaded.value = true;
 });
@@ -38,14 +38,14 @@ onBeforeMount(async () => {
   <section class="portfolios">
     <div v-if="loaded && portfolios.length !== 0">
       <article v-for="portfolio in portfolios" :key="portfolio._id">
-        <PortfolioComponent :portfolio="portfolio" />
+        <PortfolioComponent :portfolio="portfolio" @refreshPortfolios="getPortfolios" />
       </article>
     </div>
     <p v-else-if="loaded">No portfolios found</p>
     <p v-else>Loading...</p>
   </section>
   <section v-if="isLoggedIn">
-    <CreatePortfolioComponent @refreshPosts="getPosts" />
+    <CreatePortfolioComponent @refreshPortfolios="getPortfolios" />
   </section>
 </template>
 
