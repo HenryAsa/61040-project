@@ -403,7 +403,7 @@ class Routes {
     return await Asset.getHistory(ticker);
   }
 
-  @Router.get("/portfolio")
+  @Router.get("/portfolios")
   async getPortfolios(owner?: string) {
     let portfolio;
     if (owner) {
@@ -415,13 +415,13 @@ class Routes {
     return portfolio;
   }
 
-  @Router.post("/portfolio/:name")
+  @Router.post("/portfolios/:name")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
     const user = WebSession.getUser(session);
     return Portfolio.create(name, user, isPublic);
   }
 
-  @Router.get("/portfolio/value/:name")
+  @Router.get("/portfolios/:name/value")
   async getPortfolioValue(session: WebSessionDoc, name: string) {
     const user = WebSession.getUser(session);
     const isPublic = await Portfolio.portfolioIsPublic(name);
@@ -438,7 +438,7 @@ class Routes {
     return value;
   }
 
-  @Router.patch("/portfolio/purchase/:portfolioName/:ticker")
+  @Router.patch("/portfolios/purchase/:portfolioName/:ticker")
   async addStockToPortfolio(session: WebSessionDoc, portfolioName: string, ticker: string) {
     const user = WebSession.getUser(session);
     const portfolioOwner = await Portfolio.getPortfolioOwner(portfolioName);
@@ -450,7 +450,7 @@ class Routes {
     await Portfolio.addAssetToPortfolio(portfolioName, asset._id);
   }
 
-  @Router.patch("/portfolio/copy/:srcName/:dstName/:isPublic")
+  @Router.patch("/portfolios/copy/:srcName/:dstName/:isPublic")
   async copyInvest(session: WebSessionDoc, srcName: string, dstName: string, isPublic: boolean) {
     const user = WebSession.getUser(session);
     const srcIsPublic = await Portfolio.portfolioIsPublic(srcName);
@@ -466,7 +466,7 @@ class Routes {
     }
   }
 
-  @Router.get("/portfolio/topassets/:name")
+  @Router.get("/portfolios/:name/topassets")
   async getTopAssets(session: WebSessionDoc, name: string) {
     const user = WebSession.getUser(session);
     const isPublic = await Portfolio.portfolioIsPublic(name);
