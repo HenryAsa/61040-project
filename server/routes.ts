@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { AIAgent, Asset, Friend, Interest, Media, Post, User, WebSession } from "./app";
+import { AIAgent, Asset, Friend, Interest, Media, Money, Post, User, WebSession } from "./app";
 import { AssetDoc } from "./concepts/asset";
 import { MediaDoc } from "./concepts/media";
 import { PostDoc, PostOptions } from "./concepts/post";
@@ -48,6 +48,11 @@ class Routes {
     if (user.user?._id) {
       await Interest.create(user.user?._id);
       await AIAgent.create(user.user?._id);
+    }
+    // create a new account balance associated with this user
+    if (user !== null) {
+      const userId = user.user._id;
+      await Money.create(userId);
     }
     return user.user;
   }

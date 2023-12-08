@@ -8,6 +8,7 @@ import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
 import NewsView from "../views/NewsView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
+import PortfolioView from "../views/PortfolioView.vue";
 import SettingView from "../views/SettingView.vue";
 import StocksView from "../views/StocksView.vue";
 
@@ -50,6 +51,18 @@ const router = createRouter({
       beforeEnter: (to, from) => {
         const { isLoggedIn } = storeToRefs(useUserStore());
         if (isLoggedIn.value) {
+          return { name: "Settings" };
+        }
+      },
+    },
+    {
+      path: "/portfolio",
+      name: "Portfolio",
+      component: PortfolioView,
+      meta: { requiresAuth: false },
+      beforeEnter: (to, from) => {
+        const { isLoggedIn } = storeToRefs(useUserStore());
+        if (!isLoggedIn.value) {
           return { name: "Settings" };
         }
       },
