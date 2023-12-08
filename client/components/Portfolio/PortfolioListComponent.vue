@@ -35,7 +35,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn && props.createPostEnabled">
+  <section v-if="isLoggedIn">
     <h2>Create a portfolio:</h2>
     <CreatePortfolioComponent @refreshPosts="getPosts" />
   </section>
