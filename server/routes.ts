@@ -429,7 +429,7 @@ class Routes {
     if (!user.equals(portfolio.owner)) {
       throw new NotAllowedError("Cannot delete a portfolio which user does not own!");
     }
-    await Portfolio.delete(_id);
+    return Portfolio.delete(_id);
   }
 
   @Router.get("/portfolios/:_id/value")
