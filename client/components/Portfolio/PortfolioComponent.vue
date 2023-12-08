@@ -9,7 +9,9 @@ let portfolioValue: number = 0;
 
 onBeforeMount(async () => {
   try {
-    await fetchy(`/api/portfolio/create/${currentUsername.value}/true`, "POST");
+    await fetchy(`/api/portfolio/create/${currentUsername.value}`, "POST", {
+      body: { isPublic: true },
+    });
   } catch (e) {
     // user already has portfolio
   }
