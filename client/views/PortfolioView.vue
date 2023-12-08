@@ -8,11 +8,13 @@ import { fetchy } from "../utils/fetchy";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
+const props = defineProps(["username"]);
+
 let topAssets = new Array<string>("AAPL", "TSLA", "AMZN");
 
 onBeforeMount(async () => {
   try {
-    topAssets = await fetchy(`/api/portfolio/topAssets/${currentUsername.value}`, "GET");
+    topAssets = await fetchy(`/api/portfolio/topAssets/${props.username}`, "GET");
   } catch {
     console.log("could not get top assets of portfolio");
   }
@@ -25,7 +27,7 @@ onBeforeMount(async () => {
       <h1 v-if="!isLoggedIn">Please login!</h1>
       <h1 v-else>{{ currentUsername }}</h1>
     </section>
-    <PortfolioListComponent />
+    <PortfolioListComponent :username="props.username" />
     <MoneyComponent />
     <div class="holdings">
       <h1>Your Holdings</h1>

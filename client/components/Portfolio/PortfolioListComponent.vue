@@ -8,7 +8,7 @@ import { onBeforeMount, ref } from "vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
-const props = defineProps(["startingFilter"]);
+const props = defineProps(["username"]);
 
 const loaded = ref(false);
 let portfolios = ref<Array<Record<string, string>>>([]);
@@ -25,8 +25,8 @@ async function getPosts(owner?: string) {
 }
 
 onBeforeMount(async () => {
-  if (props.startingFilter) {
-    await getPosts(props.startingFilter);
+  if (props.username) {
+    await getPosts(props.username);
   } else {
     await getPosts();
   }
@@ -38,7 +38,7 @@ onBeforeMount(async () => {
   <section class="portfolios">
     <div v-if="loaded && portfolios.length !== 0">
       <article v-for="portfolio in portfolios" :key="portfolio._id">
-        <PortfolioComponent />
+        <PortfolioComponent :portfolioName="portfolio" />
       </article>
     </div>
     <p v-else-if="loaded">No portfolios found</p>
