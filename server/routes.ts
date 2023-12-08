@@ -48,6 +48,7 @@ class Routes {
     if (user.user?._id) {
       await Interest.create(user.user?._id);
       await AIAgent.create(user.user?._id);
+      await Money.create(user.user?._id);
     }
     // create a new account balance associated with this user
     if (user !== null) {
@@ -281,6 +282,23 @@ class Routes {
     return response;
   }
 
+  @Router.get("/balance")
+  async getBalance(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Money.getBalance(user);
+  }
+
+  @Router.patch("/balance/withdraw/:amount")
+  async withdraw(session: WebSessionDoc, amount: number) {
+    const user = WebSession.getUser(session);
+    return await Money.withdraw(user, amount);
+  }
+
+  @Router.patch("/balance/deposit/:amount")
+  async deposit(session: WebSessionDoc, amount: number) {
+    const user = WebSession.getUser(session);
+    return await Money.deposit(user, amount);
+  }
   ///////////
   // ASSET //
   ///////////

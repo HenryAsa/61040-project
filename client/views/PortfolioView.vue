@@ -12,7 +12,7 @@ let topAssets = new Array<string>("AAPL", "TSLA", "AMZN");
 
 onBeforeMount(async () => {
   try {
-    topAssets = await fetchy(`/api/portfolio/topAssets/${currentUsername}`, "GET");
+    topAssets = await fetchy(`/api/portfolio/topAssets/${currentUsername.value}`, "GET");
   } catch {
     console.log("could not get top assets of portfolio");
   }
