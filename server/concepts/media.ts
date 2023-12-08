@@ -26,9 +26,9 @@ export default class MediaConcept {
 
   async getMediaByCreator(user: ObjectId) {
     const media = await this.media.readMany({ creator: user });
-    if (media.length === 0) {
-      throw new NotFoundError(`This user has not uploaded any media`);
-    }
+    // if (media.length === 0) {
+    //   throw new NotFoundError(`This user has not uploaded any media`);
+    // }
     return media;
   }
 

@@ -2,7 +2,8 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { AIAgent, Friend, Interest, Media, Post, User, WebSession } from "./app";
+import { AIAgent, Asset, Friend, Interest, Media, Money, Post, User, WebSession } from "./app";
+import { AssetDoc } from "./concepts/asset";
 import { MediaDoc } from "./concepts/media";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
@@ -29,7 +30,7 @@ class Routes {
     return user;
   }
 
-  @Router.get("/usersSearchByUsername")
+  @Router.get("/users/search/:username")
   async searchUsersByUsername(username?: string) {
     let users;
     if (username) {
@@ -47,6 +48,11 @@ class Routes {
     if (user.user?._id) {
       await Interest.create(user.user?._id);
       await AIAgent.create(user.user?._id);
+    }
+    // create a new account balance associated with this user
+    if (user !== null) {
+      const userId = user.user._id;
+      await Money.create(userId);
     }
     return user.user;
   }
@@ -105,10 +111,10 @@ class Routes {
     return { msg: media.msg, media: media.media };
   }
 
-  @Router.get("/media/:id")
-  async getMediaById(id: ObjectId) {
-    const media = await Media.getMediaById(id);
-    return { msg: `Successfully retrieved the media '${id}'`, media: media };
+  @Router.get("/media/:_id")
+  async getMediaById(_id: ObjectId) {
+    const media = await Media.getMediaById(_id);
+    return { msg: `Successfully retrieved the media '${_id}'`, media: media };
   }
 
   @Router.get("/media/byUsername/:username")
@@ -273,6 +279,110 @@ class Routes {
     const user = WebSession.getUser(session);
     const response = await AIAgent.getResponse(user, decision);
     return response;
+  }
+
+  ///////////
+  // ASSET //
+  ///////////
+
+  @Router.get("/assets")
+  async getAssets() {
+    const assets = await Asset.getAssets();
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/assets/search/:name")
+  async getAssetsByName(asset_name?: string) {
+    let assets;
+    if (asset_name) {
+      assets = await Asset.searchAssetsByName(asset_name);
+    } else {
+      assets = await Asset.getAssets();
+    }
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/assets/shareholders/:username")
+  async getAssetsByShareholderUsername(session: WebSessionDoc, username?: string) {
+    let user;
+    if (!username) {
+      user = WebSession.getUser(session);
+    } else {
+      user = (await User.getUserByUsername(username))._id;
+    }
+    const assets = await Asset.getAssetsByShareholderId(user);
+    return Responses.assets(assets);
+  }
+
+  @Router.get("/asset/id/:_id")
+  async getAssetById(_id: ObjectId) {
+    const asset = await Asset.getAssetById(_id);
+    return Responses.asset(asset);
+  }
+
+  @Router.get("/asset/ticker/:ticker")
+  async getAssetByTicker(ticker: string) {
+    const asset = await Asset.getAssetByTicker(ticker);
+    return Responses.asset(asset);
+  }
+
+  @Router.get("/asset/name/:name")
+  async getAssetByName(asset_name: string) {
+    const asset = await Asset.getAssetByName(asset_name);
+    return Responses.asset(asset);
+  }
+
+  @Router.post("/asset")
+  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string, current_price: number) {
+    const asset = await Asset.create(asset_name, ticker, current_price);
+    return { msg: asset.msg, asset: asset.asset };
+  }
+
+  @Router.put("/assets/:ticker/:shareholder")
+  async addAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
+    if (!user) {
+      user = WebSession.getUser(session);
+    }
+    const asset = await Asset.getAssetByTicker(ticker);
+    const shareholders = await Asset.addShareholderToAsset(asset._id, user);
+    return {
+      msg: `User has been successfully added to '${asset.ticker}'s list of shareholders`,
+      shareholders: shareholders,
+    };
+  }
+
+  @Router.delete("/assets/:ticker/:shareholder")
+  async removeAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
+    if (!user) {
+      user = WebSession.getUser(session);
+    }
+    const asset = await Asset.getAssetByTicker(ticker);
+    await Asset.removeShareholderFromAsset(asset._id, user);
+    return { msg: `User '${user}' has successfully been removed from '${asset.ticker}'s list of shareholders` };
+  }
+
+  @Router.patch("/assets/:_id")
+  async updateAsset(session: WebSessionDoc, asset_id: ObjectId, update: Partial<AssetDoc>) {
+    const user = WebSession.getUser(session);
+    await Asset.isShareholder(asset_id, user);
+    return await Asset.update(asset_id, update);
+  }
+
+  @Router.delete("/assets/:_id")
+  async deleteAsset(session: WebSessionDoc, asset_id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Asset.isShareholder(asset_id, user, true);
+    return Asset.delete(asset_id);
+  }
+
+  @Router.get("/assets/price/:ticker")
+  async getCurrentPrice(ticker: string) {
+    return await Asset.getCurrentPrice(ticker);
+  }
+
+  @Router.get("/assets/history/:ticker")
+  async getHistoryPrice(ticker: string) {
+    return await Asset.getHistory(ticker);
   }
 }
 
