@@ -23,7 +23,7 @@ async function copyPortfolio(newPortfolioName: string) {
     const newPortfolio = await fetchy(`/api/portfolios`, "POST", {
       body: { name: newPortfolioName },
     });
-    await fetchy(`/api/portfolios/copy/${props.portfolio._id}/${newPortfolio._id}`, "DELETE");
+    await fetchy(`/api/portfolios/copy/${props.portfolio._id}/${newPortfolio._id}`, "PATCH");
   } catch (_) {
     return;
   }
