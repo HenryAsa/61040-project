@@ -12,6 +12,11 @@ const emit = defineEmits(["refreshPortfolios"]);
 const loaded = ref(false);
 const portfolioValue = ref(0);
 const topAssets = ref(new Array<string>("AAPL", "TSLA", "AMZN"));
+const copying = ref(false);
+
+async function toggleCopy() {
+  copying.value = !copying.value;
+}
 
 async function copyPortfolio() {
   try {
@@ -36,7 +41,7 @@ onBeforeMount(async () => {
 <template>
   <main v-if="props.portfolio.ownerName != currentUsername">
     <div v-if="loaded" class="flex-container">
-      <button class="button-error btn-small pure-button" @click="copyPortfolio">Copy</button>
+      <button v-if="!copying" class="button-error btn-small pure-button" @click="toggleCopy">Copy</button>
     </div>
     <div v-else>
       <p>Loading...</p>
