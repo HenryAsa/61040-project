@@ -461,8 +461,8 @@ class Routes {
     await Portfolio.addAssetToPortfolio(_id, asset._id);
   }
 
-  @Router.patch("/portfolios/copy/:srcId/:dstId/:isPublic")
-  async copyInvest(session: WebSessionDoc, srcId: ObjectId, dstId: ObjectId, isPublic: boolean) {
+  @Router.patch("/portfolios/copy/:srcId/:dstId")
+  async copyInvest(session: WebSessionDoc, srcId: ObjectId, dstId: ObjectId) {
     const user = WebSession.getUser(session);
     const srcIsPublic = await Portfolio.portfolioIsPublic(srcId);
     const portfolioOwner = await Portfolio.getPortfolioOwner(srcId);
