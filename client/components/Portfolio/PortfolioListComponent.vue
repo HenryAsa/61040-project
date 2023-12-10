@@ -4,7 +4,7 @@ import PortfolioComponent from "./PortfolioComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import CopyPortfolioComponent from "./CopyPortfolioComponent.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
@@ -32,13 +32,19 @@ onBeforeMount(async () => {
     await getPortfolios();
   }
   loaded.value = true;
+  watch(
+    () => props.username,
+    async (newUsername, oldUsername) => {
+      await getPortfolios(newUsername);
+    },
+  );
 });
 </script>
 
 <template>
   <section class="portfolios">
     <div v-if="loaded && portfolios.length !== 0">
-      <h2 v-if="username !== currentUsername">Private portfolios are hidden!</h2>
+      <h2 v-if="props.username !== currentUsername">Private portfolios are hidden!</h2>
       <article v-for="portfolio in portfolios" :key="portfolio._id">
         <PortfolioComponent v-if="portfolio.ownerName == currentUsername || portfolio.isPublic" :portfolio="portfolio" @refreshPortfolios="getPortfolios" />
         <CopyPortfolioComponent v-if="portfolio.ownerName !== currentUsername" :portfolio="portfolio" />
@@ -47,7 +53,7 @@ onBeforeMount(async () => {
     <p v-else-if="loaded">No portfolios found</p>
     <p v-else>Loading...</p>
   </section>
-  <section v-if="isLoggedIn && username === currentUsername">
+  <section v-if="isLoggedIn && props.username === currentUsername">
     <CreatePortfolioComponent @refreshPortfolios="getPortfolios" />
   </section>
 </template>
