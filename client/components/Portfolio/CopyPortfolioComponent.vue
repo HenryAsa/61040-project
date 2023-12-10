@@ -13,12 +13,13 @@ const loaded = ref(false);
 const portfolioValue = ref(0);
 const topAssets = ref(new Array<string>("AAPL", "TSLA", "AMZN"));
 const copying = ref(false);
+const content = ref("");
 
 async function toggleCopy() {
   copying.value = !copying.value;
 }
 
-async function copyPortfolio() {
+async function copyPortfolio(newPortfolioName: string) {
   try {
     await fetchy(`/api/portfolios/${props.portfolio._id}`, "DELETE");
   } catch (_) {
@@ -42,6 +43,9 @@ onBeforeMount(async () => {
   <main v-if="props.portfolio.ownerName != currentUsername">
     <div v-if="loaded" class="flex-container">
       <button v-if="!copying" class="button-error btn-small pure-button" @click="toggleCopy">Copy</button>
+      <form v-else @submit.prevent="copyPortfolio(content)">
+        <textarea id="content" v-model="content" placeholder="Portfolio name" required> </textarea>
+      </form>
     </div>
     <div v-else>
       <p>Loading...</p>
