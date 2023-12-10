@@ -36,16 +36,7 @@ onBeforeMount(async () => {
 <template>
   <main>
     <div v-if="loaded" class="flex-container">
-      <h3>{{ props.portfolio.name }}</h3>
-      <p>Portfolio Value: ${{ portfolioValue }}</p>
       <button v-if="props.portfolio.ownerName == currentUsername" class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
-      <h3>Top Holdings</h3>
-      <div v-if="topAssets[0] !== ''">
-        <p v-for="asset in topAssets" :key="asset">{{ asset }}</p>
-      </div>
-      <div v-else>
-        <p>No top holdings!</p>
-      </div>
     </div>
     <div v-else>
       <p>Loading...</p>
