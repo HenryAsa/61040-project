@@ -13,7 +13,7 @@ const loaded = ref(false);
 const portfolioValue = ref(0);
 const topAssets = ref(new Array<string>("AAPL", "TSLA", "AMZN"));
 
-async function deletePortfolio() {
+async function copyPortfolio() {
   try {
     await fetchy(`/api/portfolios/${props.portfolio._id}`, "DELETE");
   } catch (_) {
@@ -36,7 +36,7 @@ onBeforeMount(async () => {
 <template>
   <main v-if="props.portfolio.ownerName != currentUsername">
     <div v-if="loaded" class="flex-container">
-      <button v-if="props.portfolio.ownerName == currentUsername" class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
+      <button class="button-error btn-small pure-button" @click="copyPortfolio">Copy</button>
     </div>
     <div v-else>
       <p>Loading...</p>
