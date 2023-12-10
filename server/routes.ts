@@ -466,7 +466,7 @@ class Routes {
     const user = WebSession.getUser(session);
     const srcIsPublic = await Portfolio.portfolioIsPublic(srcId);
     const portfolioOwner = await Portfolio.getPortfolioOwner(srcId);
-    if (!srcIsPublic && portfolioOwner !== user) {
+    if (!srcIsPublic && !portfolioOwner.equals(user)) {
       throw new NotAllowedError("Cannot copy private portfolio which user does not own");
     }
     //const dstPortfolio = Portfolio.create(dstName, user, isPublic);
