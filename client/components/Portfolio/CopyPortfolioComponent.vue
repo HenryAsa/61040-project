@@ -7,7 +7,6 @@ import { fetchy } from "../../utils/fetchy";
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const props = defineProps(["portfolio"]);
-const emit = defineEmits(["refreshPortfolios"]);
 
 const loaded = ref(false);
 const portfolioValue = ref(0);
@@ -25,7 +24,6 @@ async function copyPortfolio(newPortfolioName: string) {
   } catch (_) {
     return;
   }
-  emit("refreshPortfolios");
 }
 
 onBeforeMount(async () => {
