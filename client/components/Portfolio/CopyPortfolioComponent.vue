@@ -48,7 +48,7 @@ onBeforeMount(async () => {
         <textarea id="content" v-model="content" placeholder="Portfolio name" required> </textarea>
         <menu>
           <li><button class="btn-small pure-button-primary pure-button" type="submit">Save</button></li>
-          <li><button class="btn-small pure-button" @click="emit('editPost')">Cancel</button></li>
+          <li><button class="btn-small pure-button" @click="toggleCopy">Cancel</button></li>
         </menu>
       </form>
     </div>
