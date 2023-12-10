@@ -20,6 +20,9 @@ async function toggleCopy() {
 
 async function copyPortfolio(newPortfolioName: string) {
   try {
+    await fetchy(`/api/portfolios`, "POST", {
+      body: { name: newPortfolioName },
+    });
     await fetchy(`/api/portfolios/${props.portfolio._id}`, "DELETE");
   } catch (_) {
     return;
