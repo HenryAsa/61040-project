@@ -1,4 +1,4 @@
-import { Filter, ObjectId } from "mongodb";
+import { Filter, FindOptions, ObjectId } from "mongodb";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 import { User } from "../app";
@@ -21,10 +21,15 @@ export default class PortfolioConcept {
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
 
-  async getPortfolios(query: Filter<PortfolioDoc>) {
-    const posts = await this.portfolios.readMany(query, {
-      sort: { dateUpdated: -1 },
-    });
+  async getPortfolios(query: Filter<PortfolioDoc>, sort?: FindOptions<PortfolioDoc>) {
+    let posts;
+    if (sort) {
+      posts = await this.portfolios.readMany(query, sort);
+    } else {
+      posts = await this.portfolios.readMany(query, {
+        sort: { dateUpdated: -1 },
+      });
+    }
     return posts;
   }
 
