@@ -469,7 +469,7 @@ class Routes {
     if (!srcIsPublic && !portfolioOwner.equals(user)) {
       throw new NotAllowedError("Cannot copy private portfolio which user does not own");
     }
-    //const dstPortfolio = Portfolio.create(dstName, user, isPublic);
+    const dstPortfolio = await Portfolio.getPortfolioById(dstId);
     const assetIds = await Portfolio.getPortfolioShares(srcId);
     for (const id of assetIds) {
       await Asset.addShareholderToAsset(id, user);
