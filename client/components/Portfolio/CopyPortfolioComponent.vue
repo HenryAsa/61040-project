@@ -4,13 +4,11 @@ import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
 
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+const { currentUsername } = storeToRefs(useUserStore());
 
 const props = defineProps(["portfolio"]);
 
 const loaded = ref(false);
-const portfolioValue = ref(0);
-const topAssets = ref(new Array<string>("AAPL", "TSLA", "AMZN"));
 const copying = ref(false);
 const content = ref("");
 
@@ -30,12 +28,6 @@ async function copyPortfolio(newPortfolioName: string) {
 }
 
 onBeforeMount(async () => {
-  try {
-    portfolioValue.value = await fetchy(`/api/portfolios/${props.portfolio._id}/value`, "GET");
-    topAssets.value = await fetchy(`/api/portfolios/${props.portfolio._id}/topAssets`, "GET");
-  } catch (_) {
-    console.log(_);
-  }
   loaded.value = true;
 });
 </script>
