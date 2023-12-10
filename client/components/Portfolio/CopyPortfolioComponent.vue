@@ -69,4 +69,12 @@ p {
   justify-content: space-between;
   align-items: center;
 }
+
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0.5em;
+  border-radius: 4px;
+  resize: none;
+}
 </style>
