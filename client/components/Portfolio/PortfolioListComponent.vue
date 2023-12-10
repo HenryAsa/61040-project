@@ -15,7 +15,7 @@ const loaded = ref(false);
 let portfolios = ref<Array<{ _id: 0; ownerName: ""; isPublic: false }>>([]);
 
 async function getPortfolios(owner?: string) {
-  let query: Record<string, string> = owner !== undefined ? { owner } : {};
+  let query: Record<string, string> = owner !== undefined ? { ownerName: owner } : {};
   let portfolioResults;
   try {
     portfolioResults = await fetchy("/api/portfolios", "GET", { query });
