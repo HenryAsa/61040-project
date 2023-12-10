@@ -37,7 +37,7 @@ onBeforeMount(async () => {
     <div v-if="loaded" class="flex-container">
       <button v-if="!copying" class="btn-small pure-button pure-button-primary" @click="toggleCopy">Copy</button>
       <form v-else @submit.prevent="copyPortfolio(content)">
-        <textarea id="content" v-model="content" placeholder="Portfolio name" required> </textarea>
+        <textarea id="content" v-model="content" placeholder="Copied portfolio name" required> </textarea>
         <div class="buttons">
           <button class="btn-small pure-button-primary pure-button" type="submit">Save</button>
           <button class="btn-small pure-button" @click="toggleCopy">Cancel</button>
@@ -76,5 +76,9 @@ textarea {
   padding: 0.5em;
   border-radius: 4px;
   resize: none;
+}
+
+form {
+  text-align: center;
 }
 </style>
