@@ -45,7 +45,7 @@ onBeforeMount(async () => {
     <p v-else-if="loaded">No portfolios found</p>
     <p v-else>Loading...</p>
   </section>
-  <section v-if="isLoggedIn">
+  <section v-if="isLoggedIn && username === currentUsername">
     <CreatePortfolioComponent @refreshPortfolios="getPortfolios" />
   </section>
 </template>
