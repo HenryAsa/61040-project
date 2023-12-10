@@ -43,7 +43,7 @@ onBeforeMount(async () => {
 <template>
   <main v-if="props.portfolio.ownerName != currentUsername">
     <div v-if="loaded" class="flex-container">
-      <button v-if="!copying" class="button-error btn-small pure-button" @click="toggleCopy">Copy</button>
+      <button v-if="!copying" class="btn-small pure-button pure-button-primary" @click="toggleCopy">Copy</button>
       <form v-else @submit.prevent="copyPortfolio(content)">
         <textarea id="content" v-model="content" placeholder="Portfolio name" required> </textarea>
       </form>
