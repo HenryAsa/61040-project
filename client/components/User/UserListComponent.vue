@@ -1,47 +1,46 @@
 <script setup lang="ts">
-import PostComponent from "@/components/Post/PostComponent.vue";
 import { fetchy } from "@/utils/fetchy";
 import { onBeforeMount, ref } from "vue";
 import SearchUserForm from "./SearchUserForm.vue";
+import MiniUserView from "./MiniUserView.vue";
 
 const props = defineProps([]);
 
 const loaded = ref(false);
 let users = ref<Array<Record<string, string>>>([]);
 let editing = ref("");
-let searchAuthor = ref("");
+let searchUser = ref("");
 
-async function getPosts(author?: string) {
-  let query: Record<string, string> = author !== undefined ? { author } : {};
+async function getUsers(username?: string) {
   let postResults;
   try {
-    postResults = await fetchy("/api/posts", "GET", { query });
+    if (username) {
+      postResults = await fetchy(`/api/users/search/${username}`, "GET");
+    } else {
+      postResults = await fetchy("/api/users", "GET");
+    }
   } catch (_) {
     return;
   }
-  searchAuthor.value = author ? author : "";
-  posts.value = postResults;
-}
-
-function updateEditing(id: string) {
-  editing.value = id;
+  searchUser.value = username ? username : "";
+  users.value = postResults;
 }
 
 onBeforeMount(async () => {
-  await getPosts();
+  await getUsers();
   loaded.value = true;
 });
 </script>
 
 <template>
   <div class="row">
-    <h2 v-if="!searchAuthor">Posts:</h2>
-    <h2 v-else>Posts by {{ searchAuthor }}:</h2>
-    <SearchUserForm @getPostsByAuthor="getPosts" />
+    <h2 v-if="!searchUser">Users:</h2>
+    <h2 v-else>User Filter: {{ searchUser }}:</h2>
+    <SearchUserForm @getUsersByName="getUsers" />
   </div>
-  <section class="posts" v-if="loaded && posts.length !== 0">
-    <article v-for="post in posts" :key="post._id">
-      <PostComponent v-if="editing !== post._id" :post="post" @refreshPosts="getPosts" @editPost="updateEditing" />
+  <section class="posts" v-if="loaded && users.length !== 0">
+    <article v-for="user in users" :key="user._id">
+      <MiniUserView :user="user" />
     </article>
   </section>
   <p v-else-if="loaded">No posts found</p>
