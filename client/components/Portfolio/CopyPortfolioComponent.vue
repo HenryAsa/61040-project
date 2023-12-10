@@ -38,10 +38,10 @@ onBeforeMount(async () => {
       <button v-if="!copying" class="btn-small pure-button pure-button-primary" @click="toggleCopy">Copy</button>
       <form v-else @submit.prevent="copyPortfolio(content)">
         <textarea id="content" v-model="content" placeholder="Portfolio name" required> </textarea>
-        <menu>
-          <li><button class="btn-small pure-button-primary pure-button" type="submit">Save</button></li>
-          <li><button class="btn-small pure-button" @click="toggleCopy">Cancel</button></li>
-        </menu>
+        <div class="buttons">
+          <button class="btn-small pure-button-primary pure-button" type="submit">Save</button>
+          <button class="btn-small pure-button" @click="toggleCopy">Cancel</button>
+        </div>
       </form>
     </div>
     <div v-else>
@@ -62,5 +62,11 @@ h1 {
 
 p {
   margin: auto;
+}
+
+.base {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
