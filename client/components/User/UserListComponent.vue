@@ -8,7 +8,6 @@ const props = defineProps([]);
 
 const loaded = ref(false);
 let users = ref<Array<Record<string, string>>>([]);
-let editing = ref("");
 let searchUser = ref("");
 
 async function getUsers(username?: string) {
