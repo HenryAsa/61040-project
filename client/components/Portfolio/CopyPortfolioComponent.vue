@@ -34,7 +34,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <main>
+  <main v-if="props.portfolio.ownerName != currentUsername">
     <div v-if="loaded" class="flex-container">
       <button v-if="props.portfolio.ownerName == currentUsername" class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
     </div>
