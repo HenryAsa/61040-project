@@ -3,7 +3,7 @@ const props = defineProps(["user"]);
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'Profile', params: { username: props.user } }">
+  <RouterLink :to="{ name: 'Profile', params: { username: props.user.username } }">
     <div class="base">
       <img v-bind:src="props.user.profile_photo" />
       <div class="username-text">
