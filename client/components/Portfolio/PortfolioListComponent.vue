@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+import CopyPortfolioComponent from "./CopyPortfolioComponent.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
@@ -40,6 +41,7 @@ onBeforeMount(async () => {
       <h2 v-if="username !== currentUsername">Private portfolios are hidden!</h2>
       <article v-for="portfolio in portfolios" :key="portfolio._id">
         <PortfolioComponent v-if="portfolio.ownerName == currentUsername || portfolio.isPublic" :portfolio="portfolio" @refreshPortfolios="getPortfolios" />
+        <CopyPortfolioComponent v-if="portfolio.ownerName !== currentUsername" :portfolio="portfolio" />
       </article>
     </div>
     <p v-else-if="loaded">No portfolios found</p>
