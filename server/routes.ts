@@ -405,18 +405,8 @@ class Routes {
   }
 
   @Router.get("/portfolios")
-  async getPortfolios(session: WebSessionDoc, owner?: string, query?: Filter<PortfolioDoc>, sort?: FindOptions<PortfolioDoc>) {
-    const user = WebSession.getUser(session);
-    let portfolio;
-    if (owner) {
-      const id = (await User.getUserByUsername(owner))._id;
-      portfolio = await Portfolio.getViewablePortfoliosByOwner(id, user);
-    } else {
-      portfolio = await Portfolio.getPortfolios({ isPublic: true });
-    }
-
-
-
+  async getPortfolios(session: WebSessionDoc, query: Filter<PortfolioDoc>, sort?: FindOptions<PortfolioDoc>) {
+    const portfolio = await Portfolio.getPortfolios(query, sort);
     return portfolio;
   }
 
