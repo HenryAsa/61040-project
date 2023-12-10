@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, Filter, FindOptions } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 import { NotAllowedError } from "./concepts/errors";
@@ -8,6 +8,7 @@ import { MediaDoc } from "./concepts/media";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
+import { PortfolioDoc } from "./concepts/portfolio";
 import Responses from "./responses";
 
 class Routes {
@@ -404,7 +405,7 @@ class Routes {
   }
 
   @Router.get("/portfolios")
-  async getPortfolios(session: WebSessionDoc, owner?: string) {
+  async getPortfolios(session: WebSessionDoc, owner?: string, query?: Filter<PortfolioDoc>, sort?: FindOptions<PortfolioDoc>) {
     const user = WebSession.getUser(session);
     let portfolio;
     if (owner) {
@@ -413,6 +414,9 @@ class Routes {
     } else {
       portfolio = await Portfolio.getPortfolios({ isPublic: true });
     }
+
+
+
     return portfolio;
   }
 
