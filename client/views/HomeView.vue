@@ -26,6 +26,7 @@ const friendListRef = ref();
     <div class="split-wrapper" v-else>
       <div class="split left">
         <PostListComponent :searchEnabled="true" :createPostEnabled="true" />
+        <UserListComponent />
       </div>
       <div class="split right">
         <MoneyComponent />
