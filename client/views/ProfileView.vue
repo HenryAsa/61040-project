@@ -19,6 +19,9 @@ onBeforeMount(async () => {});
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
     </div>
+    <RouterLink :to="{ name: 'Settings' }">
+      <button class="pure-button">Settings</button>
+    </RouterLink>
     <div class="split-wrapper">
       <div class="split left">
         <h3>Portfolios</h3>
