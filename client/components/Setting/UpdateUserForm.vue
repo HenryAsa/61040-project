@@ -32,11 +32,15 @@ async function updatePassword() {
 async function updatePicture() {
   await updateUser({ profilePhoto: profilePicture.value });
   await updateSession();
-  password.value = "";
+  profilePicture.value = "";
 }
 
 async function assignURL(url: string) {
   profilePicture.value = url;
+}
+
+function assignPassword(userPassword: string) {
+  password.value = userPassword;
 }
 </script>
 
@@ -70,7 +74,7 @@ async function assignURL(url: string) {
   <form @submit.prevent="updatePassword" class="pure-form">
     <fieldset>
       <legend>Change your password</legend>
-      <input type="password" placeholder="New password" v-model="password" required />
+      <PasswordValidation @userPassword="assignPassword" id="aligned-password" placeholder="Password" required></PasswordValidation>
       <button type="submit" class="pure-button pure-button-primary">Update password</button>
     </fieldset>
   </form>
