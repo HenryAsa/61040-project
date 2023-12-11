@@ -5,16 +5,16 @@ import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 export interface UserDoc extends BaseDoc {
   username: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  profilePhoto: string; // ObjectId maybe?
+  first_name: string;
+  last_name: string;
+  profile_photo: string; // ObjectId maybe?
 }
 
 export interface SanitizedUserDoc extends BaseDoc {
   username: string;
-  firstName: string;
-  lastName: string;
-  profilePhoto: string; // ObjectId maybe?
+  first_name: string;
+  last_name: string;
+  profile_photo: string; // ObjectId maybe?
 }
 
 export default class UserConcept {
@@ -22,7 +22,7 @@ export default class UserConcept {
 
   async create(username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
     await this.canCreate(username, password, first_name, last_name, profile_photo);
-    const _id = await this.users.createOne({ username: username, password: password, firstName: first_name, lastName: last_name, profilePhoto: profile_photo });
+    const _id = await this.users.createOne({ username: username, password: password, first_name: first_name, last_name: last_name, profile_photo: profile_photo });
     return { msg: "User created successfully!", user: await this.getUserById(_id) };
   }
 
