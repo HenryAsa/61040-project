@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import MoneyComponent from "../components/Money/MoneyComponent.vue";
 import { ref } from "vue";
+import UserListComponent from "../components/User/UserListComponent.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
@@ -20,10 +21,12 @@ const friendListRef = ref();
     </section>
     <div v-if="!isLoggedIn">
       <PostListComponent :searchEnabled="true" />
+      <UserListComponent />
     </div>
     <div class="split-wrapper" v-else>
       <div class="split left">
         <PostListComponent :searchEnabled="true" :createPostEnabled="true" />
+        <UserListComponent />
       </div>
       <div class="split right">
         <MoneyComponent />
