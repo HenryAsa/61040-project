@@ -66,8 +66,8 @@ function assignPassword(userPassword: string) {
   </form>
 
   <form @submit.prevent="updatePicture" class="pure-form">
-    <UploadMedia @update:imageURL="assignURL" required></UploadMedia>
     <fieldset>
+      <UploadMedia @update:imageURL="assignURL" required></UploadMedia>
       <legend>Change your profile picture</legend>
       <button type="submit" class="pure-button pure-button-primary">Update profile picture</button>
     </fieldset>
