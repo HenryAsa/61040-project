@@ -30,7 +30,7 @@ async function checkRequested() {
   try {
     const requests = await fetchy(`/api/friend/requests`, "GET");
     for (const request of requests) {
-      if (request.from == props.other && request.status == "pending") {
+      if (request.to == props.other && request.status == "pending") {
         requested.value = true;
       }
     }
@@ -121,12 +121,12 @@ onBeforeMount(async () => {
   <div class="friend-box">
     <div v-if="!selfFriend">
       <div v-if="!isFriend && props.outgoing" class="send-request">
-        <button v-if="!requested" class="pure-button" @click="sendFriendRequest">Send Friend Request</button>
+        <button v-if="!requested" class="pure-button-primary pure-button" @click="sendFriendRequest">Send Friend Request</button>
         <button v-else class="pure-button" @click="cancelRequest">Cancel Request</button>
       </div>
       <div v-else-if="!isFriend" class="recieve-request">
-        <button class="pure-button" @click="acceptRequest">Accept</button>
-        <button class="pure-button" @click="rejectRequest">Reject</button>
+        <button class="button-success pure-button" @click="acceptRequest">Accept</button>
+        <button class="button-error pure-button" @click="rejectRequest">Reject</button>
       </div>
       <button v-if="isFriend" class="pure-button" @click="unfriend">Unfriend</button>
     </div>
@@ -134,13 +134,6 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
-button {
-  margin: 0em;
-  margin-right: 1em;
-  background-color: var(--darker-bg);
-  color: var(--font-color);
-}
-
 .friend-box {
   display: flex;
   justify-content: space-between;

@@ -46,7 +46,14 @@ defineExpose({ updateFriends });
           <RouterLink :to="{ name: 'Profile', params: { username: friend } }">
             <p class="username">{{ friend }}</p>
           </RouterLink>
-          <FriendOptionComponent v-if="isLoggedIn && currentUsername == props.username" :user="props.username" :other="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />
+          <FriendOptionComponent
+            class="unfriend"
+            v-if="isLoggedIn && currentUsername == props.username"
+            :user="props.username"
+            :other="friend"
+            :isFriendOverride="true"
+            @refreshFriends="updateFriends"
+          />
         </article>
       </section>
       <p v-else>No friends</p>
@@ -72,7 +79,7 @@ section {
 
 section,
 p {
-  margin: auto;
+  margin: 0 auto;
   max-width: 65em;
 }
 
@@ -82,6 +89,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 0em;
+  padding: 1em;
 }
 
 p {
@@ -90,7 +98,7 @@ p {
   padding: 1em;
 }
 
-.pending-friends {
-  margin-top: 1em;
+.unfriend {
+  float: right;
 }
 </style>
