@@ -90,7 +90,7 @@ export default class PortfolioConcept {
   }
 
   async getPortfolioByName(name: string) {
-    const portfolio = await this.getPortfolios({ name });
+    const portfolio = await this.getPortfolios({ name: name });
     if (portfolio === null) {
       throw new NotFoundError(`Portfolio not found!`);
     }
