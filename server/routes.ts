@@ -415,14 +415,14 @@ class Routes {
     return portfolio;
   }
 
-  @Router.get("/portfoliosByOwner/:user")
+  @Router.get("/portfoliosForSelf")
   async getAllPortfoliosBySelf(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     const portfolios = await Portfolio.getPortfoliosByOwner(user);
     return portfolios;
   }
 
-  @Router.get("/portfoliosByOwner/:user")
+  @Router.get("/portfoliosByOwner/:username")
   async getAllPortfoliosByOwnerUsername(username: string) {
     const user = await User.getUserByUsername(username);
     const portfolios = await Portfolio.getPortfoliosByOwner(user._id);
