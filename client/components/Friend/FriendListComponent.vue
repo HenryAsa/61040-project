@@ -43,7 +43,9 @@ defineExpose({ updateFriends });
     <div v-if="loaded">
       <section class="friends" v-if="friends.length !== 0">
         <article v-for="friend in friends" :key="friend._id">
-          <p class="username">{{ friend }}</p>
+          <RouterLink :to="{ name: 'Profile', params: { username: friend } }">
+            <p class="username">{{ friend }}</p>
+          </RouterLink>
           <FriendOptionComponent v-if="isLoggedIn && currentUsername == props.username" :user="props.username" :other="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />
         </article>
       </section>
