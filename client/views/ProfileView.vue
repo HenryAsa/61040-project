@@ -18,10 +18,10 @@ onBeforeMount(async () => {});
     <div class="profile-wrapper">
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
+      <RouterLink class="settings" :to="{ name: 'Settings' }">
+        <button class="pure-button">Settings</button>
+      </RouterLink>
     </div>
-    <RouterLink :to="{ name: 'Settings' }">
-      <button class="pure-button">Settings</button>
-    </RouterLink>
     <div class="split-wrapper">
       <div class="split left">
         <h3>Portfolios</h3>
@@ -40,6 +40,8 @@ onBeforeMount(async () => {});
   background: var(--darker-bg);
   padding: 2em;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 h2 {
@@ -90,5 +92,9 @@ h3 {
 .right {
   flex-grow: 1;
   padding: 1em;
+}
+
+.settings {
+  float: right;
 }
 </style>
