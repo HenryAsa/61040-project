@@ -15,8 +15,7 @@ class Routes {
   @Router.get("/session")
   async getSessionUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    const user_object = await User.getUserById(user);
-    return user_object;
+    return await User.getUserById(user);
   }
 
   @Router.get("/users")

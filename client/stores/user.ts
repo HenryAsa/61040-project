@@ -40,11 +40,11 @@ export const useUserStore = defineStore(
 
     const updateSession = async () => {
       try {
-        const { username, first_name, last_name, profile_photo } = await fetchy("/api/session", "GET", { alert: false });
+        const { username, firstName, lastName, profilePhoto } = await fetchy("/api/session", "GET", { alert: false });
         currentUsername.value = username;
-        currentUserFirstName.value = first_name;
-        currentUserLastName.value = last_name;
-        currentUserProfilePhoto.value = profile_photo;
+        currentUserFirstName.value = firstName;
+        currentUserLastName.value = lastName;
+        currentUserProfilePhoto.value = profilePhoto;
         const friends = await fetchy("/api/friends", "GET");
         currentFriends.value = friends;
       } catch (_) {
