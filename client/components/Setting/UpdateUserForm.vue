@@ -6,6 +6,7 @@ let username = ref("");
 let password = ref("");
 let firstName = ref("");
 let lastName = ref("");
+let profilePicture = ref("");
 
 const { updateUser, updateSession } = useUserStore();
 
@@ -27,6 +28,16 @@ async function updatePassword() {
   await updateSession();
   password.value = "";
 }
+
+async function updatePicture() {
+  await updateUser({ profilePhoto: profilePicture.value });
+  await updateSession();
+  password.value = "";
+}
+
+async function assignURL(url: string) {
+  profilePicture.value = url;
+}
 </script>
 
 <template>
@@ -44,6 +55,14 @@ async function updatePassword() {
     <fieldset>
       <legend>Change your username</legend>
       <input type="text" placeholder="New username" v-model="username" required />
+      <button type="submit" class="pure-button pure-button-primary">Update username</button>
+    </fieldset>
+  </form>
+
+  <form @submit.prevent="updatePicture" class="pure-form">
+    <UploadMedia @update:imageURL="assignURL" required></UploadMedia>
+    <fieldset>
+      <legend>Change your profile picture</legend>
       <button type="submit" class="pure-button pure-button-primary">Update username</button>
     </fieldset>
   </form>
