@@ -43,7 +43,7 @@ onBeforeMount(async () => {
       <h2 v-if="props.username !== currentUsername">Private portfolios are hidden!</h2>
       <article v-for="portfolio in portfolios" :key="portfolio._id">
         <PortfolioComponent v-if="portfolio.ownerName == currentUsername || portfolio.isPublic" :portfolio="portfolio" @refreshPortfolios="getPortfolios" />
-        <CopyPortfolioComponent v-if="isLoggedIn && portfolio.ownerName !== currentUsername" :portfolio="portfolio" />
+        <CopyPortfolioComponent v-if="portfolio.ownerName !== currentUsername" :portfolio="portfolio" />
       </article>
     </div>
     <p v-else-if="loaded">No portfolios found</p>

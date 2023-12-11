@@ -433,17 +433,11 @@ class Routes {
 
   @Router.get("/portfolios/:_id/value")
   async getPortfolioValue(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
     const isPublic = await Portfolio.portfolioIsPublic(_id);
-    if (session.user) {
-      const user = WebSession.getUser(session);
-      const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
-      if (!isPublic && !portfolioOwner.equals(user)) {
-        throw new NotAllowedError("Cannot view private portfolio which the user does not own");
-      }
-    } else {
-      if (!isPublic) {
-        throw new NotAllowedError("Cannot view private portfolio");
-      }
+    const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
+    if (!isPublic && !user.equals(portfolioOwner)) {
+      throw new NotAllowedError("Cannot view private portfolio which the user does not own");
     }
     const assetIds = await Portfolio.getPortfolioShares(_id);
     let value = 0;
@@ -483,17 +477,11 @@ class Routes {
 
   @Router.get("/portfolios/:_id/topAssets")
   async getTopAssets(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
     const isPublic = await Portfolio.portfolioIsPublic(_id);
-    if (session.user) {
-      const user = WebSession.getUser(session);
-      const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
-      if (!isPublic && !user.equals(portfolioOwner)) {
-        throw new NotAllowedError("Cannot view private portfolio which user does not own");
-      }
-    } else {
-      if (!isPublic) {
-        throw new NotAllowedError("Cannot view private portfolio");
-      }
+    const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
+    if (!isPublic && !user.equals(portfolioOwner)) {
+      throw new NotAllowedError("Cannot view private portfolio which user does not own");
     }
     const assetIds = await Portfolio.getPortfolioShares(_id);
     const assetValues = new Map<string, number>();
