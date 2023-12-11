@@ -53,21 +53,21 @@ onBeforeMount(async () => {
   <div class="flex-container">
     <div class="flex-text" id="balance">Balance: ${{ balance }}</div>
     <div class="flex-item">
-      <button v-if="!showDepositInput" @click="showDepositInput = !showDepositInput" type="submit" class="pure-button-primary pure-button">Deposit</button>
+      <button v-if="!showDepositInput" @click="showDepositInput = !showDepositInput" type="submit" class="button-secondary pure-button">Deposit</button>
       <button v-else @click="showDepositInput = !showDepositInput" type="submit" class="pure-button-primary pure-button">Cancel</button>
     </div>
     <div class="flex-item">
-      <button v-if="!showWithdrawInput" @click="showWithdrawInput = !showWithdrawInput" type="submit" class="pure-button-primary pure-button">Withdraw</button>
+      <button v-if="!showWithdrawInput" @click="showWithdrawInput = !showWithdrawInput" type="submit" class="button-secondary pure-button">Withdraw</button>
       <button v-else @click="showWithdrawInput = !showWithdrawInput" type="submit" class="pure-button-primary pure-button">Cancel</button>
     </div>
   </div>
   <div v-if="showDepositInput" class="flex-container">
     <input type="number" v-model="depositAmount" />
-    <button @click="deposit" type="submit" class="pure-button-primary pure-button">Deposit</button>
+    <button @click="deposit" type="submit" class="button-secondary pure-button">Deposit</button>
   </div>
   <div v-if="showWithdrawInput" class="flex-container">
     <input type="number" v-model="withdrawAmount" />
-    <button @click="withdraw" type="submit" class="pure-button-primary pure-button">Withdraw</button>
+    <button @click="withdraw" type="submit" class="button-secondary pure-button">Withdraw</button>
   </div>
 </template>
 
@@ -83,8 +83,5 @@ onBeforeMount(async () => {
 }
 .flex-item {
   margin-right: 5px;
-}
-.pure-button {
-  background-color: black;
 }
 </style>
