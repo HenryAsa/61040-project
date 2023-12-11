@@ -110,8 +110,7 @@ onBeforeMount(async () => {
   }
   watch(
     () => props.other,
-    async (newOther, oldOther) => {
-      console.log(newOther);
+    async () => {
       checkFriend();
     },
   );
