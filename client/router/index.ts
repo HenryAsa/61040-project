@@ -57,12 +57,6 @@ const router = createRouter({
       },
     },
     {
-      path: "/portfolio/:username",
-      name: "Portfolio",
-      component: PortfolioView,
-      props: true,
-    },
-    {
       path: "/profile/:username",
       name: "Profile",
       component: ProfileView,
