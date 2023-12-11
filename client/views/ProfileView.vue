@@ -4,6 +4,7 @@ import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vu
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount } from "vue";
+import PortfolioView from "./PortfolioView.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
@@ -19,6 +20,10 @@ onBeforeMount(async () => {});
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
     </div>
     <PostListComponent :searchEnabled="false" :startingFilter="props.username" />
+    <div class="portfolio-wrapper">
+      <h3>Portfolio</h3>
+      <PortfolioView />
+    </div>
   </div>
 </template>
 
@@ -48,6 +53,10 @@ h2 {
 }
 
 .logged-out {
+  text-align: center;
+}
+
+h3 {
   text-align: center;
 }
 </style>
