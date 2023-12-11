@@ -89,6 +89,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 0em;
+  padding: 1em;
 }
 
 p {
