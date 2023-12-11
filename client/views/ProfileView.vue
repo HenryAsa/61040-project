@@ -20,7 +20,7 @@ onBeforeMount(async () => {});
     </div>
     <div class="portfolio-wrapper">
       <h3>Portfolio</h3>
-      <PortfolioView />
+      <PortfolioView :username="props.username" />
     </div>
   </div>
 </template>
