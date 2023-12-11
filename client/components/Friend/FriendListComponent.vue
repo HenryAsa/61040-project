@@ -42,7 +42,6 @@ defineExpose({ updateFriends });
   <div class="list-wrapper">
     <div v-if="loaded">
       <section class="friends" v-if="friends.length !== 0">
-        <p>Friends</p>
         <article v-for="friend in friends" :key="friend._id">
           <p class="username">{{ friend }}</p>
           <FriendOptionComponent v-if="isLoggedIn && currentUsername == props.username" :user="props.username" :other="friend" :isFriendOverride="true" @refreshFriends="updateFriends" />

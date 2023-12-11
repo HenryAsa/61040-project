@@ -25,6 +25,7 @@ onBeforeMount(async () => {});
         <PortfolioView :username="props.username" />
       </div>
       <div class="split right">
+        <h3>Friends</h3>
         <FriendListComponent :username="currentUsername" ref="friendListRef" />
       </div>
     </div>
