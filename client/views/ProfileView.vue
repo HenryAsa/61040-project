@@ -19,7 +19,7 @@ onBeforeMount(async () => {});
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
       <RouterLink v-if="isLoggedIn && props.username == currentUsername" class="settings" :to="{ name: 'Settings' }">
-        <button class="pure-button">Settings</button>
+        <button class="button-secondary pure-button">Settings</button>
       </RouterLink>
     </div>
     <div class="split-wrapper">
@@ -77,7 +77,6 @@ h3 {
 
 /* Split the screen in half */
 .split {
-  padding: 1em;
   float: left;
   background: var(--darker-bg);
 }
