@@ -63,7 +63,7 @@ async function assignURL(url: string) {
     <UploadMedia @update:imageURL="assignURL" required></UploadMedia>
     <fieldset>
       <legend>Change your profile picture</legend>
-      <button type="submit" class="pure-button pure-button-primary">Update username</button>
+      <button type="submit" class="pure-button pure-button-primary">Update profile picture</button>
     </fieldset>
   </form>
 
