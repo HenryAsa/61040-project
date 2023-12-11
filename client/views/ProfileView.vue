@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import PostListComponent from "../components/Post/PostListComponent.vue";
 import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -19,7 +18,6 @@ onBeforeMount(async () => {});
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
     </div>
-    <PostListComponent :searchEnabled="false" :startingFilter="props.username" />
     <div class="portfolio-wrapper">
       <h3>Portfolio</h3>
       <PortfolioView />
