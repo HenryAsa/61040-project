@@ -48,7 +48,9 @@ onBeforeMount(async () => {
     <section class="request" v-if="loaded && incomingPendingRequests.length !== 0">
       <p>Pending Friend Requests</p>
       <article v-for="request in incomingPendingRequests" :key="request._id">
-        <p class="username">{{ request.from }}</p>
+        <RouterLink :to="{ name: 'Profile', params: { username: request.from } }">
+          <p class="username">{{ request.from }}</p>
+        </RouterLink>
         <FriendOptionComponent :other="request.from" :outgoing="false" @refreshFriends="refreshFriendRequests" />
       </article>
     </section>
@@ -59,7 +61,9 @@ onBeforeMount(async () => {
     <section class="request" v-if="loaded && outgoingPendingRequests.length !== 0">
       <p>Outgoing Friend Requests</p>
       <article v-for="request in outgoingPendingRequests" :key="request._id">
-        <p class="username">{{ request.to }}</p>
+        <RouterLink :to="{ name: 'Profile', params: { username: request.to } }">
+          <p class="username">{{ request.to }}</p>
+        </RouterLink>
       </article>
     </section>
     <p v-else-if="loaded">No outgoing friend requests</p>
