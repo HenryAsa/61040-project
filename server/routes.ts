@@ -406,7 +406,6 @@ class Routes {
 
   @Router.get("/assets/history/:ticker/:timeSeries")
   async getHistoryPrice(ticker: string, timeSeries: string) {
-    console.log("caleds");
     return await Asset.getHistory(ticker, timeSeries);
   }
 
@@ -414,6 +413,20 @@ class Routes {
   async getPortfolios(session: WebSessionDoc, query: Filter<PortfolioDoc>, sort?: FindOptions<PortfolioDoc>) {
     const portfolio = await Portfolio.getPortfolios(query, sort);
     return portfolio;
+  }
+
+  @Router.get("/portfoliosByOwner/:user")
+  async getAllPortfoliosBySelf(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    const portfolios = await Portfolio.getPortfoliosByOwner(user);
+    return portfolios;
+  }
+
+  @Router.get("/portfoliosByOwner/:user")
+  async getAllPortfoliosByOwnerUsername(username: string) {
+    const user = await User.getUserByUsername(username);
+    const portfolios = await Portfolio.getPortfoliosByOwner(user._id);
+    return portfolios;
   }
 
   @Router.patch("/buy/:portfolio/:ticker/:quantity")
