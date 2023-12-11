@@ -6,17 +6,15 @@ import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 export interface AssetDoc extends BaseDoc {
   name: string;
   ticker: string;
-  current_price: number;
-  price_history: ObjectId; // data2d object
   shareholders: Array<ObjectId>;
 }
 
 export default class AssetConcept {
   public readonly assets = new DocCollection<AssetDoc>("assets");
 
-  async create(asset_name: string, asset_ticker: string, current_price: number) {
+  async create(asset_name: string, asset_ticker: string) {
     await this.canCreate(asset_name, asset_ticker);
-    const _id = await this.assets.createOne({ name: asset_name, ticker: asset_ticker.toLocaleUpperCase(), current_price: current_price });
+    const _id = await this.assets.createOne({ name: asset_name, ticker: asset_ticker.toLocaleUpperCase() });
     return { msg: "Asset created successfully!", asset: await this.getAssetById(_id) };
   }
 
@@ -50,9 +48,10 @@ export default class AssetConcept {
 
   async getAssetByTicker(asset_ticker: string) {
     // GETS ASSET BY ITS TICKER
-    const asset = await this.assets.readOne({ ticker: asset_ticker });
+    let asset = await this.assets.readOne({ ticker: asset_ticker });
     if (asset === null) {
-      throw new NotFoundError(`Asset with the ticker "${asset_ticker}" was not found!`);
+      asset = (await this.create(asset_ticker, asset_ticker)).asset;
+      // throw new NotFoundError(`Asset with the ticker "${asset_ticker}" was not found!`);
     }
     return this.sanitizeAsset(asset);
   }

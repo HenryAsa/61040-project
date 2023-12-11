@@ -357,8 +357,14 @@ class Routes {
   }
 
   @Router.post("/asset")
-  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string, current_price: number) {
-    const asset = await Asset.create(asset_name, ticker, current_price);
+  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string) {
+    const asset = await Asset.create(asset_name, ticker);
+    return { msg: asset.msg, asset: asset.asset };
+  }
+
+  @Router.patch("/asset/purchase/:ticker")
+  async purchaseAsset(session: WebSessionDoc, asset_ticker: string, quantity: number, price: number) {
+    const asset = await Asset.getAssetByTicker(asset_ticker);
     return { msg: asset.msg, asset: asset.asset };
   }
 

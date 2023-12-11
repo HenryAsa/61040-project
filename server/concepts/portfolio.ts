@@ -8,7 +8,7 @@ export interface PortfolioDoc extends BaseDoc {
   ownerName: string;
   owner: ObjectId;
   isPublic: boolean;
-  shares: Array<ObjectId>;
+  shares: Map<ObjectId, Array<number>>; // Asset ID: [Quantity, Price Bought]
 }
 
 export default class PortfolioConcept {
@@ -16,7 +16,7 @@ export default class PortfolioConcept {
 
   async create(name: string, owner: ObjectId, ownerName: string, isPublic: boolean) {
     await this.canCreate(name, owner);
-    const shares = Array<ObjectId>();
+    const shares = new Map<ObjectId, Array<number>>();
     const _id = await this.portfolios.createOne({ name, owner, ownerName, isPublic, shares });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
@@ -97,16 +97,16 @@ export default class PortfolioConcept {
     return portfolio;
   }
 
-  async addAssetToPortfolio(_id: ObjectId, share: ObjectId) {
+  async addAssetToPortfolio(_id: ObjectId, share: ObjectId, quantity: number, price: number) {
     const portfolio = await this.getPortfolioById(_id);
-    await this.update(portfolio._id, { shares: portfolio.shares.concat(share) });
-    return { msg: `Successfully added share '${share}' to portfolio '${name}'` };
+    await this.update(portfolio._id, { shares: portfolio.shares.set(share, [quantity, price]) });
+    return { msg: `Successfully added share '${share}' to portfolio '${portfolio.name}'` };
   }
 
   async removeAssetFromPortfolio(_id: ObjectId, share: ObjectId) {
     const portfolio = await this.getPortfolioById(_id);
-    const shares = portfolio.shares.filter((id) => id.toString() !== share.toString());
-    await this.update(_id, { shares: shares });
+    portfolio.shares.delete(share);
+    await this.update(_id, { shares: portfolio.shares });
     return { msg: `Successfully removed share '${share}' from portfolio '${_id}'` };
   }
 
