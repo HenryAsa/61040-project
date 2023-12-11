@@ -48,9 +48,10 @@ export default class AssetConcept {
 
   async getAssetByTicker(asset_ticker: string) {
     // GETS ASSET BY ITS TICKER
-    const asset = await this.assets.readOne({ ticker: asset_ticker });
+    let asset = await this.assets.readOne({ ticker: asset_ticker });
     if (asset === null) {
-      throw new NotFoundError(`Asset with the ticker "${asset_ticker}" was not found!`);
+      asset = (await this.create(asset_ticker, asset_ticker)).asset;
+      // throw new NotFoundError(`Asset with the ticker "${asset_ticker}" was not found!`);
     }
     return this.sanitizeAsset(asset);
   }
