@@ -1,14 +1,14 @@
-import { ObjectId, Filter, FindOptions } from "mongodb";
+import { Filter, FindOptions, ObjectId } from "mongodb";
 
-import { Router, getExpressRouter } from "./framework/router";
-import { NotAllowedError } from "./concepts/errors";
-import { AIAgent, Asset, Friend, Interest, Media, Money, Post, User, WebSession, Portfolio } from "./app";
+import { AIAgent, Asset, Friend, Interest, Media, Money, Portfolio, Post, User, WebSession } from "./app";
 import { AssetDoc } from "./concepts/asset";
+import { NotAllowedError } from "./concepts/errors";
 import { MediaDoc } from "./concepts/media";
+import { PortfolioDoc } from "./concepts/portfolio";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
-import { PortfolioDoc } from "./concepts/portfolio";
+import { Router, getExpressRouter } from "./framework/router";
 import Responses from "./responses";
 
 class Routes {
@@ -357,8 +357,8 @@ class Routes {
   }
 
   @Router.post("/asset")
-  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string, current_price: number) {
-    const asset = await Asset.create(asset_name, ticker, current_price);
+  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string) {
+    const asset = await Asset.create(asset_name, ticker);
     return { msg: asset.msg, asset: asset.asset };
   }
 
@@ -404,9 +404,10 @@ class Routes {
     return await Asset.getCurrentPrice(ticker);
   }
 
-  @Router.get("/assets/history/:ticker")
-  async getHistoryPrice(ticker: string) {
-    return await Asset.getHistory(ticker);
+  @Router.get("/assets/history/:ticker/:timeSeries")
+  async getHistoryPrice(ticker: string, timeSeries: string) {
+    console.log("caleds");
+    return await Asset.getHistory(ticker, timeSeries);
   }
 
   @Router.get("/portfolios")
