@@ -77,7 +77,6 @@ h3 {
 
 /* Split the screen in half */
 .split {
-  padding: 1em;
   float: left;
   background: var(--darker-bg);
 }
