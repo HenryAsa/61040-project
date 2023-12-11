@@ -51,11 +51,6 @@ class Routes {
       await AIAgent.create(user.user?._id);
       await Money.create(user.user?._id);
     }
-    // create a new account balance associated with this user
-    if (user !== null) {
-      const userId = user.user._id;
-      await Money.create(userId);
-    }
     return user.user;
   }
 
@@ -301,9 +296,9 @@ class Routes {
   }
 
   @Router.patch("/balance/deposit/:amount")
-  async deposit(session: WebSessionDoc, amount: number) {
+  async deposit(session: WebSessionDoc, amount: string) {
     const user = WebSession.getUser(session);
-    return await Money.deposit(user, amount);
+    return await Money.deposit(user, parseInt(amount));
   }
   ///////////
   // ASSET //
