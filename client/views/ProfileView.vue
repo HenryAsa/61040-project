@@ -18,7 +18,7 @@ onBeforeMount(async () => {});
     <div class="profile-wrapper">
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
-      <RouterLink class="settings" :to="{ name: 'Settings' }">
+      <RouterLink v-if="isLoggedIn && props.username == currentUsername" class="settings" :to="{ name: 'Settings' }">
         <button class="pure-button">Settings</button>
       </RouterLink>
     </div>
