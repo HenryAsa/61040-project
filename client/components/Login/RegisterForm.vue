@@ -5,25 +5,25 @@ import { ref } from "vue";
 import UploadMedia from "../Media/UploadMedia.vue";
 import PasswordValidation from "../Password/PasswordValidation.vue";
 
-const first_name = ref("");
-const last_name = ref("");
+const firstName = ref("");
+const lastName = ref("");
 const username = ref("");
 const password = ref("");
-const profile_picture = ref("");
+const profilePhoto = ref("");
 const { createUser, loginUser, updateSession } = useUserStore();
 
 async function register() {
-  if (profile_picture.value === "") {
+  if (profilePhoto.value === "") {
     return;
   }
-  await createUser(username.value, password.value, first_name.value, last_name.value, profile_picture.value);
+  await createUser(username.value, password.value, firstName.value, lastName.value, profilePhoto.value);
   await loginUser(username.value, password.value);
   await updateSession();
   void router.push({ name: "Home" });
 }
 
 async function assignURL(url: string) {
-  profile_picture.value = url;
+  profilePhoto.value = url;
 }
 
 function assignPassword(userPassword: string) {
@@ -37,11 +37,11 @@ function assignPassword(userPassword: string) {
     <fieldset>
       <div class="pure-control-group">
         <label for="aligned-first-name">First Name</label>
-        <input v-model.trim="first_name" type="text" id="aligned-first-name" placeholder="First Name" required />
+        <input v-model.trim="firstName" type="text" id="aligned-first-name" placeholder="First Name" required />
       </div>
       <div class="pure-control-group">
         <label for="aligned-last-name">Last Name</label>
-        <input v-model.trim="last_name" type="text" id="aligned-last-name" placeholder="Last Name" required />
+        <input v-model.trim="lastName" type="text" id="aligned-last-name" placeholder="Last Name" required />
       </div>
       <div class="pure-control-group">
         <label for="aligned-username">Username</label>

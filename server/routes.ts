@@ -42,9 +42,9 @@ class Routes {
   }
 
   @Router.post("/users")
-  async createUser(session: WebSessionDoc, username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
+  async createUser(session: WebSessionDoc, username: string, password: string, firstName: string, lastName: string, profilePhoto: string) {
     WebSession.isLoggedOut(session);
-    const user = await User.create(username, password, first_name, last_name, profile_photo);
+    const user = await User.create(username, password, firstName, lastName, profilePhoto);
     if (user.user?._id) {
       await Interest.create(user.user?._id);
       await AIAgent.create(user.user?._id);

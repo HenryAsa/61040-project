@@ -64,8 +64,8 @@ export default class Responses {
   //     return user;
   //   }
   //   // const users = await User.idsToUsernames(activity.members);
-  //   const user_profile_photo = await Media.getMediaById(user.profile_photo);
-  //   return { ...user, profile_photo: user_profile_photo.media_url };
+  //   const user_profilePhoto = await Media.getMediaById(user.profilePhoto);
+  //   return { ...user, profilePhoto: user_profilePhoto.media_url };
   // }
 
   // /**

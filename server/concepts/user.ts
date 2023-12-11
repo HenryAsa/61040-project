@@ -20,9 +20,9 @@ export interface SanitizedUserDoc extends BaseDoc {
 export default class UserConcept {
   public readonly users = new DocCollection<UserDoc>("users");
 
-  async create(username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
-    await this.canCreate(username, password, first_name, last_name, profile_photo);
-    const _id = await this.users.createOne({ username: username, password: password, firstName: first_name, lastName: last_name, profilePhoto: profile_photo });
+  async create(username: string, password: string, firstName: string, lastName: string, profilePhoto: string) {
+    await this.canCreate(username, password, firstName, lastName, profilePhoto);
+    const _id = await this.users.createOne({ username: username, password: password, firstName: firstName, lastName: lastName, profilePhoto: profilePhoto });
     return { msg: "User created successfully!", user: await this.getUserById(_id) };
   }
 
@@ -126,17 +126,17 @@ export default class UserConcept {
     return false;
   }
 
-  private async canCreate(username: string, password: string, first_name: string, last_name: string, profile_photo: string) {
+  private async canCreate(username: string, password: string, firstName: string, lastName: string, profilePhoto: string) {
     if (!username) {
       throw new BadValuesError("The username cannot be empty");
     }
-    if (!first_name) {
+    if (!firstName) {
       throw new BadValuesError("User must enter a first name");
     }
-    if (!last_name) {
+    if (!lastName) {
       throw new BadValuesError("User must enter a last name");
     }
-    if (!profile_photo) {
+    if (!profilePhoto) {
       throw new BadValuesError("User must upload a profile photo");
     }
     if (!this.isValidPassword(password)) {

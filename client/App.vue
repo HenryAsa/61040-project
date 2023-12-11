@@ -36,7 +36,7 @@ onBeforeMount(async () => {
           <RouterLink :to="{ name: 'News' }" :class="{ underline: currentRouteName == 'News' }"> <i class="fa fa-newspaper-o" style="font-size: 24px"></i> </RouterLink>
           <RouterLink :to="{ name: 'Stocks' }" :class="{ underline: currentRouteName == 'Stocks' }"> Stocks </RouterLink>
           <RouterLink :to="{ name: 'Profile', params: { username: currentUsername } }" :class="{ underline: currentRouteName == 'Profile' }"
-            ><img class="profile_picture" v-bind:src="currentUserProfilePhoto"
+            ><img class="profilePhoto" v-bind:src="currentUserProfilePhoto"
           /></RouterLink>
         </li>
         <li v-else>
@@ -90,7 +90,7 @@ img {
   height: 3em;
 }
 
-.profile_picture {
+.profilePhoto {
   width: 3.5em;
   height: 3.5em;
   /* object-fit: cover; */

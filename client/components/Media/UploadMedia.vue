@@ -58,13 +58,13 @@ const uploadImage = async () => {
     <h3 v-if="!imageURL">Please Upload a Profile Picture!</h3>
     <h3 v-if="imageURL">Here is a preview of what your profile picture will look like</h3>
     <input type="file" @change="handleFileChange" />
-    <img class="profile_photo" v-if="imageURL" :src="imageURL" alt="Image that was just uploaded" />
+    <img class="profilePhoto" v-if="imageURL" :src="imageURL" alt="Image that was just uploaded" />
     <br />
   </div>
 </template>
 
 <style scoped>
-.profile_photo {
+.profilePhoto {
   width: 20vw;
   height: 20vw;
   object-fit: cover;

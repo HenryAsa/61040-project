@@ -26,9 +26,9 @@ export const useUserStore = defineStore(
       currentFriends.value = [];
     };
 
-    const createUser = async (username: string, password: string, first_name: string, last_name: string, profile_photo: string) => {
+    const createUser = async (username: string, password: string, firstName: string, lastName: string, profilePhoto: string) => {
       await fetchy("/api/users", "POST", {
-        body: { username: username, password: password, first_name: first_name, last_name: last_name, profile_photo: profile_photo },
+        body: { username: username, password: password, firstName: firstName, lastName: lastName, profilePhoto: profilePhoto },
       });
     };
 
