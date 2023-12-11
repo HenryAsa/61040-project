@@ -76,7 +76,7 @@ function assignPassword(userPassword: string) {
   <form @submit.prevent="updatePassword" class="pure-form">
     <fieldset>
       <legend>Change your password</legend>
-      <PasswordValidation @userPassword="assignPassword" id="aligned-password" placeholder="Password" required></PasswordValidation>
+      <PasswordValidation @userPassword="assignPassword" id="aligned-password" placeholder="Update password" required></PasswordValidation>
       <button type="submit" class="pure-button pure-button-primary">Update password</button>
     </fieldset>
   </form>
