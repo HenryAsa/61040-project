@@ -15,7 +15,7 @@ export default class PortfolioConcept {
   public readonly portfolios = new DocCollection<PortfolioDoc>("portfolios");
 
   async create(name: string, owner: ObjectId, ownerName: string, isPublic: boolean) {
-    await this.canCreate(name);
+    await this.canCreate(name, owner);
     const shares = Array<ObjectId>();
     const _id = await this.portfolios.createOne({ name, owner, ownerName, isPublic, shares });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
@@ -130,12 +130,15 @@ export default class PortfolioConcept {
     return maybePortfolio !== null;
   }
 
-  private async canCreate(name: string) {
+  private async canCreate(name: string, owner: ObjectId) {
     if (!name) {
       throw new BadValuesError("Cannot create portfolio with empty name");
     }
-    if (await this.portfolioNameExists(name)) {
-      throw new NotAllowedError(`A portfolio with name ${name} already exists`);
+    if (!owner) {
+      throw new BadValuesError("Cannot create portfolio without an owner");
+    }
+    if ((await this.portfolios.readOne({ name, owner })) !== null) {
+      throw new NotAllowedError(`A portfolio with name ${name} owned by ${owner} already exists`);
     }
     return true;
   }
