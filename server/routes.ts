@@ -427,9 +427,9 @@ class Routes {
   }
 
   @Router.get("/portfolios/:_id/value")
-  async getPortfolioValue(_id: ObjectId, session?: WebSessionDoc) {
+  async getPortfolioValue(session: WebSessionDoc, _id: ObjectId) {
     const isPublic = await Portfolio.portfolioIsPublic(_id);
-    if (session) {
+    if (session?.user) {
       const user = WebSession.getUser(session);
       const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
       if (!isPublic && !portfolioOwner.equals(user)) {
