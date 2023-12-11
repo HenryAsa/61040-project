@@ -192,6 +192,11 @@ class Routes {
     return await User.idsToUsernames(await Friend.getFriends(user));
   }
 
+  @Router.get("/friends/:_id")
+  async getFriendsOfUser(_id: ObjectId) {
+    return await User.idsToUsernames(await Friend.getFriends(_id));
+  }
+
   @Router.delete("/friends/:friend")
   async removeFriend(session: WebSessionDoc, friend: string) {
     const user = WebSession.getUser(session);
