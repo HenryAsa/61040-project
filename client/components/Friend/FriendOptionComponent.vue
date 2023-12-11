@@ -121,7 +121,7 @@ onBeforeMount(async () => {
   <div class="friend-box">
     <div v-if="!selfFriend">
       <div v-if="!isFriend && props.outgoing" class="send-request">
-        <button v-if="!requested" class="pure-button" @click="sendFriendRequest">Send Friend Request</button>
+        <button v-if="!requested" class="pure-button-primary pure-button" @click="sendFriendRequest">Send Friend Request</button>
         <button v-else class="pure-button" @click="cancelRequest">Cancel Request</button>
       </div>
       <div v-else-if="!isFriend" class="recieve-request">
@@ -134,13 +134,6 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
-button {
-  margin: 0em;
-  margin-right: 1em;
-  background-color: var(--darker-bg);
-  color: var(--font-color);
-}
-
 .friend-box {
   display: flex;
   justify-content: space-between;
