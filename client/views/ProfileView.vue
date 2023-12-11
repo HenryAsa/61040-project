@@ -26,7 +26,7 @@ onBeforeMount(async () => {});
       </div>
       <div class="split right">
         <h3>Friends</h3>
-        <FriendListComponent :username="currentUsername" ref="friendListRef" />
+        <FriendListComponent :username="props.username" ref="friendListRef" />
       </div>
     </div>
   </div>
