@@ -105,7 +105,10 @@ export default class PortfolioConcept {
 
   async removeAssetFromPortfolio(_id: ObjectId, share: ObjectId) {
     const portfolio = await this.getPortfolioById(_id);
-    portfolio.shares.delete(share);
+    const deletedShares = portfolio.shares.delete(share);
+    if (!deletedShares) {
+      throw new BadValuesError("This portfolio does not contain the share the user is trying to sell");
+    }
     await this.update(_id, { shares: portfolio.shares });
     return { msg: `Successfully removed share '${share}' from portfolio '${_id}'` };
   }
