@@ -192,9 +192,9 @@ class Routes {
     return await User.idsToUsernames(await Friend.getFriends(user));
   }
 
-  @Router.get("/friends/:_id")
-  async getFriendsOfUser(_id: ObjectId) {
-    return await User.idsToUsernames(await Friend.getFriends(_id));
+  @Router.get("/friends/:username")
+  async getFriendsOfUser(username: string) {
+    return await User.idsToUsernames(await Friend.getFriends((await User.getUserByUsername(username))._id));
   }
 
   @Router.delete("/friends/:friend")

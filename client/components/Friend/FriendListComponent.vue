@@ -19,7 +19,7 @@ let friends = ref();
 async function updateFriends() {
   let friendResults;
   try {
-    friendResults = await fetchy(`/api/friends`, "GET");
+    friendResults = await fetchy(`/api/friends/${props.username}`, "GET");
   } catch (_) {
     return;
   }
