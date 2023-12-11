@@ -19,7 +19,7 @@ let friends = ref();
 async function updateFriends() {
   let friendResults;
   try {
-    friendResults = await fetchy(`/api/friends`, "GET");
+    friendResults = await fetchy(`/api/friends/${props.username}`, "GET");
   } catch (_) {
     return;
   }
@@ -42,7 +42,6 @@ defineExpose({ updateFriends });
   <div class="list-wrapper">
     <div v-if="loaded">
       <section class="friends" v-if="friends.length !== 0">
-        <p>Friends</p>
         <article v-for="friend in friends" :key="friend._id">
           <RouterLink :to="{ name: 'Profile', params: { username: friend } }">
             <p class="username">{{ friend }}</p>

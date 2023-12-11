@@ -2,7 +2,7 @@
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { fetchy } from "../../utils/fetchy";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 
 const { currentFriends } = storeToRefs(useUserStore());
 
@@ -108,6 +108,12 @@ onBeforeMount(async () => {
   if (props.outgoing) {
     await checkRequested();
   }
+  watch(
+    () => props.other,
+    async () => {
+      checkFriend();
+    },
+  );
 });
 </script>
 
