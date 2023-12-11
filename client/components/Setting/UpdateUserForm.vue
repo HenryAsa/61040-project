@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user";
 import { ref } from "vue";
+import UploadMedia from "../Media/UploadMedia.vue";
+import PasswordValidation from "../Password/PasswordValidation.vue";
 
 let username = ref("");
 let password = ref("");
