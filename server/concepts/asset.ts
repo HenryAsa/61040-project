@@ -111,7 +111,6 @@ export default class AssetConcept {
 
   async addShareholderToAsset(asset_id: ObjectId, user_id: ObjectId) {
     // ADDS A SHAREHOLDER (OWNER) TO THE LIST OF OWNERS
-    console.log("Here");
     const asset = await this.getAssetById(asset_id);
     await this.isShareholder(asset_id, user_id, true);
     await this.update(user_id, { shareholders: asset.shareholders.concat(user_id) });
