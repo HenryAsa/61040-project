@@ -1,21 +1,46 @@
 <script setup lang="ts">
-import { onBeforeMount } from "vue";
-import MoneyComponent from "../components/Money/MoneyComponent.vue";
-import PortfolioListComponent from "../components/Portfolio/PortfolioListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { onBeforeMount } from "vue";
+import MoneyComponent from "../components/Money/MoneyComponent.vue";
+import PortfolioComponent from "../components/Portfolio/PortfolioComponent.vue";
+import { fetchy } from "../utils/fetchy";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
-const props = defineProps(["username"]);
+let topAssets = new Array<string>("AAPL", "TSLA", "AMZN");
 
-onBeforeMount(async () => {});
+onBeforeMount(async () => {
+  try {
+    topAssets = await fetchy(`/api/portfolio/topAssets/${currentUsername.value}`, "GET");
+  } catch {
+    console.log("could not get top assets of portfolio");
+  }
+});
 </script>
 
 <template>
   <main>
-    <PortfolioListComponent :username="props.username" />
-    <MoneyComponent v-if="isLoggedIn && currentUsername == props.username" />
+    <section>
+      <h1 v-if="!isLoggedIn">Please login!</h1>
+      <h1 v-else>{{ currentUsername }}</h1>
+    </section>
+    <PortfolioComponent />
+    <MoneyComponent />
+    <div class="holdings">
+      <h1>Your Holdings</h1>
+    </div>
+    <div class="flex-container">
+      <div class="flex-item">
+        <h2>{{ topAssets[0] }}</h2>
+      </div>
+      <div class="flex-item">
+        <h2>{{ topAssets[1] }}</h2>
+      </div>
+      <div class="flex-item">
+        <h2>{{ topAssets[2] }}</h2>
+      </div>
+    </div>
   </main>
 </template>
 
