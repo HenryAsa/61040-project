@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
 import PostListComponent from "@/components/Post/PostListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import MoneyComponent from "../components/Money/MoneyComponent.vue";
-import { ref } from "vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
-
-const friendListRef = ref();
 </script>
 
 <template>
