@@ -507,17 +507,36 @@ class Routes {
   @Router.patch("/portfolios/copy/:srcId/:dstId")
   async copyInvest(session: WebSessionDoc, srcId: ObjectId, dstId: ObjectId) {
     const user = WebSession.getUser(session);
-    const srcIsPublic = await Portfolio.portfolioIsPublic(srcId);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(srcId);
+    const sourcePortfolio = await Portfolio.getPortfolioById(srcId);
+    const destinationPortfolio = await Portfolio.getPortfolioById(dstId);
+    const srcIsPublic = sourcePortfolio.isPublic;
+    const portfolioOwner = sourcePortfolio.owner;
+
     if (!srcIsPublic && !portfolioOwner.equals(user)) {
       throw new NotAllowedError("Cannot copy private portfolio which user does not own");
     }
+
     const assets = await Portfolio.getPortfolioShares(srcId);
+    let total_price: number = 0;
+    const account_id = await Money.userIdToAccountId(user);
+    let available_capital: number;
+
+    if (account_id !== undefined) {
+      available_capital = await Money.getBalance(account_id);
+    } else {
+      throw new Error("User does not have a money account.");
+    }
+
     for (const asset of assets) {
-      const asset_object = Asset.getAssetById(asset[0]);
-      const current_price = Asset.getCurrentPrice((await asset_object).ticker);
-      await Asset.addShareholderToAsset(asset[0], user);
-      await Portfolio.addAssetToPortfolio(dstId, asset[0], asset[1][0], await current_price);
+      const asset_object = await Asset.getAssetById(asset[0]);
+      total_price += (await Asset.getCurrentPrice(asset_object.ticker)) * asset[1][0];
+    }
+
+    if (total_price >= available_capital) {
+      for (const asset of assets) {
+        const asset_object = await Asset.getAssetById(asset[0]);
+        void this.purchaseAsset(session, destinationPortfolio.name, asset_object.ticker, asset[1][0]);
+      }
     }
   }
 
