@@ -51,7 +51,12 @@ export default class ChatConcept {
 
   async send(user: ObjectId, text: string) {
     await this.update(user, text, "self");
-    await this.update(user, "Analyzing ...", "ai");
+    await this.update(
+      user,
+      `This might take up to one minute. We appreciate your pateince as we are analazing your
+    decision. We are also finding recent news.`,
+      "ai",
+    );
     return { msg: "Message is received" };
   }
 
@@ -69,45 +74,56 @@ export default class ChatConcept {
   }
 
   private async getNews(prompt: string) {
-    const keywords = await this.generateKeyWords(prompt);
-    const q = keywords!;
-    const API_KEY = "KZHRUF576K9VJM0S";
-    const BASE_URL = "https://www.alphavantage.co/";
-    const response = await axios.get(`${BASE_URL}query?function=NEWS_SENTIMENT&tickers=${q}&time_from=20220410T0130&limit=1000&sort=LATEST&apikey=${API_KEY}`);
-    const data = await response.data;
-    return await data["feed"];
+    let keyword;
+    try {
+      keyword = await this.generateKeyWord(prompt);
+    } catch (e) {
+      console.log(e);
+    }
+    const apiKey = "84e797c15318481497b234586bf54b06";
+    const apiUrl = "https://newsapi.org/v2/everything";
+    const parameters = {
+      q: keyword, // Change 'technology' to your desired topic or keyword
+      language: "en", // Language of the articles (e.g., 'en' for English)
+      apiKey: apiKey,
+    };
+    const articles = await axios.get(apiUrl, { params: parameters }).catch((error) => {
+      console.error("Error fetching news:", error);
+    });
+    let articleContent = "";
+    for (const article of articles!.data.articles) {
+      articleContent += "One of the articles is as follows \n";
+      articleContent += article.content;
+    }
+    return articleContent;
   }
 
-  private async generateKeyWords(prompt: string) {
+  private async generateKeyWord(prompt: string) {
     // prompt to be fed into the chat-gpt-api
-    const userPrompt = `Generate only one keyword related to the current market trends and factors affecting stock prices. 
-    Consider economic indicators, industry news, and geopolitical events. Keywords should include terms such as 
-    'stock market,' 'economic forecast,' 'industry performance,' 'global trade,' 'central bank policies,' 
-    and any other relevant terms that might impact investment decisions.
-    You keyword must be related to this prompt ${prompt}. I am trying to use eyour keyword to search news.
-    your output must be only a keyword, nothing more, no quotation marks, no new line mark, no dash, only use space between words.`;
-
+    const userPrompt = `I am giving you the following prompt: ${prompt}. This prompt is related to investing and trading.
+    Give me exactly one keyword that I can use to search for news article related to this prompt. Please return a keyword without any extra words or characters`;
     const response = await openai.chat.completions.create({
       model: "gpt-4-1106-preview",
       messages: [
         { role: "system", content: "You are a helpful assistant and researcher." },
         { role: "user", content: userPrompt },
       ],
-      temperature: 0.8,
+      temperature: 0,
       max_tokens: 150,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,
     });
-    const message = response.choices[0];
-    return message.message.content;
+    const keyword = response.choices[0].message.content;
+    return keyword;
   }
 
   private async generateResponse(decision: string, news: string) {
     // prompt to be fed into the chat-gpt-api
-    const prompt = `You are a financial analyst analyzing a trading decision. 
-    The decision is to ${decision}. Here is the recent news related to this decision: 
-    ${news}. Based on this information, what would be the potential impact on the market?`;
+    const prompt = `You are a financial analyst analyzing a trading decision, thought, or idea. 
+    The idea is to ${decision}. Here is the recent news related to this decision: 
+    ${news}. 
+    Based on this information, what would be the potential impact on the market?`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4-1106-preview",

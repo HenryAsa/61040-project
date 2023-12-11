@@ -51,7 +51,7 @@ onBeforeMount(async () => {
         <RouterLink :to="{ name: 'Profile', params: { username: request.from } }">
           <p class="username">{{ request.from }}</p>
         </RouterLink>
-        <FriendOptionComponent :other="request.from" :outgoing="false" @refreshFriends="refreshFriendRequests" />
+        <FriendOptionComponent class="friendOptions" :other="request.from" :outgoing="false" @refreshFriends="refreshFriendRequests" />
       </article>
     </section>
     <p v-else-if="loaded">No pending friend requests</p>
@@ -101,5 +101,9 @@ p {
   background-color: var(--base-bg);
   border-radius: 1em;
   padding: 1em;
+}
+
+article {
+  display: flex;
 }
 </style>

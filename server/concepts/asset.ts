@@ -167,18 +167,35 @@ export default class AssetConcept {
     const response = await axios.get(`${BASE_URL}query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`);
     const data = await response.data;
     const currentPrice = await data["Global Quote"]["05. price"];
-
     return currentPrice;
   }
 
-  async getHistory(symbol: string) {
+  async getHistory(symbol: string, timeSeries: string) {
     const API_KEY = "KZHRUF576K9VJM0S";
     const BASE_URL = "https://www.alphavantage.co/";
-    const response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=${API_KEY}`);
-    const data = await response.data;
-    const currentPrice = await data["Time Series (30min)"];
-    const dates = Object.keys(currentPrice).reverse();
-    const prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    let response;
+    let dates;
+    let prices;
+    if (timeSeries === "24hours") {
+      response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=compact&apikey=${API_KEY}`);
+      const data = await response.data;
+      const currentPrice = await data["Time Series (30min)"];
+      dates = Object.keys(currentPrice).reverse();
+      prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    } else if (timeSeries === "daily") {
+      response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=compact&apikey=${API_KEY}`);
+      const data = await response.data;
+      const currentPrice = await data["Time Series (Daily)"];
+      dates = Object.keys(currentPrice).reverse();
+      prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    } else {
+      response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&outputsize=compact&apikey=${API_KEY}`);
+      const data = await response.data;
+      const currentPrice = await data["Monthly Time Series"];
+      dates = Object.keys(currentPrice).reverse();
+      prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    }
+
     return { dates, prices };
   }
 

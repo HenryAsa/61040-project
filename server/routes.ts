@@ -404,9 +404,10 @@ class Routes {
     return await Asset.getCurrentPrice(ticker);
   }
 
-  @Router.get("/assets/history/:ticker")
-  async getHistoryPrice(ticker: string) {
-    return await Asset.getHistory(ticker);
+  @Router.get("/assets/history/:ticker/:timeSeries")
+  async getHistoryPrice(ticker: string, timeSeries: string) {
+    console.log("caleds");
+    return await Asset.getHistory(ticker, timeSeries);
   }
 
   @Router.get("/portfolios")
