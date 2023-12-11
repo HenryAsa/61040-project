@@ -19,7 +19,7 @@ onBeforeMount(async () => {});
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
     </div>
     <div class="portfolio-wrapper">
-      <h3>Portfolio</h3>
+      <h3>Portfolios</h3>
       <PortfolioView :username="props.username" />
     </div>
   </div>

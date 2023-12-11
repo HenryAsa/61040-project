@@ -14,9 +14,6 @@ onBeforeMount(async () => {});
 
 <template>
   <main>
-    <section>
-      <h1>{{ props.username }}</h1>
-    </section>
     <PortfolioListComponent :username="props.username" />
     <MoneyComponent />
   </main>
