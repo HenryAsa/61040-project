@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vue";
+import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount } from "vue";
@@ -18,9 +19,14 @@ onBeforeMount(async () => {});
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
     </div>
-    <div class="portfolio-wrapper">
-      <h3>Portfolios</h3>
-      <PortfolioView :username="props.username" />
+    <div class="split-wrapper">
+      <div class="split left">
+        <h3>Portfolios</h3>
+        <PortfolioView :username="props.username" />
+      </div>
+      <div class="split right">
+        <FriendListComponent :username="currentUsername" ref="friendListRef" />
+      </div>
     </div>
   </div>
 </template>
@@ -56,5 +62,29 @@ h2 {
 
 h3 {
   text-align: center;
+}
+
+.split-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Split the screen in half */
+.split {
+  padding: 1em;
+  float: left;
+  background: var(--darker-bg);
+}
+
+/* Control the left side */
+.left {
+  height: 100%;
+  width: 75%;
+}
+
+/* Control the right side */
+.right {
+  flex-grow: 1;
+  padding: 1em;
 }
 </style>
