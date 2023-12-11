@@ -33,7 +33,7 @@ export default class MoneyConcept {
    * @throws error if no such id exists in the database
    */
   async getBalance(_id: ObjectId) {
-    const user = await this.accounts.readOne({ _id });
+    const user = await this.accounts.readOne({ user: _id });
     const balance = user === null ? 0 : user.balance;
     return balance;
   }
@@ -47,7 +47,7 @@ export default class MoneyConcept {
     if (!this.userExists(_id)) {
       throw new NotFoundError(`User not found!`);
     }
-    const filter = { _id };
+    const filter = { user: _id };
     const update = { balance: newBalance };
     await this.accounts.updateOne(filter, update);
   }

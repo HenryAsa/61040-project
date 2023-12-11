@@ -51,11 +51,6 @@ class Routes {
       await AIAgent.create(user.user?._id);
       await Money.create(user.user?._id);
     }
-    // create a new account balance associated with this user
-    if (user !== null) {
-      const userId = user.user._id;
-      await Money.create(userId);
-    }
     return user.user;
   }
 
@@ -301,9 +296,9 @@ class Routes {
   }
 
   @Router.patch("/balance/deposit/:amount")
-  async deposit(session: WebSessionDoc, amount: number) {
+  async deposit(session: WebSessionDoc, amount: string) {
     const user = WebSession.getUser(session);
-    return await Money.deposit(user, amount);
+    return await Money.deposit(user, parseInt(amount));
   }
   ///////////
   // ASSET //
@@ -429,7 +424,7 @@ class Routes {
     return portfolios;
   }
 
-  @Router.patch("/buy/:portfolio/:ticker/:quantity")
+  @Router.patch("/buy/:portfolio_name/:ticker/:quantity")
   async purchaseAsset(session: WebSessionDoc, portfolio_name: string, ticker: string, quantity: number) {
     const user_id = WebSession.getUser(session);
     const user = User.getUserById(user_id);
@@ -440,14 +435,14 @@ class Routes {
     const account_id = await Money.userIdToAccountId((await user)._id);
     let available_capital: number;
     if (account_id !== undefined) {
-      available_capital = await Money.getBalance(account_id);
+      available_capital = await Money.getBalance(user_id);
     } else {
       throw new Error("User does not have a money account.");
     }
     if (price <= available_capital) {
-      void Portfolio.addAssetToPortfolio((await portfolio)._id, (await asset)._id, quantity, await current_price);
+      // void Portfolio.addAssetToPortfolio((await portfolio)._id, (await asset)._id, quantity, await current_price);
       void Asset.addShareholderToAsset((await asset)._id, (await user)._id);
-      void Money.withdraw(account_id, price);
+      void Money.withdraw(user_id, price);
     } else {
       throw new Error(
         `${(await user).username} is trying to purchase ${quantity} shares of ${ticker} at ${current_price} per share for a total of $${price} but their account only has $${available_capital} in it`,
