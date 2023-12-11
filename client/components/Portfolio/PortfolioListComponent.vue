@@ -14,8 +14,8 @@ const props = defineProps(["username"]);
 const loaded = ref(false);
 let portfolios = ref<Array<{ _id: 0; ownerName: ""; isPublic: false }>>([]);
 
-async function getPortfolios(owner?: string) {
-  let query: Record<string, string> = owner !== undefined ? { ownerName: owner } : {};
+async function getPortfolios() {
+  let query: Record<string, string> = props.username !== undefined ? { ownerName: props.username } : {};
   let portfolioResults;
   try {
     portfolioResults = await fetchy("/api/portfolios", "GET", { query });
@@ -26,16 +26,12 @@ async function getPortfolios(owner?: string) {
 }
 
 onBeforeMount(async () => {
-  if (props.username) {
-    await getPortfolios(props.username);
-  } else {
-    await getPortfolios();
-  }
+  await getPortfolios();
   loaded.value = true;
   watch(
     () => props.username,
     async (newUsername, oldUsername) => {
-      await getPortfolios(newUsername);
+      await getPortfolios();
     },
   );
 });
