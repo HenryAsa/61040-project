@@ -1,30 +1,54 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
-let portfolioValue: number = 0;
+
+const props = defineProps(["portfolio"]);
+const emit = defineEmits(["refreshPortfolios"]);
+
+const loaded = ref(false);
+const portfolioValue = ref(0);
+const topAssets = ref(new Array<string>("AAPL", "TSLA", "AMZN"));
+
+async function deletePortfolio() {
+  try {
+    await fetchy(`/api/portfolios/${props.portfolio._id}`, "DELETE");
+  } catch (_) {
+    return;
+  }
+  emit("refreshPortfolios");
+}
 
 onBeforeMount(async () => {
   try {
-    await fetchy(`/api/portfolio/create/${currentUsername.value}/true`, "POST");
-  } catch (e) {
-    // user already has portfolio
+    portfolioValue.value = await fetchy(`/api/portfolios/${props.portfolio._id}/value`, "GET");
+    topAssets.value = await fetchy(`/api/portfolios/${props.portfolio._id}/topAssets`, "GET");
+  } catch (_) {
+    console.log(_);
   }
-  // try {
-  //   portfolioValue = await fetchy(`/api/portfolio/value/${currentUsername}`, "GET");
-  // } catch {
-  //   console.log("could not get value of portfolio");
-  // }
+  loaded.value = true;
 });
 </script>
 
 <template>
   <main>
-    <div class="flex-container">
-      <div class="flex-text" id="balance">Portfolio Value: ${{ portfolioValue }}</div>
+    <div v-if="loaded" class="flex-container">
+      <h3>{{ props.portfolio.name }}</h3>
+      <p>Portfolio Value: ${{ portfolioValue }}</p>
+      <button v-if="props.portfolio.ownerName == currentUsername" class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
+      <h3>Top Holdings</h3>
+      <div v-if="topAssets[0] !== ''">
+        <p v-for="asset in topAssets" :key="asset">{{ asset }}</p>
+      </div>
+      <div v-else>
+        <p>No top holdings!</p>
+      </div>
+    </div>
+    <div v-else>
+      <p>Loading...</p>
     </div>
   </main>
 </template>
@@ -34,8 +58,12 @@ h1 {
   text-align: center;
 }
 .flex-container {
-  margin: 2em;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+}
+
+p {
+  margin: auto;
 }
 </style>
