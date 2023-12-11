@@ -1,7 +1,7 @@
 import { Filter, FindOptions, ObjectId } from "mongodb";
+import { User } from "../app";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
-import { User } from "../app";
 
 export interface PortfolioDoc extends BaseDoc {
   name: string;
@@ -90,11 +90,11 @@ export default class PortfolioConcept {
   }
 
   async getPortfolioByName(name: string) {
-    const portfolio = await this.portfolios.readOne({ name });
+    const portfolio = await this.getPortfolios({ name });
     if (portfolio === null) {
       throw new NotFoundError(`Portfolio not found!`);
     }
-    return portfolio;
+    return portfolio[0];
   }
 
   async addAssetToPortfolio(_id: ObjectId, share: ObjectId, quantity: number, price: number) {

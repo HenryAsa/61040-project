@@ -34,7 +34,6 @@ export default class MoneyConcept {
    */
   async getBalance(_id: ObjectId) {
     const user = await this.accounts.readOne({ user: _id });
-    console.log(user);
     const balance = user === null ? 0 : user.balance;
     return balance;
   }
