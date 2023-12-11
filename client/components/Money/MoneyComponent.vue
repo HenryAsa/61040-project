@@ -75,9 +75,11 @@ onBeforeMount(async () => {
 .flex-container {
   display: flex;
   justify-content: center;
+  padding: 1em;
 }
 .flex-text {
   margin-right: 50px;
+  margin: auto 1em;
 }
 .flex-item {
   margin-right: 5px;
