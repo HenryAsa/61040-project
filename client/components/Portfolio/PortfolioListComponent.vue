@@ -30,7 +30,7 @@ onBeforeMount(async () => {
   loaded.value = true;
   watch(
     () => props.username,
-    async (newUsername, oldUsername) => {
+    async () => {
       await getPortfolios();
     },
   );

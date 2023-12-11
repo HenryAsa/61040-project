@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/user";
-import { storeToRefs } from "pinia";
 import { onBeforeMount } from "vue";
 import MoneyComponent from "../components/Money/MoneyComponent.vue";
 import PortfolioListComponent from "../components/Portfolio/PortfolioListComponent.vue";
-
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
 
