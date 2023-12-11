@@ -6,17 +6,15 @@ import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 export interface AssetDoc extends BaseDoc {
   name: string;
   ticker: string;
-  current_price: number;
-  price_history: ObjectId; // data2d object
   shareholders: Array<ObjectId>;
 }
 
 export default class AssetConcept {
   public readonly assets = new DocCollection<AssetDoc>("assets");
 
-  async create(asset_name: string, asset_ticker: string, current_price: number) {
+  async create(asset_name: string, asset_ticker: string) {
     await this.canCreate(asset_name, asset_ticker);
-    const _id = await this.assets.createOne({ name: asset_name, ticker: asset_ticker.toLocaleUpperCase(), current_price: current_price });
+    const _id = await this.assets.createOne({ name: asset_name, ticker: asset_ticker.toLocaleUpperCase() });
     return { msg: "Asset created successfully!", asset: await this.getAssetById(_id) };
   }
 
@@ -168,18 +166,35 @@ export default class AssetConcept {
     const response = await axios.get(`${BASE_URL}query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`);
     const data = await response.data;
     const currentPrice = await data["Global Quote"]["05. price"];
-
     return currentPrice;
   }
 
-  async getHistory(symbol: string) {
+  async getHistory(symbol: string, timeSeries: string) {
     const API_KEY = "KZHRUF576K9VJM0S";
     const BASE_URL = "https://www.alphavantage.co/";
-    const response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=${API_KEY}`);
-    const data = await response.data;
-    const currentPrice = await data["Time Series (30min)"];
-    const dates = Object.keys(currentPrice).reverse();
-    const prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    let response;
+    let dates;
+    let prices;
+    if (timeSeries === "24hours") {
+      response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=compact&apikey=${API_KEY}`);
+      const data = await response.data;
+      const currentPrice = await data["Time Series (30min)"];
+      dates = Object.keys(currentPrice).reverse();
+      prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    } else if (timeSeries === "daily") {
+      response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=compact&apikey=${API_KEY}`);
+      const data = await response.data;
+      const currentPrice = await data["Time Series (Daily)"];
+      dates = Object.keys(currentPrice).reverse();
+      prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    } else {
+      response = await axios.get(`${BASE_URL}query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&outputsize=compact&apikey=${API_KEY}`);
+      const data = await response.data;
+      const currentPrice = await data["Monthly Time Series"];
+      dates = Object.keys(currentPrice).reverse();
+      prices = dates.map((date) => parseFloat(currentPrice[date]["4. close"]));
+    }
+
     return { dates, prices };
   }
 

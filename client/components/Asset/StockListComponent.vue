@@ -3,46 +3,20 @@ import { ref } from "vue";
 import StockComponent from "./StockComponent.vue";
 
 let tickers = ref<Array<string>>([]);
-tickers.value = ["AAPL", "AMZN", "TSLA"];
+tickers.value = ["AMZN", "AAPL", "TSLA", "NVDA"];
 </script>
 
 <template>
-  <dev v-for="ticker in tickers" :key="ticker">
-    <StockComponent :ticker="ticker" />
-  </dev>
+  <div class="stocks-container">
+    <StockComponent v-for="ticker in tickers" :key="ticker" :ticker="ticker" class="stock-item" />
+  </div>
 </template>
 
 <style scoped>
-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-}
-
-section,
-p,
-.row {
-  margin: 0 auto;
-  max-width: 60em;
-}
-
-article {
-  background-color: var(--base-bg);
-  border-radius: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  padding: 1em;
-}
-
-.posts {
-  padding: 1em;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  max-width: 60em;
-}
+/* .stocks-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 20px;
+  padding: 20px;
+} */
 </style>
