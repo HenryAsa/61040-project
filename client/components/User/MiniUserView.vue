@@ -30,7 +30,7 @@ img {
   height: 5vw;
   object-fit: cover;
   align-self: auto;
-  border: 3px solid var(--subtle-gray);
+  border: 3px solid var(--deep-gold);
   border-radius: 16px;
   display: block;
   margin-right: 0.5rem;
