@@ -65,8 +65,6 @@ article {
   border-radius: 1em;
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
-  padding: 1em;
 }
 
 .posts {
