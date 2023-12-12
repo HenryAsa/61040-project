@@ -41,11 +41,11 @@ img {
   justify-content: space-between;
   align-items: center;
   border-radius: 16px;
-  border: 3px solid rgb(239, 182, 77);
+  border: 3px solid var(--deep-gold);
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   padding-left: 0.2rem;
   padding-right: 0.45em;
-  background-color: #fddf93;
+  background-color: var(--light-orange-gold);
 }
 </style>
