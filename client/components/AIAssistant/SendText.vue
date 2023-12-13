@@ -41,8 +41,8 @@ const emptyForm = () => {
 .message-input {
   position: fixed;
   bottom: 0;
-  right: 0;
-  width: 90%;
+  left: 15%;
+  width: 70%;
   display: block;
   align-items: center;
   background-color: #fff;
