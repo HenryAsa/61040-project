@@ -47,5 +47,6 @@ img {
   padding-left: 0.2rem;
   padding-right: 0.45em;
   background-color: var(--light-orange-gold);
+  min-height: 5em;
 }
 </style>
