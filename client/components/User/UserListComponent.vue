@@ -67,8 +67,7 @@ section {
 }
 
 section,
-p,
-.row {
+p {
   margin: 0 auto;
   max-width: 60em;
 }
@@ -78,10 +77,6 @@ p,
 }
 
 article {
-  background-color: var(--base-bg);
-  border-radius: 1em;
-  display: flex;
-  flex-direction: column;
   width: 100%;
 }
 
@@ -104,6 +99,5 @@ article {
   flex-direction: column;
   flex-basis: 100%;
   flex: 1;
-  background-color: var(--base-bg);
 }
 </style>
