@@ -50,7 +50,7 @@ onBeforeMount(async () => {
         <span class="checkmark"></span>
       </label>
       <div>
-        <button type="submit">Update</button>
+        <button class="pure-button-primary pure-button" type="submit">Update</button>
       </div>
     </fieldset>
   </form>
