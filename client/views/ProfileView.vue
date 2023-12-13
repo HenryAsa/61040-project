@@ -4,7 +4,7 @@ import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
 import { fetchy } from "@/utils/fetchy";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import PortfolioView from "./PortfolioView.vue";
 
 const { currentUsername, isLoggedIn, currentUserProfilePhoto } = storeToRefs(useUserStore());
@@ -28,6 +28,12 @@ onBeforeMount(async () => {
   } else {
     await getProfilePicture(props.username);
   }
+  watch(
+    () => props.username,
+    async () => {
+      await getProfilePicture(props.username);
+    },
+  );
 });
 </script>
 
