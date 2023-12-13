@@ -1,21 +1,46 @@
 <script setup lang="ts">
 import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vue";
 import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
+import { fetchy } from "@/utils/fetchy";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import PortfolioView from "./PortfolioView.vue";
 
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+const { currentUsername, isLoggedIn, currentUserProfilePhoto } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
+const picture = ref("");
 
-onBeforeMount(async () => {});
+async function getProfilePicture(username: string) {
+  let pictureResults;
+  try {
+    pictureResults = (await fetchy(`/api/users/${username}`, "GET")).profilePhoto;
+  } catch (_) {
+    return;
+  }
+  picture.value = pictureResults;
+}
+
+onBeforeMount(async () => {
+  if (isLoggedIn && props.username == currentUsername.value) {
+    picture.value = currentUserProfilePhoto.value;
+  } else {
+    await getProfilePicture(props.username);
+  }
+  watch(
+    () => props.username,
+    async () => {
+      await getProfilePicture(props.username);
+    },
+  );
+});
 </script>
 
 <template>
   <div class="full-wrapper">
     <div class="profile-wrapper">
+      <img v-bind:src="picture" />
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
       <RouterLink v-if="isLoggedIn && props.username == currentUsername" class="settings" :to="{ name: 'Settings' }">
@@ -36,6 +61,10 @@ onBeforeMount(async () => {});
 </template>
 
 <style scoped>
+p {
+  background-color: var(--light-orange-gold);
+}
+
 .full-wrapper {
   background: var(--darker-bg);
   padding: 2em;
@@ -57,7 +86,8 @@ h2 {
 }
 
 .profile-wrapper {
-  background-color: var(--base-bg);
+  background-color: var(--light-orange-gold);
+  border: 3px solid var(--deep-gold);
   border-radius: 1em;
   padding: 1em;
 }
@@ -68,6 +98,7 @@ h2 {
 
 h3 {
   text-align: center;
+  margin-bottom: 0;
 }
 
 .split-wrapper {
@@ -90,10 +121,24 @@ h3 {
 /* Control the right side */
 .right {
   flex-grow: 1;
-  padding: 1em;
 }
 
 .settings {
   float: right;
+}
+
+img {
+  width: 5vw;
+  height: 5vw;
+  object-fit: cover;
+  align-self: auto;
+  border: 3px solid var(--deep-gold);
+  border-radius: 16px;
+  display: block;
+  margin-right: 0.5rem;
+  min-height: 4.5em;
+  min-width: 4.5em;
+  max-height: 4.5em;
+  max-width: 4.5em;
 }
 </style>

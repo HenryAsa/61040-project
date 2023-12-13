@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { fetchy } from "@/utils/fetchy";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import SearchUserForm from "./SearchUserForm.vue";
 import MiniUserView from "./MiniUserView.vue";
-
-const props = defineProps([]);
 
 const loaded = ref(false);
 let users = ref<Array<Record<string, string>>>([]);
 let searchUser = ref("");
+const columns = ref(0);
 
 async function getUsers(username?: string) {
   let postResults;
@@ -28,19 +27,45 @@ async function getUsers(username?: string) {
 onBeforeMount(async () => {
   await getUsers();
   loaded.value = true;
+  handleResize();
 });
+
+onMounted(async () => {
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(async () => {
+  window.removeEventListener("resize", handleResize);
+});
+
+function handleResize() {
+  columns.value = Math.floor(document.body.clientWidth / screen.width / 0.25);
+}
 </script>
 
 <template>
-  <div class="row">
+  <div class="search-bar">
     <h2 v-if="!searchUser">Users:</h2>
     <h2 v-else>User Filter: {{ searchUser }}:</h2>
     <SearchUserForm @getUsersByName="getUsers" />
   </div>
-  <section class="posts" v-if="loaded && users.length !== 0">
-    <article v-for="user in users" :key="user._id">
-      <MiniUserView :user="user" />
-    </article>
+  <section class="users row" v-if="loaded && users.length !== 0">
+    <div
+      class="column"
+      v-for="columnNum in Array(columns)
+        .fill(0)
+        .map((_, i) => i)"
+      :key="columnNum"
+    >
+      <article
+        v-for="user in users.filter(function (element, index, array) {
+          return index % columns === columnNum;
+        })"
+        :key="user._id"
+      >
+        <MiniUserView :user="user" />
+      </article>
+    </div>
   </section>
   <p v-else-if="loaded">No posts found</p>
   <p v-else>Loading...</p>
@@ -54,29 +79,38 @@ section {
 }
 
 section,
-p,
-.row {
+p {
   margin: 0 auto;
-  max-width: 60em;
+  max-width: 90%;
+}
+
+.users {
+  padding: 1em;
 }
 
 article {
-  background-color: var(--base-bg);
-  border-radius: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  padding: 1em;
+  width: 100%;
 }
 
-.posts {
-  padding: 1em;
-}
-
-.row {
+.search-bar {
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
   max-width: 60em;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
 }
 </style>

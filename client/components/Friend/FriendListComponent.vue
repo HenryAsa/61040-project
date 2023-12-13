@@ -70,6 +70,7 @@ article {
 
 .list-wrapper {
   margin-top: 1em;
+  padding: 1em;
 }
 
 section {
@@ -100,5 +101,9 @@ p {
 
 .unfriend {
   float: right;
+}
+
+p {
+  background-color: var(--light-orange-gold);
 }
 </style>

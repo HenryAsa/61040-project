@@ -9,6 +9,7 @@ let password = ref("");
 let firstName = ref("");
 let lastName = ref("");
 let profilePicture = ref("");
+const updateFormEnabled = ref(false);
 
 const { updateUser, updateSession } = useUserStore();
 
@@ -44,40 +45,46 @@ async function assignURL(url: string) {
 function assignPassword(userPassword: string) {
   password.value = userPassword;
 }
+
+async function toggleUpdateForm() {
+  updateFormEnabled.value = !updateFormEnabled.value;
+}
 </script>
 
 <template>
-  <h2>Update user details</h2>
-  <form @submit.prevent="updateName" class="pure-form">
-    <fieldset>
-      <legend>Change your name</legend>
-      <input type="text" placeholder="New first name" v-model="firstName" required />
-      <input type="text" placeholder="New last name" v-model="lastName" required />
-      <button type="submit" class="pure-button pure-button-primary">Update name</button>
-    </fieldset>
-  </form>
+  <button @click="toggleUpdateForm" class="button-secondary pure-button">Update your details</button>
+  <div class="options-wrapper" v-if="updateFormEnabled">
+    <form @submit.prevent="updateName" class="pure-form">
+      <fieldset>
+        <legend>Change your name</legend>
+        <input type="text" placeholder="New first name" v-model="firstName" required />
+        <input type="text" placeholder="New last name" v-model="lastName" required />
+        <button type="submit" class="pure-button pure-button-primary">Update name</button>
+      </fieldset>
+    </form>
 
-  <form @submit.prevent="updateUsername" class="pure-form">
-    <fieldset>
-      <legend>Change your username</legend>
-      <input type="text" placeholder="New username" v-model="username" required />
-      <button type="submit" class="pure-button pure-button-primary">Update username</button>
-    </fieldset>
-  </form>
+    <form @submit.prevent="updateUsername" class="pure-form">
+      <fieldset>
+        <legend>Change your username</legend>
+        <input type="text" placeholder="New username" v-model="username" required />
+        <button type="submit" class="pure-button pure-button-primary">Update username</button>
+      </fieldset>
+    </form>
 
-  <form @submit.prevent="updatePicture" class="pure-form">
-    <fieldset>
-      <UploadMedia @update:imageURL="assignURL" required></UploadMedia>
-      <legend>Change your profile picture</legend>
-      <button type="submit" class="pure-button pure-button-primary">Update profile picture</button>
-    </fieldset>
-  </form>
+    <form @submit.prevent="updatePicture" class="pure-form">
+      <fieldset>
+        <UploadMedia @update:imageURL="assignURL" required></UploadMedia>
+        <legend>Change your profile picture</legend>
+        <button type="submit" class="pure-button pure-button-primary">Update profile picture</button>
+      </fieldset>
+    </form>
 
-  <form @submit.prevent="updatePassword" class="pure-form">
-    <fieldset>
-      <legend>Change your password</legend>
-      <PasswordValidation @userPassword="assignPassword" id="aligned-password" placeholder="Update password" required></PasswordValidation>
-      <button type="submit" class="pure-button pure-button-primary">Update password</button>
-    </fieldset>
-  </form>
+    <form @submit.prevent="updatePassword" class="pure-form">
+      <fieldset>
+        <legend>Change your password</legend>
+        <PasswordValidation @userPassword="assignPassword" id="aligned-password" placeholder="Update password" required></PasswordValidation>
+        <button type="submit" class="pure-button pure-button-primary">Update password</button>
+      </fieldset>
+    </form>
+  </div>
 </template>

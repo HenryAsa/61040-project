@@ -68,10 +68,10 @@ const hasNumber = computed(() => {
 
 const passwordStrength = computed(() => {
   let msg = "";
-  msg = isShort.value ? "Very Weak" : msg;
-  msg = isWeak.value ? "Weak" : msg;
-  msg = isFair.value ? "Fair" : msg;
-  msg = isExcellent.value ? "Strong" : msg;
+  msg = isShort.value ? "very weak" : msg;
+  msg = isWeak.value ? "weak" : msg;
+  msg = isFair.value ? "strong" : msg;
+  msg = isExcellent.value ? "very strong" : msg;
   return msg;
 });
 
@@ -89,17 +89,17 @@ const updatePassword = () => {
     <div class="input-with-button">
       <label for="new">Password</label>
       <input :type="state.passwordType" v-model="state.password" name="new" placeholder="Password" @change="updatePassword" required />
-      <button @click="showPassword">{{ state.passwordType === "password" ? "Show Password" : "Hide Password" }}</button>
+      <button class="button-secondary pure-button" @click="showPassword">{{ state.passwordType === "password" ? "Show Password" : "Hide Password" }}</button>
     </div>
-    <label for="strength">
-      Password Strength<span v-if="!isInitial">: </span>
+    <p for="strength">
+      <span v-if="!isInitial">Password is </span>
       <span v-bind:class="{ initial: isInitial, short: isShort, weak: isWeak, fair: isFair, excellent: isExcellent }">{{ passwordStrength }}</span>
-    </label>
+    </p>
     <div class="rg-bar">
       <div v-bind:class="{ highlight: true, initial: isInitial, bgShort: isShort, bgWeak: isWeak, bgFair: isFair, bgExcellent: isExcellent }"></div>
     </div>
-    <p class="support-text">Your password must:</p>
-    <ul class="support-text">
+    <h4 class="password-requirements">Your password must:</h4>
+    <ul class="password-requirements-list">
       <li v-bind:class="{ checked: hasUpperCase }">{{ hasUpperCase ? "✅" : "❌" }} Contain a capital letter</li>
       <li v-bind:class="{ checked: hasSpecialCharacter }">{{ hasSpecialCharacter ? "✅" : "❌" }} Contain a special character</li>
       <li v-bind:class="{ checked: hasLowerCase }">{{ hasLowerCase ? "✅" : "❌" }} Contain a lowercase letter</li>
@@ -112,6 +112,23 @@ const updatePassword = () => {
 <style scoped>
 p {
   margin: 0em;
+}
+
+.password-setter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.password-requirements {
+  padding: 0;
+  margin: 0;
+  margin-top: 0.5em;
+}
+
+.password-requirements-list {
+  margin: 0;
+  list-style-type: none;
 }
 
 .input-with-button button {
@@ -138,9 +155,8 @@ p {
 .rg-bar {
   background-color: lightgray;
   width: 100%;
-  margin-top: 10px;
-  height: 8px;
-  border-radius: 2px;
+  margin-top: 0.8em;
+  height: 0.5em;
   .highlight {
     height: 100%;
     transition: 0.5s;
