@@ -83,7 +83,7 @@ section {
 section,
 p {
   margin: 0 auto;
-  max-width: 60em;
+  max-width: 90%;
 }
 
 .users {
