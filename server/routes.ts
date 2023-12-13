@@ -439,8 +439,8 @@ class Routes {
     }
     if (price <= available_capital) {
       for (let _ = 0; _ < quantity; ++_) {
-        const asset = void Asset.create(ticker, user_id);
-        void Portfolio.addAssetToPortfolio((await portfolio)._id, (await asset)._id, quantity, await current_price);
+        const asset = await Asset.create(ticker, user_id);
+        await Portfolio.addAssetToPortfolio((await portfolio)._id, asset.asset._id, 1, await current_price);
       }
       // void Asset.addShareholderToAsset((await asset)._id, (await user)._id);
       void Money.withdraw(user_id, price);
