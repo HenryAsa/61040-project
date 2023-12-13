@@ -111,7 +111,7 @@ onBeforeMount(async () => {
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: var(--light-orange-gold);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 600px;
   margin: 0 auto;
@@ -152,6 +152,7 @@ button {
   border-radius: 5px;
   background-color: #3498db;
   color: #fff;
+  margin-right: 0.5em;
 }
 
 .chart-container {
@@ -181,7 +182,7 @@ input[type="number"] {
 .input-group {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-right: 1em;
 }
 
 input[type="number"] {
