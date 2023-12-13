@@ -1,22 +1,40 @@
 <script setup lang="ts">
 import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vue";
 import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
+import { fetchy } from "@/utils/fetchy";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 import PortfolioView from "./PortfolioView.vue";
 
 const { currentUsername, isLoggedIn, currentUserProfilePhoto } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
+const picture = ref("");
 
-onBeforeMount(async () => {});
+async function getProfilePicture(username: string) {
+  let pictureResults;
+  try {
+    pictureResults = (await fetchy(`/api/users/${username}`, "GET")).profilePhoto;
+  } catch (_) {
+    return;
+  }
+  picture.value = pictureResults;
+}
+
+onBeforeMount(async () => {
+  if (isLoggedIn && props.username == currentUsername.value) {
+    picture.value = currentUserProfilePhoto.value;
+  } else {
+    await getProfilePicture(props.username);
+  }
+});
 </script>
 
 <template>
   <div class="full-wrapper">
     <div class="profile-wrapper">
-      <img v-bind:src="currentUserProfilePhoto" />
+      <img v-bind:src="picture" />
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
       <RouterLink v-if="isLoggedIn && props.username == currentUsername" class="settings" :to="{ name: 'Settings' }">
