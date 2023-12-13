@@ -1,50 +1,42 @@
 import { Filter, FindOptions, ObjectId } from "mongodb";
-import { User } from "../app";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 
 export interface PortfolioDoc extends BaseDoc {
   name: string;
-  ownerName: string;
   owner: ObjectId;
   isPublic: boolean;
-  shares: Map<ObjectId, Array<number>>; // Asset ID: [Quantity, Price Bought]
+  shares: Array<ObjectId>;
 }
 
 export default class PortfolioConcept {
   public readonly portfolios = new DocCollection<PortfolioDoc>("portfolios");
 
-  async create(name: string, owner: ObjectId, ownerName: string, isPublic: boolean) {
+  async create(name: string, owner: ObjectId, isPublic: boolean) {
     await this.canCreate(name, owner);
-    const shares = new Map<ObjectId, Array<number>>();
-    const _id = await this.portfolios.createOne({ name, owner, ownerName, isPublic, shares });
+    const shares: Array<ObjectId> = [];
+    const _id = await this.portfolios.createOne({ name, owner, isPublic, shares });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
 
   async getPortfolios(query: Filter<PortfolioDoc>, sort?: FindOptions<PortfolioDoc>) {
-    let posts;
+    let portfolios;
     if (sort) {
-      posts = await this.portfolios.readMany(query, sort);
+      portfolios = await this.portfolios.readMany(query, sort);
     } else {
-      posts = await this.portfolios.readMany(query, {
+      portfolios = await this.portfolios.readMany(query, {
         sort: { dateUpdated: -1 },
       });
     }
-    return posts;
+    return portfolios;
   }
 
-  async getOwnerName(_id: ObjectId) {
-    const portfolio = await this.portfolios.readOne({ _id });
-    if (portfolio) {
-      const ownerName = (await User.getUserById(portfolio.owner)).username;
-      return ownerName;
-    } else {
-      throw new NotFoundError(`Portfolio not found!`);
-    }
+  async getOnePortfolioByUser(owner: ObjectId, name: string) {
+    return await this.getPortfolios({ owner, name });
   }
 
   async getPortfoliosByOwner(owner: ObjectId) {
-    return await this.getPortfolios({ owner: owner });
+    return await this.getPortfolios({ owner });
   }
 
   async getViewablePortfoliosByOwner(owner: ObjectId, viewer: ObjectId) {
@@ -90,27 +82,43 @@ export default class PortfolioConcept {
   }
 
   async getPortfolioByName(name: string) {
-    const portfolio = await this.getPortfolios({ name: name });
+    const portfolio = await this.getPortfolios({ name });
     if (portfolio === null) {
       throw new NotFoundError(`Portfolio not found!`);
     }
     return portfolio[0];
   }
 
-  async addAssetToPortfolio(_id: ObjectId, share: ObjectId, quantity: number, price: number) {
-    const portfolio = await this.getPortfolioById(_id);
-    await this.update(portfolio._id, { shares: portfolio.shares.set(share, [quantity, price]) });
-    return { msg: `Successfully added share '${share}' to portfolio '${portfolio.name}'` };
+  async getAssets(_id: ObjectId) {
+    const portfolio = await this.portfolios.readOne({ _id });
+    return portfolio?.shares;
   }
 
-  async removeAssetFromPortfolio(_id: ObjectId, share: ObjectId) {
-    const portfolio = await this.getPortfolioById(_id);
-    const deletedShares = portfolio.shares.delete(share);
-    if (!deletedShares) {
-      throw new BadValuesError("This portfolio does not contain the share the user is trying to sell");
+  async getUserAssets(user: ObjectId) {
+    const portfolios = await this.portfolios.readMany({ owner: user });
+    const assets = [];
+    for (const portfolio of portfolios) {
+      for (const asset of portfolio.shares) {
+        assets.push(asset);
+      }
     }
-    await this.update(_id, { shares: portfolio.shares });
-    return { msg: `Successfully removed share '${share}' from portfolio '${_id}'` };
+    return assets;
+  }
+
+  async addAssetToPortfolio(owner: ObjectId, name: string, asset: ObjectId) {
+    const portfolio = (await this.portfolios.readMany({ owner, name }))[0];
+    const shares: Array<ObjectId> = portfolio.shares;
+    shares.push(asset);
+    await this.update(portfolio._id, { shares });
+    return { msg: `Successfully added share '${asset}' to portfolio '${portfolio.name}'` };
+  }
+
+  async removeAssetFromPortfolio(portfolioId: ObjectId, assetId: string) {
+    const portfolio = await this.portfolios.readOne({ _id: portfolioId });
+    let shares = portfolio!.shares;
+    shares = shares.filter((element) => element.toString() !== assetId);
+    await this.portfolios.updateOne({ _id: portfolioId }, { shares });
+    return { msg: `Successfully removed share` };
   }
 
   async update(_id: ObjectId, update: Partial<PortfolioDoc>) {
@@ -118,9 +126,14 @@ export default class PortfolioConcept {
     return { msg: "Portfolio updated successfully!" };
   }
 
-  async delete(_id: ObjectId) {
+  async deleteOne(_id: ObjectId) {
     await this.portfolios.deleteOne({ _id });
     return { msg: "Portfolio deleted!" };
+  }
+
+  async deleteByUser(user: ObjectId) {
+    await this.portfolios.deleteMany({ user });
+    return { msg: "User deleted!" };
   }
 
   async portfolioIdExists(_id: ObjectId) {
