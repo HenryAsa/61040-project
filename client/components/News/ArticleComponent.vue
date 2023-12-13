@@ -11,6 +11,7 @@ const url = ref(props.article?.url);
   <img :src="props.article.banner_image" style="width: 200px; height: auto" />
   <p>{{ props.article.summary }}</p>
   <div class="base">
+    <p class="authors">Authors: {{ props.article.authors.join(", ") }}</p>
     <article class="timestamp">
       <p>{{ props.article.time_published }}</p>
     </article>
@@ -60,5 +61,9 @@ menu {
 
 .base article:only-child {
   margin-left: auto;
+}
+
+.authors {
+  font-weight: bold;
 }
 </style>
