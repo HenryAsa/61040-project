@@ -98,8 +98,8 @@ const updatePassword = () => {
     <div class="rg-bar">
       <div v-bind:class="{ highlight: true, initial: isInitial, bgShort: isShort, bgWeak: isWeak, bgFair: isFair, bgExcellent: isExcellent }"></div>
     </div>
-    <p class="support-text">Your password must:</p>
-    <ul class="support-text">
+    <h4 class="password-requirements">Your password must:</h4>
+    <ul class="password-requirements-list">
       <li v-bind:class="{ checked: hasUpperCase }">{{ hasUpperCase ? "✅" : "❌" }} Contain a capital letter</li>
       <li v-bind:class="{ checked: hasSpecialCharacter }">{{ hasSpecialCharacter ? "✅" : "❌" }} Contain a special character</li>
       <li v-bind:class="{ checked: hasLowerCase }">{{ hasLowerCase ? "✅" : "❌" }} Contain a lowercase letter</li>
@@ -112,6 +112,22 @@ const updatePassword = () => {
 <style scoped>
 p {
   margin: 0em;
+}
+
+.password-setter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.password-requirements {
+  padding: 0;
+  margin: 0;
+  margin-top: 0.5em;
+}
+
+.password-requirements-list {
+  margin: 0;
 }
 
 .input-with-button button {
