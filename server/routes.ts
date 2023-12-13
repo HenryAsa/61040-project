@@ -279,8 +279,8 @@ class Routes {
   @Router.patch("/aiagent/receive")
   async receive(session: WebSessionDoc, decision: string) {
     const user = WebSession.getUser(session);
-    const response = await AIAgent.getResponse(user, decision);
-    return response;
+    void AIAgent.getResponse(user, decision);
+    return;
   }
 
   ///////////////
@@ -350,7 +350,8 @@ class Routes {
   @Router.post("/portfolios")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
     const user = WebSession.getUser(session);
-    return Portfolio.create(name, user, isPublic);
+    const username = (await User.getUserById(user)).username;
+    return Portfolio.create(name, user, username, isPublic);
   }
 
   @Router.delete("/portfolios/:_id")
@@ -423,41 +424,17 @@ class Routes {
     return await Asset.getManyAssetsById(assetIds!);
   }
 
-  // @Router.patch("/portfolios/copy/:srcId/:dstId")
-  // async copyInvest(session: WebSessionDoc, srcId: ObjectId, dstId: ObjectId) {
-  //   const user = WebSession.getUser(session);
-  //   const sourcePortfolio = await Portfolio.getPortfolioById(srcId);
-  //   const destinationPortfolio = await Portfolio.getPortfolioById(dstId);
-  //   const srcIsPublic = sourcePortfolio.isPublic;
-  //   const portfolioOwner = sourcePortfolio.owner;
-
-  //   if (!srcIsPublic && !portfolioOwner.equals(user)) {
-  //     throw new NotAllowedError("Cannot copy private portfolio which user does not own");
-  //   }
-
-  //   const assets = await Portfolio.getPortfolioShares(srcId);
-  //   let total_price: number = 0;
-  //   const account_id = await Money.userIdToAccountId(user);
-  //   let available_capital: number;
-
-  //   if (account_id !== undefined) {
-  //     available_capital = await Money.getBalance(account_id);
-  //   } else {
-  //     throw new Error("User does not have a money account.");
-  //   }
-
-  //   for (const asset of assets) {
-  //     const asset_object = await Asset.getAssetById(asset[0]);
-  //     total_price += (await Asset.getCurrentPrice(asset_object.ticker)) * asset[1][0];
-  //   }
-
-  //   if (total_price >= available_capital) {
-  //     for (const asset of assets) {
-  //       const asset_object = await Asset.getAssetById(asset[0]);
-  //       void this.purchaseAsset(session, destinationPortfolio.name, asset_object.ticker, asset[1][0]);
-  //     }
-  //   }
-  // }
+  @Router.post("/portfolios/copy/:_id/:name")
+  async copyInvest(session: WebSessionDoc, _id: ObjectId, name: string) {
+    const assetIds = await Portfolio.getAssets(_id);
+    const assets = await Asset.getManyAssetsById(assetIds!);
+    await this.createPortfolio(session, name, true);
+    for (const asset of assets) {
+      const ticker = asset?.ticker;
+      const quantity = asset?.quantity;
+      await this.purchaseAsset(session, name, ticker!, quantity!.toString());
+    }
+  }
 
   @Router.get("/portfolios/:_id/topAssets")
   async getTopAssets(session: WebSessionDoc, _id: ObjectId) {
