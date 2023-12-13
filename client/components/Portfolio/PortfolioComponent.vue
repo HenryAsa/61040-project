@@ -46,7 +46,7 @@ onBeforeMount(async () => {
     <div v-if="loaded" class="flex-container">
       <h3>{{ props.portfolio.name }}</h3>
       <p>Portfolio Value: ${{ portfolioValue }}</p>
-      <button class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
+      <button v-if="portfolio.ownerName === currentUsername" class="button-error btn-small pure-button" @click="deletePortfolio">Delete</button>
       <h3>Holdings</h3>
       <div v-if="assets[0] !== ''">
         <p v-for="asset in assets" :key="asset">
