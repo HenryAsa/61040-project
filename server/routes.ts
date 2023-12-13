@@ -2,7 +2,7 @@ import { Filter, FindOptions, ObjectId } from "mongodb";
 
 import { AIAgent, Asset, Friend, Interest, Media, Money, Portfolio, Post, User, WebSession } from "./app";
 import { AssetDoc } from "./concepts/asset";
-import { BadValuesError, NotAllowedError } from "./concepts/errors";
+import { NotAllowedError } from "./concepts/errors";
 import { MediaDoc } from "./concepts/media";
 import { PortfolioDoc } from "./concepts/portfolio";
 import { PostDoc, PostOptions } from "./concepts/post";
@@ -439,8 +439,8 @@ class Routes {
       throw new Error("User does not have a money account.");
     }
     if (price <= available_capital) {
-      // void Portfolio.addAssetToPortfolio((await portfolio)._id, (await asset)._id, quantity, await current_price);
-      void Asset.addShareholderToAsset((await asset)._id, (await user)._id);
+      void Portfolio.addAssetToPortfolio((await portfolio)._id, (await asset)._id, quantity, await current_price);
+      // void Asset.addShareholderToAsset((await asset)._id, (await user)._id);
       void Money.withdraw(user_id, price);
     } else {
       throw new Error(
@@ -450,33 +450,33 @@ class Routes {
     return { msg: `Successfully purchased ${quantity} shares of ${ticker} at ${current_price} per share for a total of $${price}` };
   }
 
-  @Router.patch("/sell/:portfolio/:ticker/:quantity")
-  async sellAsset(session: WebSessionDoc, portfolio_name: string, ticker: string, quantity: number) {
-    const user_id = WebSession.getUser(session);
-    const user = User.getUserById(user_id);
-    const asset = Asset.getAssetByTicker(ticker);
-    const portfolio = Portfolio.getPortfolioByName(portfolio_name);
-    const current_price = Asset.getCurrentPrice(ticker);
-    const price = quantity * (await current_price);
-    const account_id = await Money.userIdToAccountId((await user)._id);
+  // @Router.patch("/sell/:portfolio/:ticker/:quantity")
+  // async sellAsset(session: WebSessionDoc, portfolio_name: string, ticker: string, quantity: number) {
+  //   const user_id = WebSession.getUser(session);
+  //   const user = User.getUserById(user_id);
+  //   const asset = Asset.getAssetByTicker(ticker);
+  //   const portfolio = Portfolio.getPortfolioByName(portfolio_name);
+  //   const current_price = Asset.getCurrentPrice(ticker);
+  //   const price = quantity * (await current_price);
+  //   const account_id = await Money.userIdToAccountId((await user)._id);
 
-    if (account_id === undefined) {
-      throw new Error("User does not have a money account.");
-    }
+  //   if (account_id === undefined) {
+  //     throw new Error("User does not have a money account.");
+  //   }
 
-    if ((await portfolio).shares.has((await asset)._id)) {
-      const number_owned = (await portfolio).shares.get((await asset)._id);
-      if (number_owned === undefined) {
-        throw new BadValuesError("User does not own this asset");
-      }
-      void Portfolio.removeAssetFromPortfolio((await portfolio)._id, (await asset)._id);
-      void Asset.removeShareholderFromAsset((await asset)._id, (await user)._id);
-      void Money.deposit(account_id, number_owned[0] * (await current_price));
-    } else {
-      throw new Error(`${(await user).username} is trying to sell ${quantity} shares of ${ticker} at ${current_price} per share for a total of $${price} but is running into an error`);
-    }
-    return { msg: `Successfully sold ${quantity} shares of ${ticker} at ${current_price} per share for a total of $${price}` };
-  }
+  //   if ((await portfolio).shares.has((await asset)._id)) {
+  //     const number_owned = (await portfolio).shares.get((await asset)._id);
+  //     if (number_owned === undefined) {
+  //       throw new BadValuesError("User does not own this asset");
+  //     }
+  //     void Portfolio.removeAssetFromPortfolio((await portfolio)._id, (await asset)._id);
+  //     void Asset.removeShareholderFromAsset((await asset)._id, (await user)._id);
+  //     void Money.deposit(account_id, number_owned * (await current_price));
+  //   } else {
+  //     throw new Error(`${(await user).username} is trying to sell ${quantity} shares of ${ticker} at ${current_price} per share for a total of $${price} but is running into an error`);
+  //   }
+  //   return { msg: `Successfully sold ${quantity} shares of ${ticker} at ${current_price} per share for a total of $${price}` };
+  // }
 
   @Router.post("/portfolios")
   async createPortfolio(session: WebSessionDoc, name: string, isPublic: boolean) {
@@ -494,58 +494,58 @@ class Routes {
     return Portfolio.delete(_id);
   }
 
-  @Router.get("/portfolios/:_id/value")
-  async getPortfolioValue(session: WebSessionDoc, _id: ObjectId) {
-    const user = WebSession.getUser(session);
-    const isPublic = await Portfolio.portfolioIsPublic(_id);
-    const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
-    if (!isPublic && !user.equals(portfolioOwner)) {
-      throw new NotAllowedError("Cannot view private portfolio which the user does not own");
-    }
-    const assetIds = await Portfolio.getPortfolioShares(_id);
-    let value = 0;
-    for (const id of assetIds) {
-      const asset = await Asset.getAssetById(id[0]);
-      value += await Asset.getCurrentPrice(asset.ticker);
-    }
-    return value;
-  }
+  // @Router.get("/portfolios/:_id/value")
+  // async getPortfolioValue(session: WebSessionDoc, _id: ObjectId) {
+  //   const user = WebSession.getUser(session);
+  //   const isPublic = await Portfolio.portfolioIsPublic(_id);
+  //   const portfolioOwner = await Portfolio.getPortfolioOwner(_id);
+  //   if (!isPublic && !user.equals(portfolioOwner)) {
+  //     throw new NotAllowedError("Cannot view private portfolio which the user does not own");
+  //   }
+  //   const assetIds = await Portfolio.getPortfolioShares(_id);
+  //   let value = 0;
+  //   for (const id of assetIds) {
+  //     const asset = await Asset.getAssetById(id[0]);
+  //     value += await Asset.getCurrentPrice(asset.ticker);
+  //   }
+  //   return value;
+  // }
 
-  @Router.patch("/portfolios/copy/:srcId/:dstId")
-  async copyInvest(session: WebSessionDoc, srcId: ObjectId, dstId: ObjectId) {
-    const user = WebSession.getUser(session);
-    const sourcePortfolio = await Portfolio.getPortfolioById(srcId);
-    const destinationPortfolio = await Portfolio.getPortfolioById(dstId);
-    const srcIsPublic = sourcePortfolio.isPublic;
-    const portfolioOwner = sourcePortfolio.owner;
+  // @Router.patch("/portfolios/copy/:srcId/:dstId")
+  // async copyInvest(session: WebSessionDoc, srcId: ObjectId, dstId: ObjectId) {
+  //   const user = WebSession.getUser(session);
+  //   const sourcePortfolio = await Portfolio.getPortfolioById(srcId);
+  //   const destinationPortfolio = await Portfolio.getPortfolioById(dstId);
+  //   const srcIsPublic = sourcePortfolio.isPublic;
+  //   const portfolioOwner = sourcePortfolio.owner;
 
-    if (!srcIsPublic && !portfolioOwner.equals(user)) {
-      throw new NotAllowedError("Cannot copy private portfolio which user does not own");
-    }
+  //   if (!srcIsPublic && !portfolioOwner.equals(user)) {
+  //     throw new NotAllowedError("Cannot copy private portfolio which user does not own");
+  //   }
 
-    const assets = await Portfolio.getPortfolioShares(srcId);
-    let total_price: number = 0;
-    const account_id = await Money.userIdToAccountId(user);
-    let available_capital: number;
+  //   const assets = await Portfolio.getPortfolioShares(srcId);
+  //   let total_price: number = 0;
+  //   const account_id = await Money.userIdToAccountId(user);
+  //   let available_capital: number;
 
-    if (account_id !== undefined) {
-      available_capital = await Money.getBalance(account_id);
-    } else {
-      throw new Error("User does not have a money account.");
-    }
+  //   if (account_id !== undefined) {
+  //     available_capital = await Money.getBalance(account_id);
+  //   } else {
+  //     throw new Error("User does not have a money account.");
+  //   }
 
-    for (const asset of assets) {
-      const asset_object = await Asset.getAssetById(asset[0]);
-      total_price += (await Asset.getCurrentPrice(asset_object.ticker)) * asset[1][0];
-    }
+  //   for (const asset of assets) {
+  //     const asset_object = await Asset.getAssetById(asset[0]);
+  //     total_price += (await Asset.getCurrentPrice(asset_object.ticker)) * asset[1][0];
+  //   }
 
-    if (total_price >= available_capital) {
-      for (const asset of assets) {
-        const asset_object = await Asset.getAssetById(asset[0]);
-        void this.purchaseAsset(session, destinationPortfolio.name, asset_object.ticker, asset[1][0]);
-      }
-    }
-  }
+  //   if (total_price >= available_capital) {
+  //     for (const asset of assets) {
+  //       const asset_object = await Asset.getAssetById(asset[0]);
+  //       void this.purchaseAsset(session, destinationPortfolio.name, asset_object.ticker, asset[1][0]);
+  //     }
+  //   }
+  // }
 
   @Router.get("/portfolios/:_id/topAssets")
   async getTopAssets(session: WebSessionDoc, _id: ObjectId) {

@@ -3,12 +3,18 @@ import { User } from "../app";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 
+export interface Share {
+  asset: ObjectId;
+  quantity: number;
+  price: number;
+}
+
 export interface PortfolioDoc extends BaseDoc {
   name: string;
   ownerName: string;
   owner: ObjectId;
   isPublic: boolean;
-  shares: Map<ObjectId, Array<number>>; // Asset ID: [Quantity, Price Bought]
+  shares: Array<Share>; // Asset ID: [Quantity, Price Bought]
 }
 
 export default class PortfolioConcept {
@@ -16,7 +22,7 @@ export default class PortfolioConcept {
 
   async create(name: string, owner: ObjectId, ownerName: string, isPublic: boolean) {
     await this.canCreate(name, owner);
-    const shares = new Map<ObjectId, Array<number>>();
+    const shares: Array<Share> = [];
     const _id = await this.portfolios.createOne({ name, owner, ownerName, isPublic, shares });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
@@ -99,17 +105,19 @@ export default class PortfolioConcept {
 
   async addAssetToPortfolio(_id: ObjectId, share: ObjectId, quantity: number, price: number) {
     const portfolio = await this.getPortfolioById(_id);
-    await this.update(portfolio._id, { shares: portfolio.shares.set(share, [quantity, price]) });
+    const shares: Array<Share> = portfolio.shares;
+    console.log(typeof shares);
+    const newShare: Share = { asset: share, quantity, price };
+    shares.push(newShare);
+    await this.update(portfolio._id, { shares });
     return { msg: `Successfully added share '${share}' to portfolio '${portfolio.name}'` };
   }
 
   async removeAssetFromPortfolio(_id: ObjectId, share: ObjectId) {
     const portfolio = await this.getPortfolioById(_id);
-    const deletedShares = portfolio.shares.delete(share);
-    if (!deletedShares) {
-      throw new BadValuesError("This portfolio does not contain the share the user is trying to sell");
-    }
-    await this.update(_id, { shares: portfolio.shares });
+    let shares = portfolio.shares;
+    shares = shares.filter((element) => element.asset !== share);
+    await this.update(_id, { shares });
     return { msg: `Successfully removed share '${share}' from portfolio '${_id}'` };
   }
 
