@@ -38,20 +38,16 @@ onBeforeMount(async () => {
     <SearchUserForm @getUsersByName="getUsers" />
   </div>
   <section class="posts row" v-if="loaded && users.length !== 0">
-    <div class="column">
+    <div
+      class="column"
+      v-for="columnNum in Array(2)
+        .fill(0)
+        .map((_, i) => i)"
+      :key="columnNum"
+    >
       <article
         v-for="user in users.filter(function (element, index, array) {
-          return index % 2 === 0;
-        })"
-        :key="user._id"
-      >
-        <MiniUserView :user="user" />
-      </article>
-    </div>
-    <div class="column">
-      <article
-        v-for="user in users.filter(function (element, index, array) {
-          return index % 2 === 1;
+          return index % 2 === columnNum;
         })"
         :key="user._id"
       >
@@ -108,5 +104,6 @@ article {
   flex-direction: column;
   flex-basis: 100%;
   flex: 1;
+  background-color: var(--base-bg);
 }
 </style>
