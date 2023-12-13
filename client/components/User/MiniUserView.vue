@@ -25,6 +25,10 @@ p {
   margin-bottom: 0.2rem;
 }
 
+.username {
+  text-align: right;
+}
+
 img {
   width: 5vw;
   height: 5vw;
