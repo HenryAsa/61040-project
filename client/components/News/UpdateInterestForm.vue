@@ -34,9 +34,9 @@ onBeforeMount(async () => {
   <form @submit.prevent="updateInterests(checkedNames)">
     <fieldset class="interests-form">
       <legend>Which stocks do you want to get updates on?</legend>
-      <label class="container" for="APPLE">
-        APPL
-        <input type="checkbox" id="APPLE" value="APPLE" v-model="checkedNames" />
+      <label class="container" for="AAPL">
+        AAPL
+        <input type="checkbox" id="AAPL" value="AAPL" v-model="checkedNames" />
         <span class="checkmark"></span>
       </label>
       <label class="container" for="AMZN">

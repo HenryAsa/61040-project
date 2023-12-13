@@ -9,7 +9,7 @@ import LoginView from "../views/LoginView.vue";
 import NewsView from "../views/NewsView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import ProfileView from "../views/ProfileView.vue";
-import SettingView from "../views/SettingView.vue";
+import SettingsView from "../views/SettingsView.vue";
 import StocksView from "../views/StocksView.vue";
 
 const router = createRouter({
@@ -23,11 +23,11 @@ const router = createRouter({
     {
       path: "/setting",
       name: "Settings",
-      component: SettingView,
+      component: SettingsView,
       meta: { requiresAuth: true },
     },
     {
-      path: "/news_",
+      path: "/news",
       name: "News",
       component: NewsView,
       meta: { requiresAuth: true },

@@ -6,11 +6,10 @@ const emit = defineEmits(["getUsersByName"]);
 </script>
 
 <template>
-  <form @submit.prevent="emit('getUsersByName', username)" class="pure-form">
+  <form class="pure-form">
     <fieldset>
       <legend>Search by Username</legend>
-      <input id="author" type="text" v-model="username" placeholder="Username" />
-      <button type="submit" class="pure-button pure-button-primary">Search</button>
+      <input id="author" @input="emit('getUsersByName', username)" type="text" v-model="username" placeholder="Username" />
     </fieldset>
   </form>
 </template>
