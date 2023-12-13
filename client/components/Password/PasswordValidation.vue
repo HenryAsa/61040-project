@@ -154,9 +154,8 @@ p {
 .rg-bar {
   background-color: lightgray;
   width: 100%;
-  margin-top: 10px;
-  height: 8px;
-  border-radius: 2px;
+  margin-top: 0.8em;
+  height: 0.5em;
   .highlight {
     height: 100%;
     transition: 0.5s;
