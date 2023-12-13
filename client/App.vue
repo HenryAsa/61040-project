@@ -32,16 +32,18 @@ onBeforeMount(async () => {
         <li>
           <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
         </li>
-        <li v-if="isLoggedIn" class="isLoggedIn">
-          <RouterLink :to="{ name: 'News' }" :class="{ underline: currentRouteName == 'News' }"> <i class="fa fa-newspaper-o" style="font-size: 24px"></i> </RouterLink>
-          <RouterLink :to="{ name: 'Stocks' }" :class="{ underline: currentRouteName == 'Stocks' }"> Stocks </RouterLink>
-          <RouterLink :to="{ name: 'Profile', params: { username: currentUsername } }" :class="{ underline: currentRouteName == 'Profile' }"
+        <li>
+          <RouterLink v-if="isLoggedIn" class="isLoggedIn" :to="{ name: 'News' }" :class="{ underline: currentRouteName == 'News' }"> Articles </RouterLink>
+        </li>
+        <li>
+          <RouterLink v-if="isLoggedIn" class="isLoggedIn" :to="{ name: 'Stocks' }" :class="{ underline: currentRouteName == 'Stocks' }"> Stocks </RouterLink>
+        </li>
+        <li>
+          <RouterLink v-if="isLoggedIn" class="isLoggedIn" :to="{ name: 'Profile', params: { username: currentUsername } }" :class="{ underline: currentRouteName == 'Profile' }"
             ><img class="profilePhoto" v-bind:src="currentUserProfilePhoto"
           /></RouterLink>
         </li>
-        <li v-else>
-          <RouterLink :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
-        </li>
+        <RouterLink v-if="!isLoggedIn" :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
       </ul>
     </nav>
     <article v-if="toast !== null" class="toast" :class="toast.style">

@@ -53,8 +53,8 @@ export default class ChatConcept {
     await this.update(user, text, "self");
     await this.update(
       user,
-      `This might take up to one minute. We appreciate your pateince as we are analazing your
-    decision. We are also finding recent news.`,
+      `This might take up to one minute. We appreciate your patience as we are analazing your
+    decision. We are also finding recent news. Please refresh the page after a minute. Because of the deployment restriction, we cannot update the page automatically.`,
       "ai",
     );
     return { msg: "Message is received" };

@@ -5,6 +5,7 @@ import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 export interface PortfolioDoc extends BaseDoc {
   name: string;
   owner: ObjectId;
+  username: string;
   isPublic: boolean;
   shares: Array<ObjectId>;
 }
@@ -12,10 +13,10 @@ export interface PortfolioDoc extends BaseDoc {
 export default class PortfolioConcept {
   public readonly portfolios = new DocCollection<PortfolioDoc>("portfolios");
 
-  async create(name: string, owner: ObjectId, isPublic: boolean) {
+  async create(name: string, owner: ObjectId, username: string, isPublic: boolean) {
     await this.canCreate(name, owner);
     const shares: Array<ObjectId> = [];
-    const _id = await this.portfolios.createOne({ name, owner, isPublic, shares });
+    const _id = await this.portfolios.createOne({ name, owner, username, isPublic, shares });
     return { msg: "Portfolio created successfully!", asset: await this.getPortfolioById(_id) };
   }
 
