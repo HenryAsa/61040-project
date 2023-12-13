@@ -4,8 +4,6 @@ import { onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import SearchUserForm from "./SearchUserForm.vue";
 import MiniUserView from "./MiniUserView.vue";
 
-const props = defineProps([]);
-
 const loaded = ref(false);
 let users = ref<Array<Record<string, string>>>([]);
 let searchUser = ref("");
