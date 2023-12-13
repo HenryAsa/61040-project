@@ -75,7 +75,8 @@ onBeforeMount(async () => {
             </option>
           </select>
         </div>
-        <button @click="buyStocks" v-if="isLoggedIn">Buy</button>
+        <button @click="buyStocks" v-if="isLoggedIn && selectedPortfolio">Buy</button>
+        <button disabled v-if="isLoggedIn && !selectedPortfolio">Buy</button>
       </div>
     </div>
     <div class="chart-container">
@@ -176,5 +177,12 @@ select {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
+}
+
+button:disabled,
+button[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
 }
 </style>
