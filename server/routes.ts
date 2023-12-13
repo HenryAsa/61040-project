@@ -427,7 +427,6 @@ class Routes {
   async purchaseAsset(session: WebSessionDoc, portfolio_name: string, ticker: string, quantity: number) {
     const user_id = WebSession.getUser(session);
     const user = User.getUserById(user_id);
-    const asset = Asset.getAssetByTicker(ticker);
     const portfolio = Portfolio.getPortfolioByName(portfolio_name);
     const current_price = Asset.getCurrentPrice(ticker);
     const price = quantity * (await current_price);
@@ -439,7 +438,10 @@ class Routes {
       throw new Error("User does not have a money account.");
     }
     if (price <= available_capital) {
-      void Portfolio.addAssetToPortfolio((await portfolio)._id, (await asset)._id, quantity, await current_price);
+      for (let _ = 0; _ < quantity; ++_) {
+        const asset = void Asset.create(ticker, user_id);
+        void Portfolio.addAssetToPortfolio((await portfolio)._id, (await asset)._id, quantity, await current_price);
+      }
       // void Asset.addShareholderToAsset((await asset)._id, (await user)._id);
       void Money.withdraw(user_id, price);
     } else {
