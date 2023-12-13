@@ -32,7 +32,7 @@ onBeforeMount(async () => {
 
 <template>
   <form @submit.prevent="updateInterests(checkedNames)">
-    <fieldset>
+    <fieldset class="interests-form">
       <legend>Which stocks do you want to get updates on?</legend>
       <label class="container" for="APPLE">
         APPL
@@ -123,5 +123,10 @@ onBeforeMount(async () => {
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+}
+
+.interests-form {
+  border-color: var(--deep-gold);
+  border-style: solid;
 }
 </style>
