@@ -8,9 +8,12 @@ const url = ref(props.article?.url);
   <div class="title">
     <a :href="props.article.url" target="_blank" style="text-decoration: none">{{ props.article.title }}</a>
   </div>
-  <img :src="props.article.banner_image" style="width: 200px; height: auto" />
-  <p>{{ props.article.description }}</p>
+  <div class="article-info">
+    <img :src="props.article.banner_image" style="width: 200px; height: auto" />
+    <p class="summary">{{ props.article.summary }}</p>
+  </div>
   <div class="base">
+    <p class="authors">Authors: {{ props.article.authors.join(", ") }}</p>
     <article class="timestamp">
       <p>{{ props.article.time_published }}</p>
     </article>
@@ -60,5 +63,18 @@ menu {
 
 .base article:only-child {
   margin-left: auto;
+}
+
+.authors {
+  font-weight: bold;
+}
+
+.article-info {
+  display: flex;
+}
+
+.summary {
+  padding-left: 1em;
+  padding-right: 1em;
 }
 </style>

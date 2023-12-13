@@ -28,7 +28,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
+  <section class="interest-form" v-if="isLoggedIn">
     <UpdateInterestForm @refreshArticles="getArticles" />
   </section>
   <section class="articles" v-if="loaded && articles.length !== 0">
@@ -48,14 +48,13 @@ section {
 }
 
 section,
-p,
-.row {
+p {
   margin: 0 auto;
   max-width: 60em;
 }
 
 article {
-  background-color: var(--base-bg);
+  background-color: var(--light-orange-gold);
   border-radius: 1em;
   display: flex;
   flex-direction: column;
@@ -63,14 +62,7 @@ article {
   padding: 1em;
 }
 
-.posts {
-  padding: 1em;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  max-width: 60em;
+.interest-form {
+  margin-bottom: 1em;
 }
 </style>

@@ -49,8 +49,8 @@ onBeforeMount(async () => {
     <p v-else-if="loaded">No portfolios found</p>
     <p v-else>Loading...</p>
   </section>
-  <section v-if="isLoggedIn && props.username === currentUsername">
-    <CreatePortfolioComponent @refreshPortfolios="getPortfolios" />
+  <section class="portfolios" v-if="isLoggedIn && props.username === currentUsername">
+    <CreatePortfolioComponent class="create" @refreshPortfolios="getPortfolios" />
   </section>
 </template>
 
@@ -68,13 +68,12 @@ p {
 }
 
 article {
-  background-color: var(--base-bg);
+  background-color: var(--light-orange-gold);
   border-radius: 1em;
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
   padding: 1em;
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
 }
 
 .portfolios {
@@ -83,5 +82,9 @@ article {
 
 h2 {
   text-align: center;
+}
+
+.create {
+  margin: 0 auto;
 }
 </style>
