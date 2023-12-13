@@ -32,7 +32,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="row">
+  <div class="search-bar">
     <h2 v-if="!searchUser">Users:</h2>
     <h2 v-else>User Filter: {{ searchUser }}:</h2>
     <SearchUserForm @getUsersByName="getUsers" />
@@ -88,6 +88,13 @@ article {
   display: flex;
   flex-direction: column;
   width: 50%;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 60em;
 }
 
 .row {
