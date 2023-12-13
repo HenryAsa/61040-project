@@ -68,10 +68,10 @@ const hasNumber = computed(() => {
 
 const passwordStrength = computed(() => {
   let msg = "";
-  msg = isShort.value ? "Very Weak" : msg;
-  msg = isWeak.value ? "Weak" : msg;
-  msg = isFair.value ? "Fair" : msg;
-  msg = isExcellent.value ? "Strong" : msg;
+  msg = isShort.value ? "very weak" : msg;
+  msg = isWeak.value ? "weak" : msg;
+  msg = isFair.value ? "strong" : msg;
+  msg = isExcellent.value ? "very strong" : msg;
   return msg;
 });
 
