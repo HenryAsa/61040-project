@@ -29,6 +29,14 @@ export default class AssetConcept {
     return assets.map((asset) => this.sanitizeAsset(asset));
   }
 
+  async getAssetOwner(_id: ObjectId) {
+    const asset = await this.assets.readOne({ _id });
+    if (asset === null) {
+      throw new NotFoundError(`Asset not found!`);
+    }
+    return asset.owner;
+  }
+
   async getAssetById(_id: ObjectId) {
     // GETS ASSET BY ITS OBJECTID
     const asset = await this.assets.readOne({ _id });

@@ -40,8 +40,7 @@ export default class Responses {
     if (!asset) {
       return asset;
     }
-    const asset_shareholders = await Promise.all(asset.shareholders.map((shareholder) => User.getUserById(shareholder)));
-    return { ...asset, shareholders: asset_shareholders };
+    return { ...asset, shareholder: asset.owner };
   }
 
   /**

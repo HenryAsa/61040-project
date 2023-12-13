@@ -309,17 +309,6 @@ class Routes {
     return Responses.assets(assets);
   }
 
-  @Router.get("/assets/search/:name")
-  async getAssetsByName(asset_name?: string) {
-    let assets;
-    if (asset_name) {
-      assets = await Asset.searchAssetsByName(asset_name);
-    } else {
-      assets = await Asset.getAssets();
-    }
-    return Responses.assets(assets);
-  }
-
   @Router.get("/assets/shareholders/:username")
   async getAssetsByShareholderUsername(session: WebSessionDoc, username?: string) {
     let user;
@@ -339,57 +328,35 @@ class Routes {
   }
 
   @Router.get("/asset/ticker/:ticker")
-  async getAssetByTicker(ticker: string) {
-    const asset = await Asset.getAssetByTicker(ticker);
-    return Responses.asset(asset);
-  }
-
-  @Router.get("/asset/name/:name")
-  async getAssetByName(asset_name: string) {
-    const asset = await Asset.getAssetByName(asset_name);
-    return Responses.asset(asset);
+  async getAssetsByTicker(ticker: string) {
+    const assets = await Asset.searchAssetsByTicker(ticker);
+    return Responses.assets(assets);
   }
 
   @Router.post("/asset")
-  async createAsset(session: WebSessionDoc, asset_name: string, ticker: string) {
-    const asset = await Asset.create(asset_name, ticker);
+  async createAsset(session: WebSessionDoc, ticker: string) {
+    const user = WebSession.getUser(session);
+    const asset = await Asset.create(ticker, user);
     return { msg: asset.msg, asset: asset.asset };
-  }
-
-  @Router.put("/assets/:ticker/:shareholder")
-  async addAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
-    if (!user) {
-      user = WebSession.getUser(session);
-    }
-    const asset = await Asset.getAssetByTicker(ticker);
-    const shareholders = await Asset.addShareholderToAsset(asset._id, user);
-    return {
-      msg: `User has been successfully added to '${asset.ticker}'s list of shareholders`,
-      shareholders: shareholders,
-    };
-  }
-
-  @Router.delete("/assets/:ticker/:shareholder")
-  async removeAssetShareholder(session: WebSessionDoc, ticker: string, user?: ObjectId) {
-    if (!user) {
-      user = WebSession.getUser(session);
-    }
-    const asset = await Asset.getAssetByTicker(ticker);
-    await Asset.removeShareholderFromAsset(asset._id, user);
-    return { msg: `User '${user}' has successfully been removed from '${asset.ticker}'s list of shareholders` };
   }
 
   @Router.patch("/assets/:_id")
   async updateAsset(session: WebSessionDoc, asset_id: ObjectId, update: Partial<AssetDoc>) {
     const user = WebSession.getUser(session);
-    await Asset.isShareholder(asset_id, user);
+    const assetOwner = await Asset.getAssetOwner(asset_id);
+    if (assetOwner !== user) {
+      throw new Error("User does not own this asset");
+    }
     return await Asset.update(asset_id, update);
   }
 
   @Router.delete("/assets/:_id")
   async deleteAsset(session: WebSessionDoc, asset_id: ObjectId) {
     const user = WebSession.getUser(session);
-    await Asset.isShareholder(asset_id, user, true);
+    const assetOwner = await Asset.getAssetOwner(asset_id);
+    if (assetOwner !== user) {
+      throw new Error("User does not own this asset");
+    }
     return Asset.delete(asset_id);
   }
 
