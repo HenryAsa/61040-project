@@ -34,6 +34,8 @@ img {
   border-radius: 16px;
   display: block;
   margin-right: 0.5rem;
+  min-height: 4.5em;
+  min-width: 4.5em;
 }
 
 .base {
