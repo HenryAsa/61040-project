@@ -37,10 +37,28 @@ onBeforeMount(async () => {
     <h2 v-else>User Filter: {{ searchUser }}:</h2>
     <SearchUserForm @getUsersByName="getUsers" />
   </div>
-  <section class="posts" v-if="loaded && users.length !== 0">
-    <article v-for="user in users" :key="user._id">
-      <MiniUserView :user="user" />
-    </article>
+  <section class="posts row" v-if="loaded && users.length !== 0">
+    <div class="column">
+      <article
+        v-for="user in users.filter(function (element, index, array) {
+          return index % 2 === 0;
+        })"
+        :key="user._id"
+      >
+        <MiniUserView :user="user" />
+      </article>
+    </div>
+    <div class="column">
+      <article
+        class="column"
+        v-for="user in users.filter(function (element, index, array) {
+          return index % 2 === 1;
+        })"
+        :key="user._id"
+      >
+        <MiniUserView :user="user" />
+      </article>
+    </div>
   </section>
   <p v-else-if="loaded">No posts found</p>
   <p v-else>Loading...</p>
@@ -60,21 +78,29 @@ p,
   max-width: 60em;
 }
 
+.posts {
+  padding: 1em;
+}
+
 article {
   background-color: var(--base-bg);
   border-radius: 1em;
   display: flex;
   flex-direction: column;
-}
-
-.posts {
-  padding: 1em;
+  width: 50%;
 }
 
 .row {
   display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  max-width: 60em;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
 }
 </style>
