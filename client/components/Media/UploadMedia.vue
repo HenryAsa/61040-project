@@ -3,7 +3,7 @@
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { ref as firebaseRef, getDownloadURL, uploadBytes } from "firebase/storage";
-import { defineEmits, ref } from "vue";
+import { onBeforeMount, defineEmits, ref } from "vue";
 import { firebaseConfig, storage } from "../../../server/firebase";
 import { fetchy } from "../../utils/fetchy";
 
@@ -53,6 +53,10 @@ const uploadImage = async () => {
     });
   });
 };
+
+onBeforeMount(async () => {
+  emit("update:imageURL", imageURL.value);
+});
 </script>
 
 <template>
