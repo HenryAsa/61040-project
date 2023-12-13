@@ -6,7 +6,7 @@ import { storeToRefs } from "pinia";
 import { onBeforeMount } from "vue";
 import PortfolioView from "./PortfolioView.vue";
 
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+const { currentUsername, isLoggedIn, currentUserProfilePhoto } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
 
@@ -16,6 +16,7 @@ onBeforeMount(async () => {});
 <template>
   <div class="full-wrapper">
     <div class="profile-wrapper">
+      <img v-bind:src="currentUserProfilePhoto" />
       <p class="username">{{ props.username }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
       <RouterLink v-if="isLoggedIn && props.username == currentUsername" class="settings" :to="{ name: 'Settings' }">
@@ -100,5 +101,20 @@ h3 {
 
 .settings {
   float: right;
+}
+
+img {
+  width: 5vw;
+  height: 5vw;
+  object-fit: cover;
+  align-self: auto;
+  border: 3px solid var(--deep-gold);
+  border-radius: 16px;
+  display: block;
+  margin-right: 0.5rem;
+  min-height: 4.5em;
+  min-width: 4.5em;
+  max-height: 4.5em;
+  max-width: 4.5em;
 }
 </style>
