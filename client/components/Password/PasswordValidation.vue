@@ -128,6 +128,7 @@ p {
 
 .password-requirements-list {
   margin: 0;
+  list-style-type: none;
 }
 
 .input-with-button button {
