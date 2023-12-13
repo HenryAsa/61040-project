@@ -91,10 +91,10 @@ const updatePassword = () => {
       <input :type="state.passwordType" v-model="state.password" name="new" placeholder="Password" @change="updatePassword" required />
       <button class="button-secondary pure-button" @click="showPassword">{{ state.passwordType === "password" ? "Show Password" : "Hide Password" }}</button>
     </div>
-    <label for="strength">
-      Password Strength<span v-if="!isInitial">: </span>
+    <p for="strength">
+      <span v-if="!isInitial">Password is </span>
       <span v-bind:class="{ initial: isInitial, short: isShort, weak: isWeak, fair: isFair, excellent: isExcellent }">{{ passwordStrength }}</span>
-    </label>
+    </p>
     <div class="rg-bar">
       <div v-bind:class="{ highlight: true, initial: isInitial, bgShort: isShort, bgWeak: isWeak, bgFair: isFair, bgExcellent: isExcellent }"></div>
     </div>
