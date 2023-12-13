@@ -101,4 +101,8 @@ p {
 .unfriend {
   float: right;
 }
+
+p {
+  background-color: var(--light-orange-gold);
+}
 </style>

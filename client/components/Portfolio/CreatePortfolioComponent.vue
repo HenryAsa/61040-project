@@ -36,6 +36,7 @@ form {
   display: flex;
   gap: 0.5em;
   padding: 1em;
+  background-color: var(--light-orange-gold);
 }
 
 textarea {

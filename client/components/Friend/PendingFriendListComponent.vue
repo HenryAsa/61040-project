@@ -98,7 +98,7 @@ section {
 }
 
 p {
-  background-color: var(--base-bg);
+  background-color: var(--light-orange-gold);
   border-radius: 1em;
   padding: 1em;
 }

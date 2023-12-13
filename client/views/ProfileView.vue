@@ -36,6 +36,10 @@ onBeforeMount(async () => {});
 </template>
 
 <style scoped>
+p {
+  background-color: var(--light-orange-gold);
+}
+
 .full-wrapper {
   background: var(--darker-bg);
   padding: 2em;
@@ -57,7 +61,8 @@ h2 {
 }
 
 .profile-wrapper {
-  background-color: var(--base-bg);
+  background-color: var(--light-orange-gold);
+  border: 3px solid var(--deep-gold);
   border-radius: 1em;
   padding: 1em;
 }
