@@ -50,7 +50,6 @@ onBeforeMount(async () => {
     </div>
     <div class="column">
       <article
-        class="column"
         v-for="user in users.filter(function (element, index, array) {
           return index % 2 === 1;
         })"
