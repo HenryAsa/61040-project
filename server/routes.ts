@@ -415,7 +415,7 @@ class Routes {
       const asset = await Asset.getAssetById(_id);
       value += await Asset.getCurrentPrice(asset.ticker);
     }
-    return value;
+    return parseFloat(value.toString());
   }
 
   @Router.get("/portfolios/:_id/assets")
