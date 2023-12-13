@@ -28,7 +28,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
+  <section class="interest-form" v-if="isLoggedIn">
     <UpdateInterestForm @refreshArticles="getArticles" />
   </section>
   <section class="articles" v-if="loaded && articles.length !== 0">
@@ -72,5 +72,9 @@ article {
   justify-content: space-between;
   margin: 0 auto;
   max-width: 60em;
+}
+
+.interest-form {
+  margin-bottom: 1em;
 }
 </style>
