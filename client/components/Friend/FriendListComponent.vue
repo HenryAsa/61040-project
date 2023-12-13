@@ -70,6 +70,7 @@ article {
 
 .list-wrapper {
   margin-top: 1em;
+  padding: 1em;
 }
 
 section {

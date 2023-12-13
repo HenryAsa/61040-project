@@ -73,6 +73,7 @@ h2 {
 
 h3 {
   text-align: center;
+  margin-bottom: 0;
 }
 
 .split-wrapper {
@@ -95,7 +96,6 @@ h3 {
 /* Control the right side */
 .right {
   flex-grow: 1;
-  padding: 1em;
 }
 
 .settings {
