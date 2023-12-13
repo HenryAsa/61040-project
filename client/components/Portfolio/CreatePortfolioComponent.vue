@@ -24,8 +24,8 @@ const emptyForm = () => {
 
 <template>
   <form @submit.prevent="createPortfolio(content)">
-    <textarea id="content" v-model="content" placeholder="Portfolio Name" required> </textarea>
-    <button type="submit" class="pure-button-primary pure-button">Create a New Portfolio</button>
+    <textarea class="create-input" id="content" v-model="content" placeholder="Portfolio Name" required> </textarea>
+    <button type="submit" class="create-input pure-button-primary pure-button">Create a New Portfolio</button>
   </form>
 </template>
 
@@ -37,6 +37,7 @@ form {
   gap: 0.5em;
   padding: 1em;
   background-color: var(--light-orange-gold);
+  width: 50%;
 }
 
 textarea {
@@ -45,5 +46,9 @@ textarea {
   padding: 0.5em;
   border-radius: 4px;
   resize: none;
+}
+
+.create-input {
+  margin: 0 auto;
 }
 </style>
