@@ -36,6 +36,8 @@ img {
   margin-right: 0.5rem;
   min-height: 4.5em;
   min-width: 4.5em;
+  max-height: 4.5em;
+  max-width: 4.5em;
 }
 
 .base {
@@ -50,5 +52,6 @@ img {
   padding-right: 0.45em;
   background-color: var(--light-orange-gold);
   min-height: 5em;
+  max-height: 5em;
 }
 </style>
