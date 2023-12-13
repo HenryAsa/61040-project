@@ -90,11 +90,11 @@ export default class ChatConcept {
     const articles = await axios.get(apiUrl, { params: parameters }).catch((error) => {
       console.error("Error fetching news:", error);
     });
-    let articleContent = "";
-    for (const article of articles!.data.articles) {
-      articleContent += "One of the articles is as follows \n";
-      articleContent += article.content;
-    }
+    const articleContent = articles!.data.articles[0].content;
+    // for (const article of articles!.data.articles) {
+    //   articleContent += "One of the articles is as follows \n";
+    //   articleContent += article.content;
+    // }
     return articleContent;
   }
 

@@ -26,20 +26,13 @@ const portfolios = ref<Array<Record<string, string>>>([]);
 async function getPortfoliods() {
   let results;
   try {
-    results = await fetchy(`/api/portfoliosForSelf`, "GET", {});
+    results = await fetchy(`/api/myPortfolios`, "GET", {});
   } catch (_) {
     return;
   }
   portfolios.value = results;
   return;
 }
-
-// const portfolios: Portfolio[] = [
-//   { id: 1, name: "Portfolio 1" },
-//   { id: 2, name: "Portfolio 2" },
-//   { id: 3, name: "Portfolio 3" },
-//   // Add your portfolios here or fetch them from an API
-// ];
 
 const selectedPortfolio = ref();
 
@@ -53,19 +46,6 @@ const buyStocks = async () => {
     } catch (e) {
       console.log(e);
     }
-  } else {
-    // Handle invalid input
-    console.error("Please enter a valid amount and select a portfolio");
-  }
-};
-
-// Function to handle selling stocks
-const sellStocks = () => {
-  const amount = Number(shareAmount.value);
-  if (!isNaN(amount) && amount > 0 && selectedPortfolio.value) {
-    // Implement your logic for selling stocks here
-    // Use selectedPortfolio.value.id to get the selected portfolio ID
-    // This could involve making API calls or updating state
   } else {
     // Handle invalid input
     console.error("Please enter a valid amount and select a portfolio");
@@ -89,13 +69,13 @@ onBeforeMount(async () => {
         <div class="input-group">
           <input type="number" v-model="shareAmount" placeholder="Enter amount" />
           <select v-model="selectedPortfolio">
+            <option value="" disabled selected>Choose your portfolio</option>
             <option v-for="portfolio in portfolios" :key="portfolio._id">
               {{ portfolio.name }}
             </option>
           </select>
         </div>
         <button @click="buyStocks" v-if="isLoggedIn">Buy</button>
-        <button @click="sellStocks" v-if="isLoggedIn">Sell</button>
       </div>
     </div>
     <div class="chart-container">

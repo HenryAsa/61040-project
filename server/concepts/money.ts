@@ -32,9 +32,9 @@ export default class MoneyConcept {
    * @returns the balance of the user with this id
    * @throws error if no such id exists in the database
    */
-  async getBalance(_id: ObjectId) {
-    const user = await this.accounts.readOne({ user: _id });
-    const balance = user === null ? 0 : user.balance;
+  async getBalance(user: ObjectId) {
+    const account = await this.accounts.readOne({ user });
+    const balance = account === null ? 0 : account.balance;
     return balance;
   }
 
@@ -85,6 +85,11 @@ export default class MoneyConcept {
     balance -= amount;
     await this.setBalance(_id, balance);
     return balance;
+  }
+
+  async hasEnough(user: ObjectId, amount: number) {
+    const balance = await this.getBalance(user);
+    return balance >= amount;
   }
 
   /**

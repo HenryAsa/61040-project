@@ -1,16 +1,25 @@
 <script setup lang="ts">
-import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vue";
 import FriendListComponent from "@/components/Friend/FriendListComponent.vue";
-import { fetchy } from "@/utils/fetchy";
 import { useUserStore } from "@/stores/user";
+import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref, watch } from "vue";
+import FriendOptionComponent from "../components/Friend/FriendOptionComponent.vue";
 import PortfolioView from "./PortfolioView.vue";
 
 const { currentUsername, isLoggedIn, currentUserProfilePhoto } = storeToRefs(useUserStore());
 
 const props = defineProps(["username"]);
 const picture = ref("");
+const totalWealth = ref(0);
+
+async function fetchData() {
+  try {
+    totalWealth.value = await fetchy("/api/totalWealth", "GET");
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 async function getProfilePicture(username: string) {
   let pictureResults;
@@ -28,6 +37,7 @@ onBeforeMount(async () => {
   } else {
     await getProfilePicture(props.username);
   }
+  await fetchData();
   watch(
     () => props.username,
     async () => {
@@ -42,6 +52,7 @@ onBeforeMount(async () => {
     <div class="profile-wrapper">
       <img v-bind:src="picture" />
       <p class="username">{{ props.username }}</p>
+      <p>Total wealth: {{ totalWealth }}</p>
       <FriendOptionComponent v-if="isLoggedIn" :user="currentUsername" :other="props.username" :outgoing="true" />
       <RouterLink v-if="isLoggedIn && props.username == currentUsername" class="settings" :to="{ name: 'Settings' }">
         <button class="button-secondary pure-button">Settings</button>

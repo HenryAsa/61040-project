@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import CreatePortfolioComponent from "./CreatePortfolioComponent.vue";
-import PortfolioComponent from "./PortfolioComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref, watch } from "vue";
 import CopyPortfolioComponent from "./CopyPortfolioComponent.vue";
+import CreatePortfolioComponent from "./CreatePortfolioComponent.vue";
+import PortfolioComponent from "./PortfolioComponent.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
@@ -15,7 +15,7 @@ const loaded = ref(false);
 let portfolios = ref<Array<{ _id: 0; ownerName: ""; isPublic: false }>>([]);
 
 async function getPortfolios() {
-  let query: Record<string, string> = props.username !== undefined ? { ownerName: props.username } : {};
+  let query: Record<string, string> = props.username !== undefined ? { username: props.username } : {};
   let portfolioResults;
   try {
     portfolioResults = await fetchy("/api/portfolios", "GET", { query });
