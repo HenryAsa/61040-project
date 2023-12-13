@@ -92,6 +92,7 @@ article {
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
+  align-items: flex-start;
 }
 
 .column {
