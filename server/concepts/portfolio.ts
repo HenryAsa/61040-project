@@ -91,8 +91,8 @@ export default class PortfolioConcept {
   }
 
   async getAssets(_id: ObjectId) {
-    const portfolio = await this.portfolios.readOne({ _id });
-    return portfolio?.shares;
+    const portfolio = await this.getPortfolioById(_id);
+    return portfolio.shares;
   }
 
   async getUserAssets(user: ObjectId) {
