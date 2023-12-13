@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { fetchy } from "@/utils/fetchy";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import SearchUserForm from "./SearchUserForm.vue";
 import MiniUserView from "./MiniUserView.vue";
 
@@ -9,6 +9,7 @@ const props = defineProps([]);
 const loaded = ref(false);
 let users = ref<Array<Record<string, string>>>([]);
 let searchUser = ref("");
+const columns = ref(0);
 
 async function getUsers(username?: string) {
   let postResults;
@@ -28,7 +29,20 @@ async function getUsers(username?: string) {
 onBeforeMount(async () => {
   await getUsers();
   loaded.value = true;
+  handleResize();
 });
+
+onMounted(async () => {
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(async () => {
+  window.removeEventListener("resize", handleResize);
+});
+
+function handleResize() {
+  columns.value = Math.floor(document.body.clientWidth / screen.width / 0.25);
+}
 </script>
 
 <template>
@@ -37,17 +51,17 @@ onBeforeMount(async () => {
     <h2 v-else>User Filter: {{ searchUser }}:</h2>
     <SearchUserForm @getUsersByName="getUsers" />
   </div>
-  <section class="posts row" v-if="loaded && users.length !== 0">
+  <section class="users row" v-if="loaded && users.length !== 0">
     <div
       class="column"
-      v-for="columnNum in Array(2)
+      v-for="columnNum in Array(columns)
         .fill(0)
         .map((_, i) => i)"
       :key="columnNum"
     >
       <article
         v-for="user in users.filter(function (element, index, array) {
-          return index % 2 === columnNum;
+          return index % columns === columnNum;
         })"
         :key="user._id"
       >
@@ -72,7 +86,7 @@ p {
   max-width: 60em;
 }
 
-.posts {
+.users {
   padding: 1em;
 }
 
