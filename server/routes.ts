@@ -440,9 +440,8 @@ class Routes {
     if (price <= available_capital) {
       for (let _ = 0; _ < quantity; ++_) {
         const asset = await Asset.create(ticker, user_id);
-        await Portfolio.addAssetToPortfolio((await portfolio)._id, asset.asset._id, 1, await current_price);
+        await Portfolio.addAssetToPortfolio((await portfolio)._id, asset.asset._id);
       }
-      // void Asset.addShareholderToAsset((await asset)._id, (await user)._id);
       void Money.withdraw(user_id, price);
     } else {
       throw new Error(
@@ -560,7 +559,7 @@ class Routes {
     const assetIds = await Portfolio.getPortfolioShares(_id);
     const assetValues = new Map<string, number>();
     for (const id of assetIds) {
-      const asset = await Asset.getAssetById(id[0]);
+      const asset = await Asset.getAssetById(id);
       const ticker = asset.ticker;
       const value = await Asset.getCurrentPrice(ticker);
       if (!assetValues.has(ticker)) {
