@@ -3,7 +3,7 @@
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { ref as firebaseRef, getDownloadURL, uploadBytes } from "firebase/storage";
-import { defineEmits, ref } from "vue";
+import { onBeforeMount, defineEmits, ref } from "vue";
 import { firebaseConfig, storage } from "../../../server/firebase";
 import { fetchy } from "../../utils/fetchy";
 
@@ -11,8 +11,10 @@ import { fetchy } from "../../utils/fetchy";
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+const defaultImageURL = "/client/assets/images/defaultProfilePicture.jpg";
+
 const imageUpload = ref();
-const imageURL = ref();
+const imageURL = ref(defaultImageURL);
 
 const props = defineProps(["target"]);
 const emit = defineEmits(["update:imageURL"]);
@@ -51,14 +53,18 @@ const uploadImage = async () => {
     });
   });
 };
+
+onBeforeMount(async () => {
+  emit("update:imageURL", imageURL.value);
+});
 </script>
 
 <template>
   <div id="media_uploader">
     <h3 v-if="!imageURL">Please Upload a Profile Picture!</h3>
-    <h3 v-if="imageURL">Here is a preview of what your profile picture will look like</h3>
+    <h3 v-if="imageURL && imageURL != defaultImageURL">Here is a preview of what your profile picture will look like</h3>
     <input type="file" @change="handleFileChange" />
-    <img class="profilePhoto" v-if="imageURL" :src="imageURL" alt="Image that was just uploaded" />
+    <img class="profilePhoto" v-if="imageURL && imageURL != defaultImageURL" :src="imageURL" alt="Image that was just uploaded" />
     <br />
   </div>
 </template>

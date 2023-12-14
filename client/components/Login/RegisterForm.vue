@@ -51,7 +51,7 @@ function assignPassword(userPassword: string) {
         <PasswordValidation @userPassword="assignPassword" id="aligned-password" placeholder="Password" required></PasswordValidation>
       </div>
       <div class="pure-control-group">
-        <UploadMedia @update:imageURL="assignURL" required></UploadMedia>
+        <UploadMedia @update:imageURL="assignURL"></UploadMedia>
       </div>
       <div class="pure-controls">
         <button id="Register" type="submit" class="pure-button pure-button-primary">Register</button>

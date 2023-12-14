@@ -367,11 +367,8 @@ class Routes {
   @Router.patch("/buy/:portfolioName/:ticker/:quantity")
   async purchaseAsset(session: WebSessionDoc, portfolioName: string, ticker: string, quantity: string) {
     const user = WebSession.getUser(session);
-
     const currentPrice = Asset.getCurrentPrice(ticker);
-
     const cost: number = parseInt(quantity) * (await currentPrice);
-
     const canAfford = Money.hasEnough(user, cost);
 
     if (await canAfford) {
@@ -381,23 +378,18 @@ class Routes {
     } else {
       throw new Error("Not enough credit");
     }
-    return { msg: `Successfully purchased ${quantity} shares of ${ticker} at ${currentPrice} per share for a total of $${cost}` };
+    return { msg: `Successfully purchased ${quantity} shares of ${ticker} at $${currentPrice} per share for a total of $${cost}` };
   }
 
   @Router.patch("/sell/:portfolioId/:assetId")
   async sellAsset(session: WebSessionDoc, portfolioId: ObjectId, assetId: ObjectId) {
     const user = WebSession.getUser(session);
-
     const asset = await Asset.getAssetById(assetId);
-
     const currentPrice = await Asset.getCurrentPrice(asset.ticker);
-
     const value = currentPrice * asset.quantity;
 
     await Money.deposit(user, value);
-
     await Asset.deleteOne(assetId);
-
     await Portfolio.removeAssetFromPortfolio(portfolioId, assetId.toString());
   }
 
@@ -415,7 +407,7 @@ class Routes {
       const asset = await Asset.getAssetById(_id);
       value += await Asset.getCurrentPrice(asset.ticker);
     }
-    return value;
+    return parseFloat(value.toString());
   }
 
   @Router.get("/portfolios/:_id/assets")

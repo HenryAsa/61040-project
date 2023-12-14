@@ -3,7 +3,7 @@ import { ref } from "vue";
 import StockComponent from "./StockComponent.vue";
 
 let tickers = ref<Array<string>>([]);
-tickers.value = ["AMZN", "AAPL", "TSLA", "NVDA"];
+tickers.value = ["AAPL", "AMZN", "NVDA", "TSLA"];
 </script>
 
 <template>
