@@ -16,9 +16,12 @@ async function getArticles() {
   try {
     newsResults = await fetchy("/api/news", "GET", {});
   } catch (_) {
+    console.log("Error loading articles");
     return;
   }
   articles.value = newsResults;
+  console.log("Loaded the articles!");
+  return;
 }
 
 onBeforeMount(async () => {
