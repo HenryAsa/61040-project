@@ -79,7 +79,6 @@ p {
 .full-wrapper {
   background: var(--darker-bg);
   padding: 2em;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -114,7 +113,6 @@ h3 {
 
 .split-wrapper {
   display: flex;
-  min-height: 100vh;
 }
 
 /* Split the screen in half */
