@@ -17,6 +17,7 @@ async function getArticles() {
     newsResults = await fetchy("/api/news", "GET", {});
   } catch (_) {
     console.log("Error loading articles");
+    console.log(_);
     return;
   }
   articles.value = newsResults;
